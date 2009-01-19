@@ -88,7 +88,7 @@ SC.Collection = SC.Object.extend(
   */
   records: function() {
     if (this._changedRecords) this._flushChangedRecords() ;
-    return this._records ;
+    return this._records || [] ;
   }.property(),
   
   /**
@@ -349,7 +349,7 @@ SC.Collection = SC.Object.extend(
     // update the count as well.
     this._store = current ;
     this._count = current.length ;
-    this._reslice() ;
+    this._reslice() ; // updates this._records
   },
   
   // Anytime the properties used to filter the collection change, reslice if possible
