@@ -1,30 +1,38 @@
 // ========================================================================
 // SC.Timer Tests
 // ========================================================================
+/*globals module test ok isObj equals expects */
 
-Test.context("Timer.invalidate", {
+/**
+  Exercises timer invalidation on the SC.Timer class.
+*/
+module("Timer.invalidate") ;
 
-  "invalidate immediately should never execute": function() {
-    
-    var fired = NO ;
-    
-    SC.runLoop.beginRunLoop() ;
-    var start = SC.runLoop.get('startTime') ;
-    var t = SC.Timer.schedule({
-      target: this,
-      action: function() { fired = YES ; },
-      interval: 100
-    });
-    t.invalidate() ;
-    SC.runLoop.endRunLoop() ;
-
-    var checks = 10 ;
-    wait(1500, function() {
-      assertEqual(NO, fired) ;
-    }) ;
-  }
+/**
+  A timer scheduled and then invalidated before the end of the run loop should 
+  not fire.
   
-  // using invalidate on a repeating timer is tested in schedule().
-
+  @author Erich Ocean
+  @since 6e7becdfb4e7f22b340eb5e6d7f3b4df4ea65060
+*/
+test("invalidate immediately should never execute", function() {
+  
+  var fired = NO ;
+  
+  SC.runLoop.beginRunLoop() ;
+  var start = SC.runLoop.get('startTime') ;
+  var t = SC.Timer.schedule({
+    target: this,
+    action: function() { fired = YES ; },
+    interval: 100
+  });
+  t.invalidate() ;
+  SC.runLoop.endRunLoop() ;
+  
+  stop(2500) ; // stops the test runner, fails after 2500ms
+  setTimeout(function() {
+    equals(NO, fired) ;
+    window.start() ; // starts the test runner
+  }, 1500);
+  
 });
-
