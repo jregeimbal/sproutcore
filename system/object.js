@@ -436,13 +436,21 @@ SC.Object.prototype = {
   },
 
   /**
-    Invokes the passed method or method name one time during the runloop.
+    Invokes the passed method or method name one time during the run loop.
     
     @param {Funciton} method
     @returns {SC.Object} receiver
   */
   invokeOnce: function(method) {
     SC.runLoop.invokeOnce(this, method);
+    return this ;
+  },
+  
+  /**
+    Invoke at the beginning of the next iteration of the run loop.
+  */
+  invokeNext: function(method) {
+    SC.runLoop.invokeNext(this, method);
     return this ;
   },
   

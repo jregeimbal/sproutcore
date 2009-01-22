@@ -163,7 +163,15 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     property will point to the parent of the view.
   */
   parentView: null,
-
+  
+  /** @private
+    Whenever the parentView changes, this observer will fire, notifying
+    child views that their parentViews have also changed.
+  */
+  _view_parentViewDidChange: function() {
+    this.get('childViews').invoke('notifyPropertyChange', 'parentView');
+  }.observes('parentView'),
+  
   // ..........................................................
   // CHILD VIEW SUPPORT
   // 

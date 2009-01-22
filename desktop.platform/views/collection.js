@@ -14,7 +14,7 @@ SC.VALIDATE_COLLECTION_CONSISTANCY = NO ;
   Special drag operation passed to delegate if the collection view proposes
   to perform a reorder event.
 */
-SC.DRAG_REORDER = 0xfff0001 ;
+SC.DRAG_REORDER = 0x0010 ;
 
 /** Indicates that selection points should be selected using horizontal 
   orientation.
@@ -41,7 +41,7 @@ SC.REMOVE_COLLECTION_ROOT_ELEMENT_DURING_RENDER = NO ;
   views based on a source array of objects.  It can automatically create the
   and layout the views, including displaying them in groups.  It also 
   handles event input for the entire collection.
-
+  
   To use CollectionView, just create the view and set the 'content' property
   to an array of objects.  (Note that if you setup a binding, it will 
   always transform content to an array.)  The view will create instances of
@@ -65,7 +65,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /**
     An array of content objects
-
+    
     This array should contain the content objects you want the collection view 
     to display.  An item view (based on the exampleView view class) will be 
     created for each content object, in the order the content objects appear 
@@ -85,13 +85,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   // contentBindingDefault: SC.Binding.multiple().notEmpty(),
   contentBindingDefault: SC.Binding.multiple(),
   
-  /**  
+  /**
     The array of currently selected objects.  
-
+    
     This array should contain the currently selected content objects.  It is 
     modified automatically by the collection view when the user changes the 
     selection on the collection.
-
+    
     Any item views representing content objects in this array will have their 
     isSelected property set to YES automatically.
     
@@ -109,7 +109,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /** @private */
   selectionBindingDefault: SC.Binding.multiple(),
-
+  
   /**
     Delegate used to implement fine-grained control over collection view 
     behaviors.
@@ -145,11 +145,11 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     @type {Bool}
   */
-  isEnabled: true,
+  isEnabled: YES,
   
   /** @private */
   isEnabledBindingDefault: SC.Binding.bool(),
-
+  
   /**
     Allow user to edit content views.
     
@@ -158,7 +158,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     the user will not be able to reorder, add, or delete items regardless of 
     the canReorderContent and canDeleteContent and isDropTarget properties.
   */
-  isEditable: true,
+  isEditable: YES,
   
   /** @private */
   isEditableBindingDefault: SC.Binding.bool(),
@@ -174,7 +174,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /** @private */
   canReorderContentBindingDefault: SC.Binding.bool(),
-
+  
   /**
     Allow the user to delete items using the delete key
     
@@ -205,27 +205,27 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @type Boolean
   */
   useToggleSelection: NO,
-
+  
   /**
     Trigger the action method on a single click.
-  
+    
     Normally, clicking on an item view in a collection will select the content 
     object and double clicking will trigger the action method on the 
-    collection view.  
-  
+    collection view.
+    
     If you set this property to true, then clicking on a view will both select 
     it (if isSelected is true) and trigger the action method.  
-  
+    
     Use this if you are using the collection view as a menu of items.
-  
+    
     @type {Boolean}
   */  
-  actOnSelect: false,  
+  actOnSelect: NO,
   
   
   /**
     Select an item immediately on mouse down
-  
+    
     Normally as soon as you begin a click the item will be selected.
     
     In some UI scenarios, you might want to prevent selection until
@@ -234,51 +234,51 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     @type {Boolean}
   */  
-  selectOnMouseDown: true,
-
+  selectOnMouseDown: YES,
+  
   /**
     Property key to use to group objects.
-  
+    
     If groupBy is set to a non-null value, then the collection view will
     automatically display item views in groups based on the value of the 
     passed property key.  The exampleGroupView will be used to display the 
     items in groups.
-  
+    
     If this property is set, you MUST ensure the items in the content array 
     are already sorted by the group key.  Otherwise item view groups might 
     appear more than once.
-  
+    
     @type {String}
   */
   groupBy: null,
   
   /**
     The view class to use when creating new item views.
-  
+    
     The collection view will automatically create an instance of the view 
     class you set here for each item in its content array.  You should provide 
     your own subclass for this property to display the type of content you 
-    want. 
-  
+    want.
+    
     For best results, the view you set here should understand the following 
     properties:
-  
+    
     - *content* The content object from the content array your view should display
     - *isEnabled* True if the view should appear enabled
     - *isSelected* True if the view should appear selected
-  
+    
     In general you do not want your child views to actually respond to mouse 
     and keyboard events themselves.  It is better to let the collection view 
     do that.
-
+    
     If you do implement your own event handlers such as mouseDown or mouseUp, 
     you should be sure to actually call the same method on the collection view 
     to give it the chance to perform its own selection housekeeping.
-  
+    
     @property {SC.View}
   */
   exampleView: SC.LabelView,
-
+  
   /**
     If set, this key will be used to get the example view for a given
     content object.
@@ -287,14 +287,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /**
     The view class to use when displaying item views in groups.
-  
+    
     If the groupBy property is not null, then the collection view will create
     an instance of this view class with the item views that belong to the 
     group as child nodes for each distinct group value it encounters.
-  
+    
     If groupBy is null, then this property will not be used.  The default 
     class provided here simply displays the group value in an H1 tag.
-  
+    
     @property {SC.View}
   */
   exampleGroupView: SC.View,
@@ -302,12 +302,12 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   /**
     Invoked when the user double clicks on an item (or single clicks of 
     actOnSelect is true)
-
+    
     Set this to the name of the action you want to send down the
     responder chain when the user double clicks on an item (or single clicks 
     if actOnSelect is true).  You can optionally specify a specific target as 
     well using the target property.
-
+    
     If you do not specify an action, then the collection view will also try to 
     invoke the action named on the target item view.
     
@@ -319,7 +319,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @property {String}
   */  
   action: null,
-
+  
   /**
     Optional target to send the action to when the user double clicks.
     
@@ -350,7 +350,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /** 
     Property on content items to use for display.
-
+    
     Built-in item views such as the LabelViews and ImageViews will use the
     value of this property as a key on the content object to determine the
     value they should display.
@@ -367,12 +367,12 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @property {String}
   */
   contentValueKey: null,
-
+  
   /**
-    Enables keyboard-based navigate if set to true.
+    Enables keyboard-based navigate, deletion, etc. if set to true.
   */
   acceptsFirstResponder: false,
-
+  
   /**
     If your layout uses a grid or horizontal-based layout, then make sure this 
     property is always up to date with the current number of items per row.  
@@ -386,12 +386,12 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @property {Number}
   */
   itemsPerRow: 1,
-
+  
   /**  
     Property returns all of the item views, regardless of group view.  This
     property is somewhat expensive to compute so you should avoid calling it
     unless necessary.
-
+    
     @property {Array}
   */
   itemViews: function() {
@@ -404,7 +404,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     }
     return ret ;
   }.property('nowShowingRange', 'content').cacheable(),
-
+  
   /**
     Property returns all of the rendered group views in order of their 
     appearance.
@@ -417,7 +417,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       var range = this.get('nowShowingRange') ;
       var content = this.get('content') || [] ;
       var groupValue = undefined ;
-
+      
       for(var idx=0;idx<range.length;idx++) {
         var cur = content.objectAt(idx) ;
         var curGroupValue = (cur) ? cur.get(groupBy) : null ;
@@ -444,7 +444,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     if (!this._itemViewsByGuid) this._itemViewsByGuid = {} ;
     return !!this._itemViewsByGuid[SC.guidFor(view)] ;
   },
-
+  
   /** 
     Find the first content item view for the passed event.
     
@@ -479,8 +479,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // nothing was found... 
     return null;
   },
-
-
+  
+  
   /**
     Returns the itemView that represents the passed content object.  
     
@@ -494,7 +494,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var key = (obj) ? SC.guidFor(obj) : '0';
     return this._itemViewsByContent[key];
   },
-
+  
   /**
     Returns the groupView that represents the passed group value.
     
@@ -508,7 +508,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   groupViewForGroupValue: function(groupValue) {
     return this._groupViewsByValue[groupValue] ;
   },
-
+  
   /**
     Returns the groupValue for the passed group view.
     
@@ -541,7 +541,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var len = content.get('length') ;
     var groupBy = this.get('groupBy') ;
     if (!groupBy) return { start: 0, length: len } ;
-
+    
     var min = contentIndex, max = contentIndex ;
     var cur = content.objectAt(contentIndex) ;
     var groupValue = (cur) ? cur.get(groupBy) : null ;
@@ -564,7 +564,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     return { start: min, length: max-min } ;
   },
-
+  
   /**
     Determines the group value at the specified content index.  Returns null
     if grouping is disabled.
@@ -577,7 +577,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var content = SC.makeArray(this.get('content')).objectAt(contentIndex) ;
     return (groupBy && content && content.get) ? content.get(groupBy) : null;
   },
-
+  
   // ..........................................................
   // CONTENT CHANGES
   // 
@@ -589,9 +589,9 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   _collection_contentDidChange: function() {
     var content = this.get('content') ;
     if (content === this._content) return this; // nothing to do
-
+    
     var func = this._collection_contentPropertyDidChange ;
-
+    
     // remove old observer, add new observer
     if (this._content) this._content.removeObserver('[]', this, func) ;
     if (content) content.addObserver('[]', this, func) ;
@@ -604,7 +604,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var rev = (content) ? content.propertyRevision : -1 ;
     this._collection_contentPropertyDidChange(this, '[]', content, rev) ; 
   }.observes('content'),
-
+  
   /** @private
     Called whenever the content array or any items in the content array 
     changes.  update children if this is a new property revision.
@@ -617,7 +617,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       this._updatingContent = false ;
     }
   },
-
+  
   /**
     Invoked whenever a the content array changes.  The default implementation
     will possibly recompute the view's layout size and the marks it as dirty
@@ -653,7 +653,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     the collection view to do a 'fast' revalidation of its content.
   */
   nowShowingRange: function() {
-
+    
     // note that we keep a cached clippingFrame and cached nowShowingRange.
     // if the clipping frame has not actually changed, we avoid the cost of
     // actually recomputing the contentRangeInFrame.
@@ -666,13 +666,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // if (!range || !old || !SC.rectsEqual(cf, old) || !this._nowShowingIsValid) {
       this._nowShowingRange_clippingFrame = cf ; // save
       // this._nowShowingIsValid = YES ;
-
+      
       // ask the subclass to compute the content range in frame...
       range = this.contentRangeInFrame(cf) ;
       var content = SC.makeArray(this.get('content'));
       
       // console.log('nowShowingRange content length is %@'.fmt(content.get('length')));
-
+      
       if (!range) range = { start: 0, length: 0 }; // default
        
       // make sure the range isn't greater than the content length 
@@ -725,14 +725,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     This layout is automatically applied whenever the content changes.
     
     If you don't care about computing the layout at all, you can return null.
-  
+    
     @returns {Hash} layout properties
   */
   computeLayout: function() { return null; },
   
   /**
     Override to return the range of items to render for a given frame.
-
+    
     You can override this method to implement support for incremenetal 
     rendering.  The range you return here will be used to limit the number of 
     actual item views that are created by the collection view.
@@ -770,9 +770,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @param {Bool} firstLayout True if this is the first the view has been laid out. 
     
   */
-  layoutGroupView: function(groupView, groupValue, contentIndexHint, firstLayout) {
-    
-  },
+  layoutGroupView: function(groupView, groupValue, contentIndexHint, firstLayout) {},
   
   /**
     This method is called whenever an itemView is added or during the 
@@ -783,9 +781,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @param {Number} contentIndex the index of the content this layout represents.
     @param {Bool} firstLayout true if this is the first time it has been laid out.
   */
-  layoutItemView: function(itemView, contentIndex, firstLayout) {
-    
-  },
+  layoutItemView: function(itemView, contentIndex, firstLayout) {},
   
   /**
     This method is called whenever the view is resized.  The default
@@ -809,7 +805,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     while(--idx >= nowShowingRange.start) {
       var cur = content.objectAt(idx) ;
       var itemView = this.itemViewForContent(cur) ;
-
+      
       // should never happen, but recover just in case.
       if (!itemView) continue ; 
       
@@ -863,24 +859,24 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   updateChildren: function(fullUpdate) {
     // console.log('updateChildren invoked on %@, fullUpdate is %@'.fmt(this, fullUpdate));
     var f ;
-
+    
     // force fullUpdate if we are currently dirty.
     if (this.get('isDirty')) fullUpdate = YES;
-
+    
     if (SC.BENCHMARK_UPDATE_CHILDREN) {
       var bkey = '%@.updateChildren(%@)'.fmt(this, (fullUpdate) ? 'FULL' : 'FAST') ;
       SC.Benchmark.start(bkey);
     }
-
+    
     this.beginPropertyChanges() ; // avoid sending notifications
     
     var content = SC.makeArray(this.get('content'));
-
+    
     // get the target nowShowingRange and the current range.  Save the value
     var range = this.get('nowShowingRange') ;
     var curRange = this._currentNowShowingRange ; 
     this._currentNowShowingRange = range ;
-
+    
     var groupBy = this.get('groupBy'), didChange = false ;
     var key, itemView, c, start, length;
     
@@ -901,7 +897,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         c = content.objectAt(idx) ;
         key = SC.guidFor(c) ;
         itemView = this._insertItemViewFor(c, groupBy, idx) ;
-
+        
         if (itemView) {
           // add item view to new hash and remove from old hash.
           itemViewsByContent[key] = itemView;
@@ -944,7 +940,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         didChange = true ;
       }
     }
-
+    
     // Clear dirty state
     this.set('isDirty', NO);
     
@@ -957,11 +953,11 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       this.notifyPropertyChange('itemViews') ;
       this.notifyPropertyChange('groupViews') ;
     }
-
+    
     this.endPropertyChanges() ;
     if (SC.BENCHMARK_UPDATE_CHILDREN) SC.Benchmark.end(bkey);    
   },
-
+  
   /**
     Rebuild all the child item views in the collection view.
     
@@ -991,10 +987,10 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   */
   updateSelectionStates: function() {
     var key, idx, cur, itemView, isSelected ;
-
+    
     if (this.get('isDirty')) return ;
     var selection = this.get('selection') || [];
-
+    
     // First, for efficiency, turn the selection into a hash by GUID.  This 
     // way, we'll only have to perform a linear search over the children.
     // This hash is cached and flushed each time the selection changes.
@@ -1009,7 +1005,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       }
       this._selectionHash = selectionHash ;
     }
-
+    
     // Iterate over the item views and set their selection property.
     var itemViewsByContent = this._itemViewsByContent ;
     for(key in itemViewsByContent) {
@@ -1021,7 +1017,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       }
     }
   },
-
+  
   // ..........................................................
   // INTERNAL CHILD VIEW SUPPORT
   // 
@@ -1029,7 +1025,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   // Ordered array of item views currently on display.  This array 
   // is reset whenever the item views are regenerated.
   _itemViews: null,
-
+  
   // Ordered array of group views currently in the display.  This array is
   // reset whenever the group views are regenerated.
   _groupViews: null,
@@ -1040,14 +1036,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   // Hash of itemViews to the content guids they current represent.  This
   // only matches views in currently in the _visibleContentRange.
   _itemViewsByContent: null,
-
+  
   // Hash of groupViews to the group key they currently represent.
   _groupViewsByValue: null,
   
   // Hash of counts of item views contained in a group view.  When the count
   // of a group reaches zero, it will be removed.
   _groupViewCounts: null,
-
+  
   // Array of unused itemViews.  Push/pop only.
   _itemViewPool: null,
   
@@ -1067,7 +1063,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     take into account the actual ORDER of item views in the hierarchy.  It 
     assumes that manual layout will ensure the items appear visually in the 
     proper order anyway.
-
+    
     @param {Object} content The content to insert an item view for.
     @param {String} groupBy the value used for grouping or null if grouping is disabled.
     @param {Number} contentIndex hint.
@@ -1079,7 +1075,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var key = SC.guidFor(content) ;
     var ret = this._itemViewsByContent[key];
     var firstLayout = false ;
-
+    
     // if no record was found, pull an item view from the pool or create one.
     // set the content.
     if (!ret) {
@@ -1092,7 +1088,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
           displayDelegate: this
         }) ;
         ret.$().addClass('sc-collection-item') ; // add class name for display
-      
+        
         // set content and add to content hash
         ret.set('content', content) ;
         this._itemViewsByContent[key] = ret ;
@@ -1101,7 +1097,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       }
     }
     if (!ret) throw "Could not create itemView for content: %@".fmt(content);
-
+    
     // Determine proper parent view and insert itemView if needed.
     // Also update count of itemViews.
     var canGroup = !!(groupBy && content) ;
@@ -1121,18 +1117,17 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         if (--this._groupViewCounts[SC.guidFor(curParentView)] <= 0) {
           this._removeGroupView(curParentView, groupValue) ;
         }
-        
       }
       
       parentView.appendChild(ret) ;
       if (groupBy) this._groupViewCounts[SC.guidFor(parentView)]++ ;
     }
-
+    
     // Layout itemView.
     this.layoutItemView(ret, contentIndex, firstLayout) ;
     return ret ;
   },
-
+  
   /** @private
     Removes the itemView from the receiver and returns it to the itemView pool 
     for later reuse.  
@@ -1186,7 +1181,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   _insertOrRemoveItemViewsInRange: function(start, length, groupBy) {
     // zero length means do nothing.
     if (length === 0) return ;
-
+    
     var content = SC.makeArray(this.get('content')) ;
     
     // negative length == remove item views
@@ -1196,7 +1191,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         var itemView = this.itemViewForContent(c) ;
         if (itemView) this._removeItemView(itemView, groupBy) ;
       }
-      
+    
     // positive length == add item views.
     } else if (length > 0) {
       while(--length >= 0) {
@@ -1206,13 +1201,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       }  
     }
   },
-
+  
   /** @private
     Finds or creates a groupView for the named group value and inserts it into
     the receiver.  This method does not take into account the actual ORDER of
     the groupViews in the hierarchy.  It assumes that manual layout will 
     ensure the items appear visually in the proper order anyway.
-
+    
     @param {Object} groupValue value for group
     @param {Number} contentIndex hint
     @returns {SC.View} the new groupView.
@@ -1235,7 +1230,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         this._groupViewCounts[SC.guidFor(ret)] = 0 ;
       }
     }
-
+    
     // If groupValue still not found, create one.
     if (!ret) {
       ret = this._groupViewPool.pop() || this.get('exampleGroupView').create({
@@ -1259,7 +1254,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     return ret ;
   },
-
+  
   /** @private
     Called whenever a groupView is no longer being used.
     
@@ -1311,7 +1306,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   // ......................................
   // SELECTION
   //
-
+  
   /** @private
     Finds the smallest index of a content object in the selected array.
   */
@@ -1319,7 +1314,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var content = this.get('content');
     var sel = this.get('selection');
     if (!content || !sel) return - 1;
-
+    
     // find the first item in the selection
     var contentLength = content.get('length') ;
     var indexOfSelected = contentLength ; var idx = sel.length ;
@@ -1330,7 +1325,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     return (indexOfSelected >= contentLength) ? -1 : indexOfSelected ;
   },
-
+  
   /**
     Finds the largest index of a content object in the selection array.
   */
@@ -1338,7 +1333,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var content = this.get('content');
     var sel = this.get('selection');
     if (!content || !sel) return - 1;
-
+    
     var indexOfSelected = -1 ; var idx = sel.length ;
     while(--idx >= 0) {
       var curIndex = content.indexOf(sel[idx]) ;
@@ -1361,14 +1356,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       selected.  Defaults to 1
     @returns {void}
   */
-  selectPreviousItem: function(extend, numberOfItems)
-  {
+  selectPreviousItem: function(extend, numberOfItems) {
     if (SC.none(numberOfItems)) numberOfItems = 1 ;
     if (SC.none(extend)) extend = false ;
-
+    
     var content  = this.get('content');
     var contentLength = content.get('length') ;
-
+    
     // if extending, then we need to do some fun stuff to build the array
     var selTop, selBottom, anchor ;
     if (extend) {
@@ -1376,7 +1370,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       selBottom = this._indexOfSelectionBottom() ;
       anchor = SC.none(this._selectionAnchor) ? selTop : this._selectionAnchor ;
       this._selectionAnchor = anchor ;
-
+      
       // If the selBottom is after the anchor, then reduce the selection
       if (selBottom > anchor) {
         selBottom = selBottom - numberOfItems ;
@@ -1403,7 +1397,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     while(selTop <= selBottom) {
       items[items.length] = content.objectAt(selTop++) ;
     }
-
+    
     // ensure that the item is visible and set the selection
     if (items.length > 0) {
       this.scrollToContent(items.first());
@@ -1416,7 +1410,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   /**
     Select one or more items folling the current selection, optionally
     extending the current selection.  Also scrolls to selected item.
-
+    
     Selection does not wrap around.
     
     @param extend {Boolean} (Optional) If true, the selection will be extended 
@@ -1425,14 +1419,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       selected.  Defaults to 1.
     @returns {void}
   */
-  selectNextItem: function(extend, numberOfItems)
-  {
+  selectNextItem: function(extend, numberOfItems) {
     if (SC.none(numberOfItems)) numberOfItems = 1 ;
     if (SC.none(extend)) extend = false ;
-
+    
     var content  = this.get('content');
     var contentLength = content.get('length') ;
-
+    
     // if extending, then we need to do some fun stuff to build the array
     var selTop, selBottom, anchor ;
     if (extend) {
@@ -1440,7 +1433,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       selBottom = this._indexOfSelectionBottom() ;
       anchor = SC.none(this._selectionAnchor) ? selTop : this._selectionAnchor ;
       this._selectionAnchor = anchor ;
-
+      
       // If the selTop is before the anchor, then reduce the selection
       if (selTop < anchor) {
         selTop = selTop + numberOfItems ;
@@ -1457,7 +1450,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // if not extending, just select the item next to the selBottom
     } else {
       selBottom = this._findNextSelectableItemFromIndex(this._indexOfSelectionBottom() + numberOfItems);
-
+      
       if (selBottom >= contentLength) selBottom = contentLength-1;
       selTop = selBottom ;
       anchor = null ;
@@ -1515,7 +1508,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     if (!scrollable || (scrollable == SC.window)) return ; // no scrollable!
     scrollable.scrollToVisible(view) ;
   },
-
+  
   /** 
     Selects the passed array of items, optionally extending the
     current selection.
@@ -1527,7 +1520,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   selectItems: function(items, extendSelection) {
     var base = (extendSelection) ? this.get('selection') : [] ;
     var sel = [];
-
+    
     items = [items].flatten();
     for (var i = 0, len = items.length; i < len; i++) {
       if (this.invokeDelegateMethod(this.delegate, 'collectionViewShouldSelectItem', this, items[i])) {
@@ -1535,13 +1528,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       }
     }
     sel = sel.concat(base).uniq() ;
-
+    
     // if you are not extending the selection, then clear the selection 
     // anchor.
     this._selectionAnchor = null ;
     this.set('selection',sel) ;  
   },
-
+  
   /** 
     Removes the items from the selection.
   */
@@ -1561,18 +1554,18 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @returns {Boolean} YES if deletion is possible, even if none actually occurred.
   */
   deleteSelection: function() {
-    
+    // console.log('deleteSelection called on %@'.fmt(this));
     // perform some basic checks...
     if (!this.get('canDeleteContent')) return NO;  
     var sel = SC.makeArray(this.get('selection'));
     if (!sel || sel.get('length') === 0) return NO ;
-
+    
     // let the delegate decide what to actually delete.  If this returns an
     // empty array or null, just do nothing.
     sel = this.invokeDelegateMethod(this.delegate, 'collectionViewShouldDeleteContent', this, sel) ;
     sel = SC.makeArray(sel) ; // ensure this is an array
     if (!sel || sel.get('length') === 0) return YES ;
-
+    
     // now have the delegate (or us) perform the deletion.  The collection
     // view implements a default version of this method.
     this.invokeDelegateMethod(this.delegate, 'collectionViewDeleteContent', this, sel) ;
@@ -1623,6 +1616,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   //
 
   keyDown: function(evt) {
+    console.log('keyDown called on %@'.fmt(this));
     return this.interpretKeyEvents(evt) ;
   },
   
@@ -1641,6 +1635,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     Handle delete keyboard event.
   */
   deleteBackward: function(evt) {
+    console.log('deleteBackward called on %@ with evt %@'.fmt(this, evt));
     return this.deleteSelection() ;
   },
   
@@ -1648,6 +1643,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     Handle delete keyboard event.
   */
   deleteForward: function(evt) {
+    console.log('deleteForward called on %@ with evt %@'.fmt(this, evt));
     return this.deleteSelection() ;
   },
   
@@ -2021,11 +2017,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     Adds the focused class to the element.
   */
   didBecomeFirstResponder: function() {
-    this.addClassName('focus') ;
+    // console.log('didBecomeFirstResponder called on %@'.fmt(this));
+    this.$().addClass('focus') ;
   },
   
   willLoseFirstResponder: function() {
-    this.removeClassName('focus');
+    // console.log('willLoseFirstResponder called on %@'.fmt(this));
+    this.$().removeClass('focus');
   },
   
   // ......................................
@@ -2061,7 +2059,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /**
     This property is set to the proposed insertion index during a call to
-    collectionViewValidateDrop().  Your delegate implementations can change
+    collectionViewValidateDragOperation().  Your delegate implementations can change
     the value of this property to enforce a drop some in some other location.
     
     @type {Number}
@@ -2071,7 +2069,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   
   /**
     This property is set to the proposed drop operation during a call to
-    collectionViewValidateDrop().  Your delegate implementations can change
+    collectionViewValidateDragOperation().  Your delegate implementations can change
     the value of this property to enforce a different type of drop operation.
     
     @type {Number}
@@ -2163,6 +2161,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @type {Array}
   */
   dragDataTypes: function() {
+    // console.log('dragDataTypes called on %@'.fmt(this));
     
     // consult delegate.
     var ret = this.invokeDelegateMethod(this.delegate, 'collectionViewDragDataTypes', this) ;
@@ -2200,7 +2199,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     }
     
     // otherwise, just pass along to the delegate.
-    return this.invokeDelegateMethod(this.delegate, 'collectionViewDragDataForType', this, dataType, drag) ;
+    return this.invokeDelegateMethod(this.delegate, 'collectionViewDragDataForType', this, drag, dataType) ;
   },
 
   /**
@@ -2208,7 +2207,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     consult the collection view delegate, if you implement those methods.
   */
   computeDragOperations: function(drag, evt) {
-
+    // console.log('computeDragOperations called on %@'.fmt(this));
+    
     // the proposed drag operation is DRAG_REORDER only if we can reorder
     // content and the drag contains reorder content.
     var op = SC.DRAG_NONE ;
@@ -2220,9 +2220,10 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     }
     
     // Now pass this onto the delegate.
-    op = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDrop', this, drag, SC.DROP_ANY, -1, op) ;
+    // op = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDrop', this, drag, SC.DROP_ANY, -1, op) ;
+    op = this.invokeDelegateMethod(this.delegate, 'collectionViewComputeDragOperations', this, drag, op) ;
     
-    if (op === SC.DRAG_REORDER) op = SC.DRAG_MOVE ;
+    if (op & SC.DRAG_REORDER) op = SC.DRAG_MOVE ;
     
     // return
     return op ;
@@ -2264,7 +2265,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       // the collection delegate.
       this.set('proposedInsertionIndex', idx) ;
       this.set('proposedDropOperation', dropOp) ;
-      dragOp = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDrop', this, drag, dropOp, idx, dragOp) ;
+      dragOp = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDragOperation', this, drag, dragOp, idx, dropOp) ;
       idx = this.get('proposedInsertionIndex') ;
       dropOp = this.get('proposedDropOperation') ;
       this._dropInsertionIndex = this._dropOperation = null ;
@@ -2288,28 +2289,28 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     }
     
     // console.log('this is a redorder drag, dropOp is %@'.fmt(dropOp)) ;
-
+    
     // if this is a reorder drag, set the proposed op to SC.DRAG_REORDER and
     // validate the insertion point.  This only works if the insertion point
     // is DROP_BEFORE.  DROP_ON is not handled by reordering content.
     if ((idx >= 0) && this.get('canReorderContent') && (dropOp === SC.DROP_BEFORE)) {
-
+      
       var objects = drag.dataForType(this.get('reorderDataType')) ;
       if (objects) {
         // console.log('found objects');
         var content = this.get('content') || [] ;
         // console.log('objects is %@, content is %@'.fmt(objects, content));
-
+        
         // if the insertion index is in between two items in the drag itself, 
         // then this is not allowed.  Either use the last insertion index or 
         // find the first index that is not in between selections.  Stop when
         // we get to the beginning.
         var previousContent = (idx > 0) ? content.objectAt(idx-1) : null ;
         var nextContent = (idx < content.get('length')) ? content.objectAt(idx) : null;
-
+        
         var isPreviousInDrag = (previousContent) ? objects.indexOf(previousContent)>=0 : NO;
         var isNextInDrag = (nextContent) ? objects.indexOf(nextContent)>=0 : NO;
-
+        
         if (isPreviousInDrag && isNextInDrag) {
           if (SC.none(this._lastInsertionIndex)) {
             while((idx >= 0) && (objects.indexOf(content.objectAt(idx)) >= 0)) {
@@ -2317,20 +2318,21 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
             } 
           } else idx = this._lastInsertionIndex ;
         }
-
+        
         // If we found a valid insertion point to reorder at, then set the op
         // to custom DRAG_REORDER.
         if (idx >= 0) dragOp = SC.DRAG_REORDER ;
       }
     }
-
+    
     // console.log('the dragOp is %@'.fmt(dragOp)) ;
-
+    
     // Now save the insertion index and the dropOp.  This may be changed by
     // the collection delegate.
     this.set('proposedInsertionIndex', idx) ;
     this.set('proposedDropOperation', dropOp) ;
-    dragOp = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDrop', this, drag, dropOp, idx, dragOp) ;
+    // dragOp = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDrop', this, drag, dropOp, idx, dragOp) ;
+    dragOp = this.invokeDelegateMethod(this.delegate, 'collectionViewValidateDragOperation', this, drag, dragOp, idx, dropOp) ;
     idx = this.get('proposedInsertionIndex') ;
     dropOp = this.get('proposedDropOperation') ;
     this._dropInsertionIndex = this._dropOperation = null ;
@@ -2357,18 +2359,18 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         var itemView = this.itemViewForContent(this.get('content').objectAt(idx));
         this.showInsertionPoint(itemView, dropOp) ;
       }
-
+      
       this._lastInsertionIndex = idx ;
       this._lastDropOperation = dropOp ;
     } else {
       this.hideInsertionPoint() ;
       this._lastInsertionIndex = this._lastDropOperation = null ;
     }
-
+    
     // Normalize drag operation to the standard kinds accepted by the drag system.
-    return (dragOp === SC.DRAG_REORDER) ? SC.DRAG_MOVE : dragOp;  
+    return (dragOp & SC.DRAG_REORDER) ? SC.DRAG_MOVE : dragOp;  
   },
-
+  
   /**
     Implements the SC.DropTarget protocol.  Hides any visible insertion 
     point and clears some cached values.
@@ -2377,16 +2379,16 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     this.hideInsertionPoint() ;
     this._lastInsertionIndex = this._lastDropOperation = null ;
   },
-
-  /**
-    Implements the SC.DropTarget protocol.  Hides any visible insertion 
-    point and clears some cached values.
-  */
-  dragEnded: function() {
-    this.hideInsertionPoint() ;
-    this._lastInsertionIndex = this._lastDropOperation = null ;
-  },
-
+  
+  // /**
+  //   Implements the SC.DropTarget protocol.  Hides any visible insertion 
+  //   point and clears some cached values.
+  // */
+  // dragEnded: function() {
+  //   this.hideInsertionPoint() ;
+  //   this._lastInsertionIndex = this._lastDropOperation = null ;
+  // },
+  
   /**
     Implements the SC.DropTarget protocol.
   */
@@ -2398,35 +2400,42 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     reordering content.
   */
   performDragOperation: function(drag, op) { 
-    
+    // console.log('performDragOperation called on %@ with drag.dataTypes %@'.fmt(this, drag.get('dataTypes')));
+    // console.log('op is %@'.fmt(SC.Drag.inspectOperation(op)));
     // Get the correct insertion point, drop operation, etc.
     var state = this._computeDropOperationState(drag, null, op) ;
     var idx = state[0], dropOp = state[1], dragOp = state[2] ;
-
+    // console.log('dragOp is %@'.fmt(SC.Drag.inspectOperation(dragOp)));
+    
     // The dragOp is the kinds of ops allowed.  The drag operation must 
     // be included in that set.
-    if (dragOp === SC.DRAG_REORDER) {
+    if (dragOp & SC.DRAG_REORDER) {
       op = (op & SC.DRAG_MOVE) ? SC.DRAG_REORDER : SC.DRAG_NONE ;
     } else {
       op = op & dragOp ;
     }
+    // console.log('after processing, op is %@'.fmt(SC.Drag.inspectOperation(op)));
     
     // If no allowed drag operation could be found, just return.
     if (op === SC.DRAG_NONE) return op;
     
     // Some operation is allowed through, give the delegate a chance to
     // handle it.
-    var performed = this.invokeDelegateMethod(this.delegate, 'collectionViewAcceptDrop', this, drag, dropOp, idx, op) ;
-
+    // var performed = this.invokeDelegateMethod(this.delegate, 'collectionViewAcceptDrop', this, drag, dropOp, idx, op) ;
+    var performed = this.invokeDelegateMethod(this.delegate, 'collectionViewPerformDragOperation', this, drag, op, idx, dropOp) ;
+    
+    // console.log('performed is %@'.fmt(SC.Drag.inspectOperation(performed)));
     // If the delegate did not handle the drag (i.e. returned SC.DRAG_NONE),
     // and the op type is REORDER, then do the reorder here.
-    if ((performed === SC.DRAG_NONE) && (op === SC.DRAG_REORDER)) {
+    // console.log('performed & SC.DRAG_NONE is %@, op & SC.DRAG_REORDER is %@'.fmt((performed & SC.DRAG_NONE),(op & SC.DRAG_REORDER)));
+    if ((performed === SC.DRAG_NONE) && (op & SC.DRAG_REORDER)) {
       var objects = drag.dataForType(this.get('reorderDataType')) ;
+      // console.log('objects is %@'.fmt(objects));
       if (!objects) return SC.DRAG_NONE ;
-
+      
       var content = this.get('content') ;
       content.beginPropertyChanges(); // suspend notifications
-
+      
       // find the old index and remove it.
       var old ;
       var objectsIdx = objects.get('length') ;
@@ -2436,7 +2445,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         if (old >= 0) content.removeAt(old) ;
         if ((old >= 0) && (old < idx)) idx--; //adjust idx
       }
-    
+      
       // now insert objects at new location
       content.replace(idx, 0, objects) ;
       content.endPropertyChanges(); // restart notifications
@@ -2449,7 +2458,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       // make the op into its actual value
       op = SC.DRAG_MOVE ;
     }
-
+    
     return op; 
   },
   
@@ -2465,7 +2474,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   //   this.hideInsertionPoint() ;
   //   this._lastInsertionIndex = null ;
   // },
-
+  
   /**
     If some state changes that causes the row height for a range of rows 
     then you should call this method to notify the view that it needs to
@@ -2712,13 +2721,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   collectionViewShouldSelectItem: function(view, item) {
     return this.get('isSelectable') ;
   },
-
+  
   // ......................................
   // INTERNAL
   //
   
   init: function() {
-
+    
     // Initialize internal hashes and arrays.  Normally the best approach to this 
     // is to initialize a property only when it is used.  However, these properties
     // are critical to layout and therefore will always be needed so it is faster
@@ -2728,14 +2737,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     this._groupViewCounts= {};
     this._zombieGroupViews= {};
     this._itemViewsByGuid = {} ;
-
+    
     this._itemViewPool= [];
     this._groupViewPool= [];
-
+    
     sc_super() ;
     this._dropTargetObserver();
   },
-
+  
   // Perform the action.  Supports legacy behavior as well as newer style
   // action dispatch.
   _action: function(view, evt) {
@@ -2767,7 +2776,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       return view.action(evt) ;
     }
   },
-
+  
   /** Add/remove from drop targets as needed. */
   _dropTargetObserver: function() {
     var canDrop = this.get('canReorderContent') || this.get('isDropTarget') ;
@@ -2777,14 +2786,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       SC.Drag.removeDropTarget(this) ;
     }
   }.observes('canReorderContent', 'isDropTarget'),
-
+  
   /** @private
     Whenever the selection changes, update the itemViews.
   */
   _selectionObserver: function() {
     var sel = this.get('selection') ;
     if (SC.isEqual(sel, this._selection)) return ; // nothing to do
-
+    
     var func = this._selectionPropertyDidChange ;
     
     if (this._selection) this._selection.removeObserver('[]', this, func) ;
@@ -2794,8 +2803,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var propertyRevision = (sel) ? sel.propertyRevision : null;
     this._selectionPropertyDidChange(this, '[]', sel, propertyRevision) ;
   }.observes('selection'),
-
-
+  
+  
   // called on selection change and selection.[] change...
   // update selection states if this is a new propertyRevision
   _selectionPropertyDidChange: function(target, key, value, rev) {
@@ -2806,25 +2815,6 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       this.updateSelectionStates() ;
       this._updatingSel = false ;
     }
-  },
-
-  // ======================================================================
-  // DEPRECATED APIS (Still available for compatibility)
+  }
   
-  /** @private 
-    If set to false, this method will prevent you from deselecting all of
-    the items in your view.  This is better implemented using a controller
-    that prohibits empty selection.
-  */
-  allowDeselectAll: true,
-
-  /** @private */
-  itemExistsInCollection: function( view ) { return this.hasItemView(view); },
-  
-  /** @private */
-  viewForContentRecord: function(rec) { return this.itemViewForContent(rec); }
-  
-  
-}) ;
-
-
+});
