@@ -158,7 +158,9 @@ SC.Store = SC.Object.create(
   cleanRecord: function(rec) {
     var guid = rec._storeKey();
     var dirty = this.get('_dirtyRecords') || {};
-    delete dirty[guid];
+    if (dirty.hasOwnProperty(guid)){
+      delete dirty[guid];
+    }
     var count = 0;
     for(var elem in dirty){
       count = count + 1;
@@ -327,7 +329,8 @@ SC.Store = SC.Object.create(
     this.set('_changedRecords',changed) ;
     
     // Set the global record changes
-    dirty[guid] = rec;
+    var changeCount = rec.get('changeCount');
+    if (changeCount > 0) dirty[guid] = rec;
     this.set('_dirtyRecords', dirty);
     this.set('hasChanged', YES);
     this._changedRecordsObserver() ;
