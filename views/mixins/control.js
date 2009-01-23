@@ -223,7 +223,7 @@ SC.Control = {
     // passed all of our checks, update the content (and the _contentValue
     // to avoid infinite loops)
     this._contentValue = value ;
-    content.set(this._contentValueKey, value) ;
+    content.setIfChanged(this._contentValueKey, value) ;
     
   }.observes('value'),
 
