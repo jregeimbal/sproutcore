@@ -670,6 +670,7 @@ SC.Record = SC.Object.extend(
   _cleanRecordInStore: function(){
     var cleanCount = this.get('changeCount');
     if (cleanCount === 0) {
+      //console.log('Cleaning Record: %@'.fmt(this.get('guid')));
       SC.Store.cleanRecord(this);
     }
   }.observes('changeCount')

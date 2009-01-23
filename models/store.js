@@ -66,7 +66,7 @@ SC.Store = SC.Object.create(
       if (data.destroyURL) rec.destroyURL = data.destroyURL;
       rec.updateAttributes(data, isLoaded, isLoaded) ;
       if (rec.needsAddToStore) store.addRecord(rec) ;
-      if (rec.changeCount === 0) store.cleanRecord(rec);
+      //store.cleanRecord(rec);
       ret.push(rec) ;
     });
 
@@ -156,18 +156,26 @@ SC.Store = SC.Object.create(
   },
   
   cleanRecord: function(rec) {
-    var guid = rec._storeKey();
-    var dirty = this.get('_dirtyRecords') || {};
-    if (dirty.hasOwnProperty(guid)){
+    var guid = rec.get('guid');
+    
+    var dirty = this._dirtyStoreRecords;
+    if (dirty.hasOwnProperty(guid)) {
+      console.log('SC.Store#cleanRecord: Clean: %@'.fmt(guid));
       delete dirty[guid];
+    }
+    else {
+      console.log("SC.Store#cleanRecord: Doesn't Exist: %@".fmt(guid));
     }
     var count = 0;
     for(var elem in dirty){
-      count = count + 1;
+      if (dirty.hasOwnProperty(elem)){
+        count = count + 1;
+      }
     }
     if (count === 0) {
       this.set('hasChanged', NO);
     }
+    this.set('_dirtyStoreRecords', dirty);
   },
 
   /**
@@ -301,18 +309,18 @@ SC.Store = SC.Object.create(
   },
   
   dirtyRecords: function(){
-    var dirty = this.get('_dirtyRecords') || {};
+    var dirty = this.get('_dirtyStoreRecords') || {};
     var returnAry = [];
     for(var elem in dirty){
       if (dirty[elem] !== null) returnAry.push(dirty[elem]);
     }
     return returnAry;
-  }.property(),
+  }.property('_dirtyStoreRecords'),
   
   // ....................................
   // PRIVATE
   //
-  _records: {}, _changedRecords: {}, _collections: {}, _dirtyRecords: {},
+  _records: {}, _changedRecords: {}, _collections: {}, _dirtyStoreRecords: {},
   
   /** @private
     called whenever properties on a record change.
@@ -321,7 +329,7 @@ SC.Store = SC.Object.create(
     // add to changed records.  This will eventually notify collections.
     var guid    = rec._storeKey(),
         changed = this.get('_changedRecords') || {},
-        dirty = this.get('_dirtyRecords') || {},
+        dirty = this.get('_dirtyStoreRecords') || {},
         records = changed[guid] || {} ;
     records[SC.guidFor(rec)] = rec ;
 
@@ -329,9 +337,13 @@ SC.Store = SC.Object.create(
     this.set('_changedRecords',changed) ;
     
     // Set the global record changes
+    var dirtyId = rec.get('guid');
     var changeCount = rec.get('changeCount');
-    if (changeCount > 0) dirty[guid] = rec;
-    this.set('_dirtyRecords', dirty);
+    if (changeCount > 0) {
+      console.log('SC.Store#recordDidChange: Adding To Dirty: %@'.fmt(dirtyId));
+      dirty[dirtyId] = rec;
+    }
+    this.set('_dirtyStoreRecords', dirty);
     this.set('hasChanged', YES);
     this._changedRecordsObserver() ;
   },
