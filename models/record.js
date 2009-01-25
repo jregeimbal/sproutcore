@@ -265,6 +265,7 @@ SC.Record = SC.Object.extend(
     @returns {Boolean} isLoaded is the object loaded?
   **/
   updateAttributes: function(newAttrs, replace, isLoaded) {
+    //console.log('Replace: %@, isLoaded: %@'.fmt(replace, isLoaded));
     var changed = false ;
     if (this._attributes && (replace !== true)) {
       for(var key in newAttrs) {
@@ -669,9 +670,12 @@ SC.Record = SC.Object.extend(
   // Store Cleaner function
   _cleanRecordInStore: function(){
     var cleanCount = this.get('changeCount');
-    if (cleanCount === 0) {
+    
+    if (cleanCount > 0) {
       //console.log('Cleaning Record: %@'.fmt(this.get('guid')));
-      SC.Store.cleanRecord(this);
+      console.log('ChangeCount: %@'.fmt(cleanCount));
+    } else {
+      SC.Store.cleanRecord(this.get('guid'));
     }
   }.observes('changeCount')
      
