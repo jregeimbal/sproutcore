@@ -28,6 +28,24 @@ SC.Page.prototype.emitDesign = function() {
   return ret ;
 };
 
+
+SC.Page.prototype.emitDesign1 = function() {
+
+  // awake all views.  this is needed to emit the design for them.
+  this.awake();
+
+  // the pageName must be set on the page so we can emit properly
+  var pageName = this.get('pageName');
+  
+  // now encode the page.
+  var ret = SC.DesignCoder.encode(this);
+  
+  // and add some wrapper
+  ret = ['','%@;'.fmt(ret),''].join("");
+  
+  return ret ;
+};
+
 /**
   Extend SC.Page to create a PageDesignController on demand.
   

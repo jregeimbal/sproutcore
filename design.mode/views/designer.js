@@ -117,7 +117,7 @@ SC.ViewDesigner = SC.Object.extend(
     
     You can add to this array in your subclasses.
   */
-  designProperties: 'isVisible isEnabled styleClass'.w(),
+  designProperties: 'isVisible isEnabled styleClass layout'.w(),
   
   /** 
     Invoked by a design coder to encode design properties.  The default 

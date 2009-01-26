@@ -501,7 +501,9 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     if (last !== cur) {
       this.set('isVisibleInWindow', cur) ;
       var childViews = this.get('childViews'), idx = childViews.length;
-      while(--idx>=0) childViews[idx].recomputeIsVisibleInWindow(cur);
+      while(--idx>=0) {
+        if($type(childViews[idx]) === T_OBJECT) childViews[idx].recomputeIsVisibleInWindow(cur);
+      }
       
       // if we were firstResponder, resign firstResponder also
       if (!cur && this.get('isFirstResponder')) {
