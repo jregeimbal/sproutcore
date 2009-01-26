@@ -29,7 +29,7 @@ SC.Page.prototype.emitDesign = function() {
 };
 
 
-SC.Page.prototype.emitDesign1 = function() {
+SC.Page.prototype.emitDesignWithoutVar = function() {
 
   // awake all views.  this is needed to emit the design for them.
   this.awake();
