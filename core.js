@@ -895,6 +895,32 @@ SC.mixin(Function.prototype,
       f = f.bind.apply(f, args) ;
     }
     return SC.Timer.schedule({ target: target, action: f, interval: interval });
+  },
+  
+  /**
+    Creates a timer that will execute the function after a specified 
+    period of time.
+    
+    If you pass an optional set of arguments, the arguments will be passed
+    to the function as well.  Otherwise the function should have the 
+    signature:
+    
+    {{{
+      function functionName(timer)
+    }}}
+
+    @param target {Object} optional target object to use as this
+    @param interval {Number} the time to wait, in msec
+    @returns {SC.Timer} scheduled timer
+  */
+  invokeNext: function(target) {
+    var f = this;
+    if (arguments.length > 1) {
+      var args = SC.$A(arguments).slice(1,arguments.length);
+      args.unshift(target);
+      f = f.bind.apply(f, args) ;
+    }
+    SC.runLoop.invokeNext(target, f) ;
   }    
   
 }) ;

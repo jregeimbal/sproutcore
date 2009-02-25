@@ -7,7 +7,7 @@ require('views/label');
 require('desktop.platform/views/list_item') ;
 
 /** @class
-
+  
   A list view renders vertical lists of items.  It is a specialized form of
   collection view that is simpler than the table view, but more refined than
   a generic collection.
@@ -15,9 +15,9 @@ require('desktop.platform/views/list_item') ;
   You can use a list view just like a collection view, except that often you
   also should provide a default rowHeight.  Setting this value will allow 
   the ListView to optimize its rendering.
-
+  
   h2. Variable Row Heights
-
+  
   ListView now supports variable row heights 
   The ListView adds support for a single delegate method:
   
@@ -35,7 +35,7 @@ require('desktop.platform/views/list_item') ;
   calculate variable rows heights can become very expensive since the list 
   view will essentially have to iterate over every item in the collection to
   collect its row height.  
-
+  
   To work with very large lists, you should consider making your row heights
   uniform.  This will allow the list view to efficiently render content 
   without worrying about the overall performance.
@@ -50,13 +50,12 @@ require('desktop.platform/views/list_item') ;
   (Can we also have an 'estimate row heights' property that will simply 
   cheat for very long data sets to make rendering more efficient?)
   
-  
   @extends SC.CollectionView
   @since SproutCore 1.0
 */
 SC.ListView = SC.CollectionView.extend(
 /** @scope SC.ListView.prototype */ {
-
+  
   styleClass: 'sc-list-view',
   
   /**
@@ -74,7 +73,7 @@ SC.ListView = SC.CollectionView.extend(
   // ..........................................................
   // ROW HEIGHT SUPPORT
   // 
-
+  
   /** 
     The common row height for list view items.
     
@@ -88,7 +87,7 @@ SC.ListView = SC.CollectionView.extend(
     the collectionViewHeightForRowAtContentIndex() delegate method.
   */
   rowHeight: 20,
-
+  
   /**
     If set, this key will be used to calculate the row height for a given
     content object.
@@ -160,9 +159,12 @@ SC.ListView = SC.CollectionView.extend(
         }
       }
     }
-
+    
     // now update the layout...
     this.adjust(this.computeLayout());
+    
+    // force recomputation of contentRangeInFrame
+    this.notifyPropertyChange('content');
     
     // and notify that nowShowingRange may have changed...
     this.invalidateNowShowingRange() ;
@@ -182,7 +184,7 @@ SC.ListView = SC.CollectionView.extend(
   //     value = this._list_hasUniformRowHeights;
   //     return SC.none(value) ? !((this.delegate && this.delegate.collectionViewHeightForRowAtContentIndex) || this.contentRowHeightKey) : value ;
   //   }.property('delegate', 'contentRowHeightKey').cacheable(),
-
+  
   /**
     Calculates the offset for the row at the specified index.  Based on the 
     current setting this may compute the row heights for previous items or 
@@ -200,11 +202,11 @@ SC.ListView = SC.CollectionView.extend(
       // get caches
       var offsets = this._list_rowOffsets;
       if (!offsets) offsets = this._list_rowOffsets = [] ;
-
+      
       // OK, now try the fast path...if undefined, loop backwards until we
       // find an offset that IS cached...
       var len = offsets.length, cur = index, height, ret;
-
+      
       // get the cached offset.  Note that if the requested index is longer 
       // than the length of the offsets cache, then just assume the value is
       // undefined.  We don't want to accidentally read an old value...
@@ -214,7 +216,7 @@ SC.ListView = SC.CollectionView.extend(
         ret = undefined ;
         cur = len; // start search at current end of offsets...
       }
-
+      
       // if the cached value was undefined, loop backwards through the offsets
       // hash looking for a cached value to start from
       while((cur>0) && (ret===undefined)) ret = offsets[--cur];
@@ -261,23 +263,23 @@ SC.ListView = SC.CollectionView.extend(
     // console.log('_list_heightForRowAtContentIndex invoked on %@ with index %@'.fmt(this, index));
     var heights = this._list_rowHeights;
     if (!heights) heights = this._list_rowHeights = [] ;
-
+    
     var height = (index<heights.length) ? heights[index] : undefined;
     if (height===undefined) {
       height = heights[index] = this.invokeDelegateMethod(this.delegate, 'collectionViewHeightForRowAtContentIndex', this, index) || 0 ;
     }
     
     // console.log('height in _list_heightForRowAtContentIndex is %@'.fmt(height));
-
+    
     return height ;
   },
   
   // ..........................................................
   // SUBCLASS SUPPORT
   // 
-
+  
   insertionOrientation: SC.VERTICAL_ORIENTATION,
-
+  
   /** 
     Overrides default CollectionView method to compute the minimim height
     of the list view.
@@ -294,7 +296,7 @@ SC.ListView = SC.CollectionView.extend(
     ret.minHeight = this.offsetForRowAtContentIndex(rows);
     return ret; 
   },
-
+  
   /**
     Calculates the visible content range in the specified frame.  If 
     uniform rows are set, this will use some simple math.  Otherwise it will
@@ -316,14 +318,14 @@ SC.ListView = SC.CollectionView.extend(
       
       // convert to range...
       ret = { start: min, length: max - min } ;
-
+      
     // otherwise, get the cached row offsets...
     } else {
       var content = this.get('content');
       var len = (content ? content.get('length') : 0), offset = 0;
-
+      
       // console.log('contentRangeInFrame content length is %@'.fmt(len));
-
+      
       min = null; 
       max = 0;
       do {
@@ -332,8 +334,10 @@ SC.ListView = SC.CollectionView.extend(
         if ((min===null) && (offset >= minY)) min = max; // set min
         max++ ;
       } while (max<len && offset < maxY);
-    
+      
       // convert to range...
+      // FIXME: why is this so flaky? *grrr*
+      // ret = { start: Math.max(min-1, 0), length: Math.max(max - min + 2, max) } ;
       ret = { start: min, length: max - min + 1 } ;
     }
     
@@ -344,7 +348,7 @@ SC.ListView = SC.CollectionView.extend(
   /** @private */
   layoutItemView: function(itemView, contentIndex, firstLayout) {
     // console.log('layoutItemView invoked on %@'.fmt(this));
-
+    
     // use cached hash to reduce memory allocs
     var layout = this._list_cachedItemViewLayoutHash ;
     if (!layout) {
@@ -378,7 +382,7 @@ SC.ListView = SC.CollectionView.extend(
       
       var f = itemView.get('frame') ;
       var top = f.y, height = f.height ;
-
+      
       if (!this._insertionPointView) {
         this._insertionPointView = this.insertionPointClass.create() ;
       }
@@ -405,11 +409,11 @@ SC.ListView = SC.CollectionView.extend(
         this._dropOnInsertionPoint.$().removeClass('drop-target') ;
         this._dropOnInsertionPoint = null ;
       }
-    
+      
       if (!this._insertionPointView) {
         this._insertionPointView = this.insertionPointClass.create() ;
       }
-    
+      
       var insertionPoint = this._insertionPointView ;
       if (insertionPoint.get('parentView') !== itemView.get('parentView')) {
         itemView.get('parentView').appendChild(insertionPoint) ;
@@ -430,14 +434,14 @@ SC.ListView = SC.CollectionView.extend(
       this._dropOnInsertionPoint = null ;
     }
   },
-
+  
   // We can do this much faster programatically using the rowHeight
   insertionIndexForLocation: function(loc, dropOperation) {
     // console.log('insertionIndexForLocation called on %@'.fmt(this));
     var f = this.get('clippingFrame') ;
     var sf = f ; // FIXME this.get('scrollFrame') ;
     var retOp = SC.DROP_BEFORE ;
-
+    
     // find the rowHeight and offset to work with
     var offset = loc.y - f.y - sf.y ;
     var rowOffset, rowHeight, idx ;
@@ -455,11 +459,11 @@ SC.ListView = SC.CollectionView.extend(
       
       // console.log('offset of pointer is %@'.fmt(offset));
       // console.log('offsets are %@'.fmt(offsets.join(', ')));
-
+      
       // OK, now try the fast path...if undefined, loop backwards until we
       // find an offset that IS cached...
       var len = offsets.length, cur = len, ret;
-
+      
       // if the cached value was undefined, loop backwards through the offsets
       // hash looking for a cached value to start from
       while (cur>0) {
@@ -469,7 +473,7 @@ SC.ListView = SC.CollectionView.extend(
       
       rowOffset = offset[cur] ;
       rowHeight = this._list_heightForRowAtContentIndex(cur) ;
-
+      
       // console.log('rowHeight is %@'.fmt(rowHeight));
       
       idx = cur ;
@@ -479,7 +483,7 @@ SC.ListView = SC.CollectionView.extend(
     var percentage = ((offset - rowOffset) / rowHeight) ;
     
     // console.log('percentage is %@'.fmt(percentage));
-
+    
     // if the dropOperation is SC.DROP_ON and we are in the center 60%
     // then return the current item.
     if (dropOperation === SC.DROP_ON) {
@@ -501,4 +505,4 @@ SC.ListView = SC.CollectionView.extend(
     return [idx, retOp] ;
   }
   
-}) ;
+});

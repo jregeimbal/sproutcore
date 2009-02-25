@@ -76,9 +76,10 @@ SC.runLoop = SC.Object.create({
     @returns {SC.RunLoop} receiver
   */
   beginRunLoop: function() {
-    this._start = Date.now() ;  
+    this._start = Date.now() ;
+    this._flushInvokeNextQueue() ; // call any invokeNext methods first
   },
-
+  
   /**
     Call this method whenever you are done executing code.
     
@@ -127,6 +128,16 @@ SC.runLoop = SC.Object.create({
     return hadContent ;
   },
   
+  _flushInvokeNextQueue: function() {
+    var queue = this._invokeNextQueue, hadContent = NO, len, idx, handler ;
+    if (queue && queue.targets > 0) {
+      this._invokeNextQueue = null; // reset queue.
+      hadContent = YES; // has targets!
+      if (hadContent) queue.invokeMethods();
+    }
+    return hadContent ;
+  },
+  
   /**
     Invokes the passed target/method pair once at the end of the runloop.
     You can call this method as many times as you like and the method will
@@ -147,6 +158,31 @@ SC.runLoop = SC.Object.create({
     if (SC.typeOf(method) === SC.T_STRING) method = target[method];
     if (!this._invokeQueue) this._invokeQueue = SC._ObserverSet.create();
     this._invokeQueue.add(target, method);
+    return this ;
+  },
+  
+  /**
+    Invokes the passed target/method pair once at the beginning of the next runloop,
+    before any other methods (including events) are processed.
+    
+    You can call this method as many times as you like and the method will
+    only be invoked once.  
+    
+    Usually you will not call this method directly but use invokeOnce() 
+    defined on SC.Object.
+    
+    @param {Object} target
+    @param {Function} method
+    @returns {SC.RunLoop} receiver
+  */
+  invokeNext: function(target, method) {
+    // normalize
+    if (method === undefined) { 
+      method = target; target = this ;
+    }
+    if (SC.typeOf(method) === SC.T_STRING) method = target[method];
+    if (!this._invokeNextQueue) this._invokeNextQueue = SC._ObserverSet.create();
+    this._invokeNextQueue.add(target, method);
     return this ;
   },
   

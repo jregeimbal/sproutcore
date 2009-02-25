@@ -19,7 +19,7 @@ SC.CAPTURE_BACKSPACE_KEY = NO ;
   Usually you do not work with a RootResponder directly.  Instead you will work 
   with Pane objects, which register themselves with the RootResponder as needed 
   to receive events.
-
+  
   h1. RootResponder and Platforms
   
   RootResponder is implemented differently on the desktop and mobile platforms 
@@ -51,11 +51,11 @@ SC.CAPTURE_BACKSPACE_KEY = NO ;
   
 */
 SC.RootResponder = SC.Object.extend({
-
+  
   // .......................................................
   // MAIN Pane
   //
-
+  
   /** @property
     The main pane.  This pane receives shortcuts and actions if the focusedPane 
     does not respond to them.  There can be only one main pane.  You can swap 
@@ -66,7 +66,7 @@ SC.RootResponder = SC.Object.extend({
     when you append it to the document.
   */
   mainPane: null,
-
+  
   /** 
     Swaps the main pane.  If the current main pane is also the key pane, then the 
     new main pane will also be made key view automatically.  In addition to simply 
@@ -84,13 +84,13 @@ SC.RootResponder = SC.Object.extend({
     if (currentMain === pane) return this; // nothing to do
     
     this.beginPropertyChanges();
-
+    
     // change key focus if needed.
     if (this.get('keyPane') === currentMain) this.makeKeyPane(pane);
         
     // change setting
     this.set('mainPane', pane) ;
-
+    
     // notify panes.  This will allow them to remove themselves.    
     if (currentMain) currentMain.blurMainTo(pane);
     if (pane) pane.focusMainFrom(currentMain) ;
@@ -98,17 +98,17 @@ SC.RootResponder = SC.Object.extend({
     this.endPropertyChanges();
     return this ;
   }, 
-
+  
   // .......................................................
   // KEY ROOT VIEW
   //
-
+  
   /** @property
     The current key pane.  This pane receives keyboard events, shortcuts, and 
     actions first.  This pane is usually the highest ordered pane or the mainPane.
   */
   keyPane: null,
-
+  
   /**
     Makes the passed pane the new key pane.  If you pass nil or if the pane does 
     not accept key focus, then key focus will transfer to the mainPane.  This 
@@ -119,38 +119,38 @@ SC.RootResponder = SC.Object.extend({
   */
   makeKeyPane: function(pane) {
     if (pane && !pane.get('acceptsKeyFocus')) return this ;
-
+    
     // if null was passed, try to make mainPane key instead.
     if (!pane) {
       pane = this.get('mainPane') ;
       if (!pane.get('acceptsKeyFocus')) pane = null ;
     }
-
+    
     var current = this.get('keyPane') ;
     if (current === pane) return this; // nothing to do
-
+    
     // now notify old and new key views of change after edit    
     if (current) current.willLoseKeyPaneTo(pane) ;
     if (pane) pane.willBecomeKeyPaneFrom(current);
-
+    
     this.set('keyPane', pane) ;
     
     if (pane) pane.didBecomeKeyPaneFrom(current);
     if (current) current.didLoseKeyPaneTo(pane);
-
+    
     return this ;
   },
   
   // .......................................................
   // ROOT VIEW ORDER
   //
-
+  
   /** @property
     A set of all panes currently managed by the RootResponder.  To put a view 
     under management, just add it to this set.
   */
   panes: null,
-
+  
   /**
     Called by a pane whenever the pane is added to the document.  This will 
     add the pane to the set.
@@ -168,7 +168,7 @@ SC.RootResponder = SC.Object.extend({
     This only needs to be set for platforms that support multiple, layered panes.
   */
   focusedPane: null,
-
+  
   // .......................................................
   // ACTIONS
   //
@@ -178,7 +178,7 @@ SC.RootResponder = SC.Object.extend({
     down the responder chain. 
   */
   defaultResponder: null,
-
+  
   /**
     Route an action message to the appropriate responder
     @param {String} action The action to perform - this is a method name.
@@ -188,6 +188,7 @@ SC.RootResponder = SC.Object.extend({
     @returns YES if action was performed, NO otherwise
   */
   sendAction: function( action, target, sender, pane) {
+    // console.log('sendAction called on %@, action %@, target %@, sender %@, pane %@'.fmt(this, action, target, sender, pane));
     target = this.targetForAction(action, target, sender, pane);
     return target && target.tryToPerform(action, sender) ;
   },
@@ -220,10 +221,10 @@ SC.RootResponder = SC.Object.extend({
     @returns {Object} target object or null if none found
   */
   targetForAction: function(methodName, target, sender, pane) {
-
+    // console.log('targetForAction called on %@, methodName %@, target %@, sender %@, pane %@'.fmt(this, methodName, target, sender, pane));
     // no action, no target...
     if (!methodName || (SC.typeOf(methodName) !== SC.T_STRING)) return null;
-
+    
     // an explicit target was passed...
     if (target) {
       if (SC.typeOf(target) === SC.T_STRING) {
@@ -231,7 +232,7 @@ SC.RootResponder = SC.Object.extend({
       }
       return target.respondsTo(methodName) ? target : null ;
     }
-
+    
     // ok, no target was passed... try to find one in the responder chain
     var focusedPane = this.get('focusedPane'), keyPane = this.get('keyPane'), mainPane = this.get('mainPane');
     
@@ -243,11 +244,11 @@ SC.RootResponder = SC.Object.extend({
     if (!target && mainPane && (mainPane !== keyPane) && (mainPane !== focusedPane)) {
       target = this._responderFor(mainPane, methodName) ;
     }
-
+    
     // last stop, this defaultResponder
-    target = this.get('defaultResponder');
+    if (!target) target = this.get('defaultResponder');
     if (target && target.respondsTo(methodName)) return target;
-
+    
     return null;
   },
 
@@ -318,7 +319,7 @@ SC.RootResponder = SC.Object.extend({
   */
   setup: function() {
     this.listenFor('keydown keyup'.w(), document);
-
+    
     // handle special case for keypress- you can't use normal listener to block the backspace key on Mozilla
     if (this.keypress) {
       if (SC.CAPTURE_BACKSPACE_KEY && SC.browser.mozilla) {
@@ -329,7 +330,7 @@ SC.RootResponder = SC.Object.extend({
         };
         
         SC.Event.add(window, 'unload', this, function() { document.onkeypress = null; }); // be sure to cleanup memory leaks
-  
+        
       // Otherwise, just add a normal event handler. 
       } else SC.Event.add(document, 'keypress', this, this.keypress);
     }
@@ -343,9 +344,9 @@ SC.RootResponder = SC.Object.extend({
   // .......................................................
   // KEYBOARD HANDLING
   //
-
+  
   _lastModifiers: null,
-
+  
   /** @private
     Modifier key changes are notified with a keydown event in most browsers.  
     We turn this into a flagsChanged keyboard event.  Normally this does not
@@ -355,16 +356,16 @@ SC.RootResponder = SC.Object.extend({
     // if the modifier keys have changed, then notify the first responder.
     var m;
     m = this._lastModifiers = (this._lastModifiers || { alt: false, ctrl: false, shift: false });
-
+    
     var changed = false;
     if (evt.altKey !== m.alt) { m.alt = evt.altKey; changed=true; }
     if (evt.ctrlKey !== m.ctrl) { m.ctrl = evt.ctrlKey; changed=true; }
     if (evt.shiftKey !== m.shift) { m.shift = evt.shiftKey; changed=true;}
     evt.modifiers = m; // save on event
-
+    
     return (changed) ? (this.sendEvent('flagsChanged', evt) ? evt.hasCustomEventHandling : YES) : YES ;
   },
-
+  
   /** @private
     Determines if the keyDown event is a nonprintable or function key. These
     kinds of events are processed as keyboard shortcuts.  If no shortcut
@@ -373,7 +374,7 @@ SC.RootResponder = SC.Object.extend({
   _isFunctionOrNonPrintableKey: function(evt) {
     return !!(evt.altKey || evt.ctrlKey || evt.metaKey || ((evt.charCode !== evt.which) && SC.FUNCTION_KEYS[evt.which]));
   },
-
+  
   /** @private 
     Determines if the event simply reflects a modifier key change.  These 
     events may generate a flagsChanged event, but are otherwise ignored.
@@ -381,7 +382,7 @@ SC.RootResponder = SC.Object.extend({
   _isModifierKey: function(evt) {
     return !!SC.MODIFIER_KEYS[evt.charCode];
   },
-
+  
   /** @private
     The keydown event occurs whenever the physically depressed key changes.
     This event is used to deliver the flagsChanged event and to with function
@@ -399,7 +400,7 @@ SC.RootResponder = SC.Object.extend({
     // is only a modifier change
     var ret = this._handleModifierChanges(evt);
     if (this._isModifierKey(evt)) return ret;
-
+    
     // if this is a function or non-printable key, try to use this as a key
     // equivalent.  Otherwise, send as a keyDown event so that the focused
     // responder can do something useful with the event.
@@ -408,7 +409,7 @@ SC.RootResponder = SC.Object.extend({
       // keyDown event (probably the case), just let the browser do its own
       // processing.
       ret = this.sendEvent('keyDown', evt) ;
-
+      
       // attempt key equivalent if key not handled
       if (!ret) {
         ret = this.attemptKeyEquivalent(evt) ;
@@ -432,7 +433,7 @@ SC.RootResponder = SC.Object.extend({
     // delete is handled in keydown() for most browsers
     if (SC.browser.mozilla > 0 && (evt.which === 8)) {
       return this.sendEvent('keyDown', evt) ? evt.hasCustomEventHandling:YES;
-
+      
     // normal processing.  send keyDown for printable keys...
     } else {
       if (this._isFunctionOrNonPrintableKey(evt)) return YES; 
@@ -456,7 +457,7 @@ SC.RootResponder = SC.Object.extend({
   an instance and sets up event listeners as needed.
 */
 SC.ready(SC.RootResponder, SC.RootResponder.ready = function() {
-  console.log('SC.RootResponder.ready called');
+  // console.log('SC.RootResponder.ready called');
   var r = SC.RootResponder.create();
   SC.RootResponder.responder = r; r.setup();
 });
