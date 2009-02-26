@@ -2126,7 +2126,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         // Build the drag view to use for the ghost drag.  This 
         // should essentially contain any visible drag items.
         // var view = this.ghostViewFor(dragContent) ;
-        var view = this.dragViewFor(dragContent) ;
+        var view = this.invokeDelegateMethod(this.delegate, 'dragViewFor', dragContent, this);
 
         // Initiate the drag
         SC.Drag.start({
@@ -2708,7 +2708,6 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       var itemView = this.itemViewForContent(ary[idx]) ;
       if (itemView) view.$().append(itemView.rootElement.cloneNode(true)) ;
     }
-    
     var frame = this.convertClippingFrameToView(this.get('clippingFrame'), null) ;
     view.adjust({ top: frame.y, left: frame.x, width: frame.width, height: frame.height }) ;
     return view ;
