@@ -113,7 +113,7 @@ SC.SplitView = SC.View.extend(
     Configure which view(s) you want to autoresize when this split view's layout
     changes.
   */
-  autoresizeBehavior: SC.RESIZE_BOTH,
+  autoresizeBehavior: SC.RESIZE_TOP_LEFT,
   
   /**
     A number between 0.0 and 1.0 specify how much of the topLeftView should show
