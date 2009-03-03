@@ -132,6 +132,11 @@ SC.SplitView = SC.View.extend(
   bottomRightView: SC.View,
   
   /**
+    @property {SC.Cursor} the cursor thumb view should use for themselves
+  */
+  thumbViewCursor: null,
+  
+  /**
     Used by split divider to decide if the view can be collapsed.
   */
   canCollapseView: function(view) {
@@ -350,10 +355,15 @@ SC.SplitView = SC.View.extend(
     // bottomRightView.updateDisplayLayout();
   },
   
+  /** @private */
   renderLayout: function(context, firstTime) {
     // console.log('%@.renderLayout(%@, %@)'.fmt(this, context, firstTime));
     // console.log('%@.frame = %@'.fmt(this, SC.inspect(this.get('frame'))));
     if (firstTime) {
+      if (!this.get('thumbViewCursor')) {
+        this.set('thumbViewCursor', SC.Cursor.create()) ;
+      }
+      
       var direction = this.get('layoutDirection') ;
       var splitViewThickness = (direction == SC.LAYOUT_HORIZONTAL) ? this.get('frame').width : this.get('frame').height ;
       this._desiredTopLeftThickness = parseInt(splitViewThickness * (this.get('topLeftDefaultThickness') || 0.5)) ;
@@ -371,13 +381,17 @@ SC.SplitView = SC.View.extend(
       // this handles min-max settings and collapse parameters
       this._updateTopLeftThickness(0) ;
       
+      // update the cursor used by thumb views
+      this._setCursorStyle() ;
+      
       // actually set layout for our child views
       this.updateChildLayout() ;
     }
     sc_super() ;
   },
   
-  render: function(context, firstTime) {alert("hi");
+  /** @private */
+  render: function(context, firstTime) {
     // console.log('%@.render(%@, %@)'.fmt(this, context, firstTime));
     // console.log('%@.frame = %@'.fmt(this, SC.inspect(this.get('frame'))));
     sc_super() ;
@@ -569,16 +583,17 @@ SC.SplitView = SC.View.extend(
     // console.log('%@._setCursorStyle()'.fmt(this));
     var topLeftView = this._topLeftView ;
     var bottomRightView = this._bottomRightView ;
+    var thumbViewCursor = this.get('thumbViewCursor') ;
     
     // updates the cursor of the thumb view that called mouseDownInThumbView() to reflect the status of the drag
     var tlThickness = this.thicknessForView(topLeftView) ;
     var brThickness = this.thicknessForView(bottomRightView) ;
-    if (topLeftView.get('isCollapsed') || tlThickness == topLeftView.get("minThickness") || brThickness == bottomRightView.get("maxThickness")) {
-      this._thumbView.$().css('cursor', this._layoutDirection == SC.HORIZONTAL ? "e-resize" : "s-resize" ) ;
-    } else if (bottomRightView.get('isCollapsed') || tlThickness == topLeftView.get("maxThickness") || brThickness == bottomRightView.get("minThickness")) {
-      this._thumbView.$().css('cursor', this._layoutDirection == SC.HORIZONTAL ? "w-resize" : "n-resize" ) ;
+    if (topLeftView.get('isCollapsed') || tlThickness == this.get("topLeftMinThickness") || brThickness == this.get("bottomRightMaxThickness")) {
+      thumbViewCursor.set('cursorStyle', this._layoutDirection == SC.LAYOUT_HORIZONTAL ? "e-resize" : "s-resize") ;
+    } else if (bottomRightView.get('isCollapsed') || tlThickness == this.get("topLeftMaxThickness") || brThickness == this.get("bottomRightMinThickness")) {
+      thumbViewCursor.set('cursorStyle', this._layoutDirection == SC.LAYOUT_HORIZONTAL ? "w-resize" : "n-resize") ;
     } else {
-      this._thumbView.$().css('cursor', this._layoutDirection == SC.HORIZONTAL ? "ew-resize" : "ns-resize" ) ;
+      thumbViewCursor.set('cursorStyle', this._layoutDirection == SC.LAYOUT_HORIZONTAL ? "ew-resize" : "ns-resize") ;
     }
   },
   
