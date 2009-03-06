@@ -2127,16 +2127,18 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
         // should essentially contain any visible drag items.
         // var view = this.ghostViewFor(dragContent) ;
         var view = this.invokeDelegateMethod(this.delegate, 'dragViewFor', dragContent, this);
-
+        
+        
         // Initiate the drag
-        SC.Drag.start({
+        var dragOptions = {
           event: this._mouseDownEvent,
           source: this,
           dragView: view,
           ghost: NO,
           slideBack: YES,
           dataSource: this
-        }) ; 
+        }
+        this.invokeDelegateMethod(this.delegate, 'collectionViewStartDrag', dragOptions)
 
         // Also use this opportunity to clean up since mouseUp won't 
         // get called.
@@ -2150,6 +2152,16 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       
       return YES ;
     }
+  },
+  
+  /**
+    This method is a wrapper for SC.Drag so a delegate can pass a different
+    Drag Method
+    
+    @param dragOptions {Object} the options passed to the drag
+  */
+  collectionViewStartDrag: function(dragOptions) {
+    SC.Drag.start(dragOptions);
   },
 
   /**

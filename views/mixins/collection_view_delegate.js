@@ -71,6 +71,17 @@ SC.CollectionViewDelegate = {
   collectionViewShouldBeginDrag: function(view) { return YES; },
   
   /**
+    This method is a wrapper for SC.Drag so a delegate can pass a different
+    Drag Method
+    
+    @param dragOptions {Object} the options passed to the drag
+
+  */
+  collectionViewStartDrag: function(dragOptions) {
+    SC.Drag.start(dragOptions);
+  },
+  
+  /**
     Called by the collection view just before it starts a drag so that 
     you can provide the data types you would like to support in the data.
     
