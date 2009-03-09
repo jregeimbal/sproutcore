@@ -248,7 +248,7 @@ SC.Drag = SC.Object.extend(
     // let all drop targets know that a drag has started
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
-      ary[idx].tryToPerform('dragStarted', this.event) ;
+      ary[idx].tryToPerform('dragStarted', this, this.event) ;
     }
   },
   
