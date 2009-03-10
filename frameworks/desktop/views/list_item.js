@@ -118,7 +118,7 @@ SC.ListItemView = SC.View.extend(SC.Control,
   isEditing: NO,
   
   contentPropertyDidChange: function() {
-    console.log('contentPropertyDidChange(%@)'.fmt(SC.A(arguments).join(',')));
+    // console.log('contentPropertyDidChange(%@)'.fmt(SC.A(arguments).join(',')));
     
     if (this.get('isEditing')) this.discardEditing() ;
     this.displayDidChange();
