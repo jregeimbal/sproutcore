@@ -5,8 +5,7 @@
 // ========================================================================
 
 require('core') ;
-require('system/object') ;
-require('application/input_manager');
+
 
 /**
   @class 

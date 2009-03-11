@@ -1215,8 +1215,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     if (!content) return NO;  // nothing to do
     
     // determine the method to use
-    var hasDestroyObject = SC.$type(content.destroyObject) === SC.T_FUNCTION ;
-    var hasRemoveObject = SC.$type(content.removeObject) === SC.T_FUNCTION ;
+    var hasDestroyObject = SC.typeOf(content.destroyObject) === SC.T_FUNCTION ;
+    var hasRemoveObject = SC.typeOf(content.removeObject) === SC.T_FUNCTION ;
     if (!hasDestroyObject && !hasRemoveObject) return NO; // nothing to do
     
     // suspend property notifications and remove the objects...
@@ -1889,7 +1889,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // get the computed insertion index and possibly drop operation.
     // prefer to drop ON.
     var idx = this.insertionIndexForLocation(loc, SC.DROP_ON) ;
-    if (SC.$type(idx) === SC.T_ARRAY) {
+    if (SC.typeOf(idx) === SC.T_ARRAY) {
       dropOp = idx[1] ; // order matters here
       idx = idx[0] ;
     }
@@ -1921,7 +1921,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       } else {
         dropOp = SC.DROP_BEFORE ;
         idx = this.insertionIndexForLocation(loc, SC.DROP_BEFORE) ;
-        if (SC.$type(idx) === SC.T_ARRAY) {
+        if (SC.typeOf(idx) === SC.T_ARRAY) {
           dropOp = idx[1] ; // order matters here
           idx = idx[0] ;
         }
@@ -2317,7 +2317,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // console.log('action %@, target %@'.fmt(action, target));
     if (action) {
       // if the action is a function, just call it
-      if (SC.$type(action) == SC.T_FUNCTION) return this.action(view, evt) ;
+      if (SC.typeOf(action) == SC.T_FUNCTION) return this.action(view, evt) ;
       
       // otherwise, use the new sendAction style
       var pane = this.get('pane') ;
@@ -2331,11 +2331,11 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       
     // if the target view has its own internal action handler,
     // trigger that.
-    } else if (SC.$type(view._action) == SC.T_FUNCTION) {
+    } else if (SC.typeOf(view._action) == SC.T_FUNCTION) {
       return view._action(evt) ;
       
     // otherwise call the action method to support older styles.
-    } else if (SC.$type(view.action) == SC.T_FUNCTION) {
+    } else if (SC.typeOf(view.action) == SC.T_FUNCTION) {
       return view.action(evt) ;
     }
   }

@@ -4,7 +4,6 @@
 // Portions copyright ©2008 Apple, Inc.  All rights reserved.
 // ========================================================================
 
-require('views/mixins/button');
 
 SC.Button.Designer = {
 
