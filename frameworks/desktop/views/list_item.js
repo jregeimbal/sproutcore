@@ -20,8 +20,7 @@ SC.LIST_ITEM_ACTION_EJECT = 'sc-list-item-cancel-eject';
   A ListItemView can implement all of this for you in a more efficient way 
   than you might get if you simply put together a list item on your own using
   views.
-
-
+  
   @extends SC.View
   @extends SC.Control
   @extends SC.InlineEditorDelegate
@@ -30,8 +29,10 @@ SC.LIST_ITEM_ACTION_EJECT = 'sc-list-item-cancel-eject';
   
   @since SproutCore 1.0
 */
-SC.ListItemView = SC.View.extend(SC.Control, 
-    SC.InlineEditorDelegate, SC.CollectionItem,
+SC.ListItemView = SC.View.extend(
+  SC.Control,
+  SC.InlineEditorDelegate, 
+  SC.CollectionItem,
 /** @scope SC.ListItemView.prototype */ {
   
   classNames: ['sc-list-item-view'],
@@ -42,6 +43,8 @@ SC.ListItemView = SC.View.extend(SC.Control,
   
   /**
     The content object the list item will display.
+    
+    @type SC.Object
   */
   content: null,
   
@@ -205,8 +208,7 @@ SC.ListItemView = SC.View.extend(SC.Control,
     
     // now add inner content.  note we do not add a real checkbox because
     // we don't want to have to setup a change observer on it.
-    var blank = sc_static('blank');
-    context.push('<img src="', blank, '" class="button" />');
+    context.push('<img src="', SC.BLANK_IMAGE_URL, '" class="button" />');
     
     // apply edit
     context.end();
@@ -228,7 +230,7 @@ SC.ListItemView = SC.View.extend(SC.Control,
     if (icon && SC.ImageView.valueIsUrl(icon)) {
       url = icon; className = '' ;
     } else {
-      className = icon; url = sc_static('blank.gif') ;
+      className = icon; url = SC.BLANK_IMAGE_URL ;
     }
 
     // generate the img element...
