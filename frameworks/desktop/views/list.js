@@ -317,8 +317,6 @@ SC.ListView = SC.CollectionView.extend(
       // convert to range...
       ret = { start: min, length: max - min } ;
       
-      if (ret.length !== 0 && ret.length < 10) debugger ;
-      
     // otherwise, get the cached row offsets...
     } else {
       var content = this.get('content');
