@@ -6,7 +6,6 @@
 
 /*global ViewBuilder */
 
-require('views/view');
 
 /** @class
 
