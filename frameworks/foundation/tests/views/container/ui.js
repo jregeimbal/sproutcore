@@ -10,7 +10,7 @@
 // htmlbody('<style> .sc-control-test-pane .wrapper { overflow: none; } </style>');
 
 (function() {
-  var pane = SC.ControlTestPane.design({ height: 100 })
+  var pane = SC.ControlTestPane.design({ height: 100 });
   
   pane.add("basic", SC.ContainerView, {
       isEnabled: YES
@@ -19,6 +19,10 @@
   pane.add("disabled", SC.ContainerView, {
       isEnabled: NO
     })
+  
+  pane.add('content', SC.ContainerView, {
+    contentView: SC.LabelView.extend({value: 'dorkus'})
+  })
     
     // .add("disabled - single selection", SC.ListView, {
     //   isEnabled: NO,
@@ -66,6 +70,15 @@
     var view = pane.view('disabled');
     ok(view.$().hasClass('disabled'), 'should have disabled class');
     ok(!view.$().hasClass('sel'), 'should not have sel class');
+  });
+  
+  test('content', function(){
+    var view = pane.view('content');
+    ok(view.get('contentView'), 'should have contentView propert');
+    ok(view.$('div').html() === "dorkus", "should have content");
+    view.set('nowShowing', "");
+    ok(!view.get('contentView'), "shouldn't have contentView property");
+    ok(view.$('div').html() === "", "shouldn't have content");
   });
    
   // test("disabled - single selection", function() {
