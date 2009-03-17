@@ -7,6 +7,8 @@
 
 sc_require('views/view') ;
 
+SC.CONTENT_SET_DIRECTLY = 'content-set-directly' ;
+
 /** 
   @class
   
@@ -24,7 +26,7 @@ sc_require('views/view') ;
 */
 SC.ContainerView = SC.View.extend(
 /** @scope SC.ContainerView.prototype */ {
-
+  
   classNames: ['sc-container-view'],
   
   /**
@@ -39,7 +41,7 @@ SC.ContainerView = SC.View.extend(
     @property {String, SC.View}
   */
   nowShowing: null,
-
+  
   /** 
     The content view to display.  This will become the only child view of
     the view.  Note that if you set the nowShowing property to any value other
@@ -63,10 +65,11 @@ SC.ContainerView = SC.View.extend(
     @param {SC.View} newContent the new content view or null.
   */
   replaceContent: function(newContent) {
+    // console.log('%@.replaceContent(newContent=%@)'.fmt(this, newContent));
     this.removeAllChildren() ;
     if (newContent) this.appendChild(newContent) ;
   },
-
+  
   /** @private */
   createChildViews: function() {
     // if contentView is defined, then create the content
@@ -84,7 +87,7 @@ SC.ContainerView = SC.View.extend(
   awake: function() {
     sc_super();
     var nowShowing = this.get('nowShowing') ;
-    if (nowShowing && nowShowing.length>0) this.nowShowingDidChange();
+    if (nowShowing && nowShowing.length) this.nowShowingDidChange();
   },
   
   /**
@@ -97,28 +100,27 @@ SC.ContainerView = SC.View.extend(
   */
   nowShowingDidChange: function() {
     var nowShowing = this.get('nowShowing') ;
-    var content = null;
+    var content = null ;
     //its a property path
-    if(SC.typeOf(nowShowing) === SC.T_STRING){
+    if (SC.typeOf(nowShowing) === SC.T_STRING) {
       // if nowShowing was set because the content was set directly, then 
       // do nothing.
       if (nowShowing === SC.CONTENT_SET_DIRECTLY) return ;
-
+      
       // otherwise, if nowShowing is a non-empty string, try to find it...
-      if (nowShowing && nowShowing.length>0) {
-        if (nowShowing.indexOf('.')>0) {
-          content = SC.objectForPropertyPath(nowShowing, null);
+      if (nowShowing && nowShowing.length) {
+        if (nowShowing.indexOf('.') > 0) {
+          content = SC.objectForPropertyPath(nowShowing, null) ;
         } else {
-          content = SC.objectForPropertyPath(nowShowing, this.get('page'));
+          content = SC.objectForPropertyPath(nowShowing, this.get('page')) ;
         }
       }
-    }else{ //its a view
+    } else { // it's a view
       content = nowShowing;
     }
-
     
     // only allow views
-    if (content && !(content instanceof SC.View)) content = null;
+    if (content && !(content instanceof SC.View)) content = null ;
     
     // set content
     this.set('contentView', content) ;
@@ -130,7 +132,7 @@ SC.ContainerView = SC.View.extend(
     swapped out.
   */
   contentViewDidChange: function() {
-    this.replaceContent(this.get('contentView'));
+    this.replaceContent(this.get('contentView')) ;
   }.observes('contentView')
   
 }) ;

@@ -332,14 +332,19 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @returns {SC.View} receiver
   */
   removeChild: function(view) {
-    if (!view) return this; // nothing to do
+    // console.log('%@.removeChild(view=%@)'.fmt(this, view));
+    if (!view) return this ; // nothing to do
     if (view.parentView !== this) {
-      throw "%@.removeChild(%@) must belong to parent".fmt(this,view);
+      throw "%@.removeChild(%@) must belong to parent".fmt(this,view) ;
     }
     
     // notify views
     if (view.willRemoveFromParent) view.willRemoveFromParent() ;
     if (this.willRemoveChild) this.willRemoveChild(view) ;
+    
+    // MUST cache a child's layer before we remove it from its parent;
+    // otherwise, child's layer cannot be found later to remove...
+    view.get('layer') ; // cache it...
     
     // update parent node
     view.set('parentView', null) ;
@@ -347,13 +352,13 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     // remove view from childViews array.
     var childViews = this.get('childViews') ;
     var idx = childViews.indexOf(view) ;
-    if (idx>=0) childViews.removeAt(idx);
+    if (idx>=0) childViews.removeAt(idx) ;
     
     // The DOM will need some fixing up, note this on the view.
     view.parentViewDidChange() ;
     
     // notify views
-    if (this.didRemoveChild) this.didRemoveChild(view);
+    if (this.didRemoveChild) this.didRemoveChild(view) ;
     if (view.didRemoveFromParent) view.didRemoveFromParent(this) ;
     
     return this ;
@@ -365,6 +370,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @returns {SC.View} receiver 
   */
   removeAllChildren: function() {
+    // console.log('%@.removeAllChildren()'.fmt(this));
     var childViews = this.get('childViews'), view ;
     while (view = childViews.objectAt(childViews.get('length')-1)) {
       this.removeChild(view) ;
@@ -467,6 +473,9 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     // no layer...attempt to discover it...  
     } else {
       value = this._view_layer;
+      
+      // NOTE: removeChild() depends on this method not invalidating 
+      // this._view_layer when isVisibleInWindow changes...
       if (!value) {
         var parent = this.get('parentView');
         if (parent) parent = parent.get('layer');
@@ -478,6 +487,15 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     }
     return value ;
   }.property('isVisibleInWindow').cacheable(),
+  
+  /**
+    Set to YES to retain a layer's DOM even when the view is not in the view 
+    hierarchy. Caching a layer increases memory use and can decrease 
+    performance. Default is NO.
+    
+    @type Boolean
+  */
+  shouldCacheLayer: NO,
   
   /**
     Get a CoreQuery object for this view's layer, or pass in a selector string
@@ -930,6 +948,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @returns {SC.View} receiver
   */
   updateLayerLocation: function() {
+    // console.log('%@.updateLayerLocation()'.fmt(this));
     // collect some useful value
     // if there is no node for some reason, just exit
     var node = this.get('layer') ;
@@ -939,12 +958,15 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     // remove node from current parentNode if the node does not match the new 
     // parent node.
     if (node && node.parentNode && node.parentNode !== parentNode) {
-      node.parentNode.removeChild(node);
+      node.parentNode.removeChild(node) ;
     }
     
     // CASE 1: no new parentView.  just remove from parent (above).
     if (!parentView) {
       if (node && node.parentNode) node.parentNode.removeChild(node);
+      
+      // destroy the node unless this view should cache its layer
+      if (!this.get('shouldCacheLayer')) this.destroyLayer() ;
       
     // CASE 2: parentView has no layer, view has layer.  destroy layer
     // CASE 3: parentView has no layer, view has no layer, nothing to do
