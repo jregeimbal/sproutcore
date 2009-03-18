@@ -339,6 +339,24 @@ SC.Pane = SC.View.extend({
   },
   
   // .......................................................
+  // FOCUSED PANE SUPPORT
+  //
+  
+  /**
+    Invoked when the pane is about to become the focused pane.
+    
+    @param {SC.Pane} pane the pane that currently have focus
+  */
+  focusFrom: function(pane) {},
+  
+  /**
+    Invoked when the the pane is about to lose its focused pane status.
+    
+    @param {SC.Pane} pane the pane that will receive focus next
+  */
+  blurTo: function(pane) {},
+  
+  // .......................................................
   // MAIN PANE SUPPORT
   //
   
