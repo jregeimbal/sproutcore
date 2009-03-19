@@ -4,15 +4,17 @@
 // Portions copyright ©2008 Apple, Inc.  All rights reserved.
 // ========================================================================
 
-require('system/drag');
+sc_require('system/drag');
 
 /**
   @mixin
   
   Add the DropTarget mixin to your view to be able to accept drop events. You 
-  should also override the methods below as needed to handle accepting of events.
+  should also override the methods below as needed to handle accepting of 
+  events.
   
-  See the method descriptions for more information on what you need to implement.
+  See the method descriptions for more information on what you need to 
+  implement.
   
   The general call sequence for all drop targets is (in pseudo-Ragel, regex
   format):
@@ -24,18 +26,18 @@ require('system/drag');
       dragEntered
       dragUpdated
       ( computeDragOperations | dragUpdated )*
-      ( acceptDragOperation performDragOperation? )? // mouseUp
+      ( acceptDragOperation performDragOperation? )? // on mouseup...
       dragExited
     )*
   )*
   dragEnded
   
-  Thus, every drop target will have its dragStarted and dragEnded methods called 
-  once during every drag session. computeDragOperations, if called at all, may be 
-  called more than once before the dragEntered method is called. Once dragEntered 
-  is called, you are at guaranteed that both dragUpdated and dragExited will be 
-  called at some point, followed by either dragEnded or additonal 
-  computeDragOperation calls.
+  Thus, every drop target will have its dragStarted and dragEnded methods 
+  called once during every drag session. computeDragOperations, if called at 
+  all, may be called more than once before the dragEntered method is called. 
+  Once dragEntered is called, you are at guaranteed that both dragUpdated and 
+  dragExited will be called at some point, followed by either dragEnded or 
+  additonal computeDragOperation calls.
 */
 SC.DropTarget = {
   
@@ -45,8 +47,10 @@ SC.DropTarget = {
     Drop targets must be specially registered in order to receive drop
     events.  SproutCore knows to register your view when this property
     is true on view creation.
+    
+    @type Boolean
   */  
-  isDropTarget: true,
+  isDropTarget: YES,
   
   /**
     Called when the drag is started, regardless of where or not your drop
@@ -56,7 +60,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object.
-    @param {SC.Event}   evt  The most recent mouse move event.  Use to get location 
+    @param {SC.Event} evt The most recent mouse move event. Use to get 
+      location
   */
   dragStarted: function(drag, evt) {},
   
@@ -66,8 +71,9 @@ SC.DropTarget = {
     
     The default implementation does nothing.
     
-    @param drag {SC.Drag} The current drag object.
-    @param evt {SC.Event} The most recent mouse move event.  Use to get location
+    @param {SC.Drag} drag The current drag object.
+    @param {SC.Event} evt The most recent mouse move event. Use to get 
+      location.
   */
   dragEntered: function(drag, evt) {},
   
@@ -86,7 +92,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object.
-    @param {SC.Event} evt The most recent mouse move event. Use to get location
+    @param {SC.Event} evt The most recent mouse move event. Use to get 
+      location.
   */
   dragUpdated: function(drag, evt) {},
   
@@ -100,7 +107,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object
-    @param {SC.Event}   evt  The most recent mouse move event. Use to get location.
+    @param {SC.Event}   evt  The most recent mouse move event. Use to get 
+      location.
   */
   dragExited: function(drag, evt) {},
   
@@ -114,7 +122,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object
-    @param {SC.Event}   evt  The most recent mouse move event. Use to get location.
+    @param {SC.Event}   evt  The most recent mouse move event. Use to get 
+      location.
   */
   dragEnded: function(drag, evt) {},
   
@@ -147,8 +156,8 @@ SC.DropTarget = {
     
     The default implementation returns YES.
     
-    @param {SC.Drag} drag The drag instance managing this drag
-    @param {DragOp} op The proposed drag operation. A drag constant
+    @param {SC.Drag} drag The drag instance managing this drag.
+    @param {DragOp} op The proposed drag operation. A drag constant.
     
     @return {Boolean} YES if operation is OK, NO to cancel.
   */  
@@ -165,10 +174,10 @@ SC.DropTarget = {
     
     The default implementation returns SC.DRAG_NONE
     
-    @param {SC.Drag} drag The drag instance managing this drag
+    @param {SC.Drag} drag The drag instance managing this drag.
     @param {DragOp} op The proposed drag operation. A drag constant.
     
-    @return {DragOp} Drag Operation actually performed
+    @return {DragOp} Drag Operation actually performed.
   */
   performDragOperation: function(drag, op) { return SC.DRAG_NONE; }
   
