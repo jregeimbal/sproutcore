@@ -102,6 +102,13 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
       allowsEmptySelection: YES,
       allowsMultipleSelection: YES,
       layout: { height: 25 }
+    })
+    .add("3_items,1_sel,singleSel,1_active", SC.SegmentedView, { 
+      items: "Item1 Item2 Item3".w(),
+      value: "Item1".w(),
+      allowsEmptySelection: YES,
+      allowsMultipleSelection: NO,
+      layout: { height: 25 }
     });
     
   pane.show(); // add a test to show the test pane
@@ -201,6 +208,23 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
     }
     ok((count==2), '3_items,2_sel,disabled should have two segments selected.');
 
+  });
+  
+  test("Check to see if one item is selected and another active by activeIndex", function() {
+    var segView = pane.view('3_items,1_sel');
+    //debugger;
+    segView._isMouseDown = YES ;
+    segView.set('activeIndex', 0);
+    var segments=segView.$('a');
+    for (var i=0, ilen=segments.length; i<ilen; i++){
+      seg=segments[i];
+      if (i==1){
+        ok((seg.className.indexOf('sel')!=-1), 'the second element is selected');
+      }
+      else if (i==0){
+        ok((seg.className.indexOf('active')!=-1), 'the first element is active');
+      }
+    }
   });
   
 })();

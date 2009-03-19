@@ -262,7 +262,6 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   
   
   render: function(context, firstTime) { 
-    
     // collect some data 
     var items = this.get('displayItems');
     
@@ -329,6 +328,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
         ic.addClass('sel');
       }
       if(activeIndex === i) {
+        console.log('Active added');
         ic.addClass('active') ;
       }
       if(item[4]){
