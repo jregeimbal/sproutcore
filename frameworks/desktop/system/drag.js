@@ -268,14 +268,14 @@ SC.Drag = SC.Object.extend(
     // var origin = dragView.convertFrameToView(dragView.get('frame'), null) ;
     var origin = dragView.get('frame') ;
     var loc = { x: evt.pageX, y: evt.pageY } ;
-    console.log(loc) ;
-    console.log(origin) ;
+    // console.log(loc) ;
+    // console.log(origin) ;
     this.ghostOffset = { x: (loc.x-origin.x), y: (loc.y-origin.y) } ;
     // this.ghostOffset = loc ;
-    console.log(this.ghostOffset) ;
+    // console.log(this.ghostOffset) ;
     
     this.set('location', loc) ;
-    console.log({ top: loc.y, left: loc.x });
+    // console.log({ top: loc.y, left: loc.x });
     
     // position the ghost view
     this._positionGhostView(evt) ;
@@ -430,7 +430,7 @@ SC.Drag = SC.Object.extend(
       }
     });
     
-    console.log('dragView %@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(this.dragView, frame.y, frame.x, frame.width, frame.height)) ;
+    // console.log('dragView %@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(this.dragView, frame.y, frame.x, frame.width, frame.height)) ;
     // console.log(this._ghostView);
     view.append() ;  // add to window
   },
@@ -442,10 +442,10 @@ SC.Drag = SC.Object.extend(
   _positionGhostView: function(evt) {
     // console.log('%@._positionGhostView(evt=%@)'.fmt(this, evt));
     var loc = { x: evt.pageX, y: evt.pageY } ;
-    console.log(loc) ;
+    // console.log(loc) ;
     loc.x -= this.ghostOffset.x ;
     loc.y -= this.ghostOffset.y ;
-    console.log({ top: loc.y, left: loc.x });
+    // console.log({ top: loc.y, left: loc.x });
     // console.log(this._ghostView);
     this._ghostView.adjust({ top: loc.y, left: loc.x }) ;   
     this._ghostView.invokeOnce('updateLayout') ;
