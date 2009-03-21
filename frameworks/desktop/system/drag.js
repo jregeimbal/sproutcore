@@ -30,13 +30,12 @@ SC.DRAG_AUTOSCROLL_ZONE_THICKNESS = 20;
     for this view and parent them under the drag pane, which has the class 
     name 'sc-ghost-view'.
   
-  - *ghost:  YES | NO*  If YES or not passed, then drag view image will show, 
-    but the source dragView will not be hidden.  set to NO to make it appear 
-    that the dragView itself is being dragged around.
+  - *ghost:  YES | NO*  If NO, the drag view image will show, but the source 
+    dragView will not be hidden.  Set to YES to make it appear that the 
+    dragView itself is being dragged around.
   
-  - *slideBack: YES | NO*  If YES or not specified, then if the drag 
-    operation is cancelled, the dragView will slide back to its source 
-    origin.
+  - *slideBack: YES | NO*  If YES and the drag operation is cancelled, the 
+    dragView will slide back to its source origin.
   
   - *origin:*  If passed, this will be used as the origin point for the 
     ghostView when it slides back.  You normally do not need to pass this 
@@ -44,7 +43,7 @@ SC.DRAG_AUTOSCROLL_ZONE_THICKNESS = 20;
   
   - *data:* Optional hash of data types and values.  You can use this to pass 
     a static set of data instead of providing a dataSource.  If you provide
-    a dataSource, it will override this.
+    a dataSource, it will be used instead.
   
   - *dataSource:*  Optional object that will provide the data for the drag to 
     be consumed by the drop target.  If you do not pass this parameter or the 
@@ -262,25 +261,35 @@ SC.Drag = SC.Object.extend(
     // create the ghost view
     this._createGhostView() ;
     
+    var evt = this.event ;
+    
     // compute the ghost offset from the original mouse location
     var dragView = this.dragView ;
-    var origin = dragView.convertFrameToView(dragView.get('frame'), null) ;
-    var pointer = { x: this.event.pageX, y: this.event.pageY } ;
-    this.ghostOffset = { x: (pointer.x-origin.x), y: (pointer.y-origin.y) } ;
+    // var origin = dragView.convertFrameToView(dragView.get('frame'), null) ;
+    var origin = dragView.get('frame') ;
+    var loc = { x: evt.pageX, y: evt.pageY } ;
+    console.log(loc) ;
+    console.log(origin) ;
+    this.ghostOffset = { x: (loc.x-origin.x), y: (loc.y-origin.y) } ;
+    // this.ghostOffset = loc ;
+    console.log(this.ghostOffset) ;
+    
+    this.set('location', loc) ;
+    console.log({ top: loc.y, left: loc.x });
     
     // position the ghost view
-    this._positionGhostView(this.event) ;
+    this._positionGhostView(evt) ;
     
     // notify root responder that a drag is in process
-    this._ghostView.rootResponder.dragDidStart(this);
+    this._ghostView.rootResponder.dragDidStart(this) ;
     
     var source = this.source ;
-    if (source && source.dragDidBegin) source.dragDidBegin(this, pointer) ;
+    if (source && source.dragDidBegin) source.dragDidBegin(this, loc) ;
     
     // let all drop targets know that a drag has started
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
-      ary[idx].tryToPerform('dragStarted', this.event) ;
+      ary[idx].tryToPerform('dragStarted', this, evt) ;
     }
   },
   
@@ -386,7 +395,7 @@ SC.Drag = SC.Object.extend(
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
       try {
-        ary[idx].tryToPerform('dragEnded', evt) ;
+        ary[idx].tryToPerform('dragEnded', this, evt) ;
       } catch (e) {
         console.log('Exception in SC.Drag.mouseUp(dragEnded on %@): %@'.fmt(ary[idx], e)) ;
       }
@@ -410,11 +419,19 @@ SC.Drag = SC.Object.extend(
     This will create the ghostView and add it to the document.
   */
   _createGhostView: function() {
-    var view = this._ghostView = SC.Pane.create({ owner: this }) ;
-    view.$().addClass('sc-ghost-view').append(this.dragView.rootElement.cloneNode(true)) ;
-    // var f = this.dragView.get('frame') ;
-    // console.log('dragView %@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(this.dragView, f.y, f.x, f.width, f.height)) ;
-    view.adjust(this.dragView.get('frame')) ;
+    var that = this ;
+    var frame = this.dragView.get('frame') ;
+    var view = this._ghostView = SC.Pane.create({
+      classNames:['sc-ghost-view'],
+      layout: { top: frame.y, left: frame.x, width: frame.width, height: frame.height },
+      owner: this,
+      render: function(context, firstTime) {
+        if (firstTime) context.push(that.dragView.$().html()) ;
+      }
+    });
+    
+    console.log('dragView %@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(this.dragView, frame.y, frame.x, frame.width, frame.height)) ;
+    // console.log(this._ghostView);
     view.append() ;  // add to window
   },
   
@@ -423,10 +440,15 @@ SC.Drag = SC.Object.extend(
     recorded by when the drag started.
   */
   _positionGhostView: function(evt) {
+    // console.log('%@._positionGhostView(evt=%@)'.fmt(this, evt));
     var loc = { x: evt.pageX, y: evt.pageY } ;
+    console.log(loc) ;
     loc.x -= this.ghostOffset.x ;
     loc.y -= this.ghostOffset.y ;
+    console.log({ top: loc.y, left: loc.x });
+    // console.log(this._ghostView);
     this._ghostView.adjust({ top: loc.y, left: loc.x }) ;   
+    this._ghostView.invokeOnce('updateLayout') ;
   },
   
   /** @private */

@@ -9,9 +9,9 @@ sc_require('system/drag');
 /**
   @mixin
   
-  The DragSource protocol is used to dynamically generate multiple types of
-  data from a single object.  You must implement this protocol if you want to
-  provide the data for a drag event.
+  The DragSource protocol is used to delegate key decisions during a drag 
+  session, such as whether or not the drop target under the mouse is valid. 
+  You must implement this protocol to participate in a drag session.
 */
 SC.DragSource = {
   
@@ -31,7 +31,7 @@ SC.DragSource = {
   /**
     If this property is set to NO or is not implemented, then the user may
     modify the drag operation by changing the modifier keys they have 
-    pressed.
+    pressed. Default is NO.
     
     @type Boolean
   */
@@ -54,9 +54,8 @@ SC.DragSource = {
     similar to the dragUpdated() method called on drop targets.
     
     @param {SC.Drag} drag The Drag instance managing this drag.
-    @param {Point} loc  The point in *window* coordinates where the drag 
-      mouse is.  You can use convertOffsetFromView() to convert this to local 
-      coordinates.
+    @param {Point} loc The point in *window* coordinates where the drag 
+      mouse is.
   */
   dragDidMove: function(drag, loc) {},
   

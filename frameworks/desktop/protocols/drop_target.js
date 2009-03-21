@@ -53,15 +53,15 @@ SC.DropTarget = {
   isDropTarget: YES,
   
   /**
-    Called when the drag is started, regardless of where or not your drop
-    target is current. You can use this to highlight your drop target
+    Called when the drag is started, even if the mouse is not currently over 
+    the drop target. You can use this to highlight your drop target
     as "eligible".
     
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object.
-    @param {SC.Event} evt The most recent mouse move event. Use to get 
-      location
+    @param {SC.Event} evt The most recent mouse move event. Use to get the
+      location of the mouse.
   */
   dragStarted: function(drag, evt) {},
   
@@ -72,8 +72,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object.
-    @param {SC.Event} evt The most recent mouse move event. Use to get 
-      location.
+    @param {SC.Event} evt The most recent mouse move event. Use to get the
+      location of the mouse.
   */
   dragEntered: function(drag, evt) {},
   
@@ -92,8 +92,8 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object.
-    @param {SC.Event} evt The most recent mouse move event. Use to get 
-      location.
+    @param {SC.Event} evt The most recent mouse move event. Use to get the
+      location of the mouse.
   */
   dragUpdated: function(drag, evt) {},
   
@@ -107,23 +107,23 @@ SC.DropTarget = {
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object
-    @param {SC.Event}   evt  The most recent mouse move event. Use to get 
-      location.
+    @param {SC.Event}   evt  The most recent mouse move event. Use to get the
+      location of the mouse.
   */
   dragExited: function(drag, evt) {},
   
   /**
     Called on all drop targets when the drag ends.  
     
-    For example, the user might have dragged the view off the screen and let go
-    or they might have hit escape.  Override this method to perform any final
-    cleanup.  This will be called instead of dragExited.
+    For example, the user might have dragged the view off the screen and let 
+    go or they might have hit escape.  Override this method to perform any 
+    final cleanup.  This will be called instead of dragExited.
     
     The default implementation does nothing.
     
     @param {SC.Drag} drag The current drag object
-    @param {SC.Event}   evt  The most recent mouse move event. Use to get 
-      location.
+    @param {SC.Event}   evt  The most recent mouse move event. Use to get the
+      location of the mouse.
   */
   dragEnded: function(drag, evt) {},
   
@@ -133,14 +133,14 @@ SC.DropTarget = {
     
     Override this method to return an OR'd mask of the allowed drag 
     operations.  If the user drags over a droppable area within another 
-    droppable area, the drag will latch onto the deepest view that returns one 
+    droppable area, the drag will latch onto the deepest view that returns one
     or more available operations.
     
     The default implementation returns SC.DRAG_NONE
     
     @param {SC.Drag} drag The current drag object
-    @param {SC.Event} evt The most recent mouse move event.  Use to get 
-      location 
+    @param {SC.Event} evt The most recent mouse move event.  Use to get the
+      location of the mouse.
     @returns {DragOps} A mask of all the drag operations allowed or 
       SC.DRAG_NONE
   */
@@ -152,7 +152,7 @@ SC.DropTarget = {
     This method gives your drop target one last opportunity to choose to 
     accept the proposed drop operation.  You might use this method to
     perform fine-grained checks on the drop location, for example.
-    Return true to accept the drop operation.
+    Return YES to accept the drop operation.
     
     The default implementation returns YES.
     
