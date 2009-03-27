@@ -5,7 +5,8 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-require('views/panel');
+sc_require('views/panel');
+sc_require('mixins/shadow');
 
 /**
   Displays a non-modal, default positioned, drag&drop-able palette pane.
@@ -14,11 +15,11 @@ require('views/panel');
   
   {{{
     SC.PalettePane.create({
-	    layout: { width: 400, height: 200, right: 0, top: 0 },
+      layout: { width: 400, height: 200, right: 0, top: 0 },
       contentView: SC.View.extend({
-        layout: { width: 400, height: 200, right: 0, top: 0 }
+        layout: {} // doesn't matter...
       })
-    }).append();
+    }).append() ;
   }}}
   
   This will cause your palette pane to display.
@@ -31,27 +32,59 @@ require('views/panel');
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.PalettePane = SC.Panel.extend({
+SC.PalettePane = SC.Panel.extend(SC.Shadow, {
   
   classNames: 'sc-palette-pane',
-  isModal: false,
-  isAnchored: false,
-  _mouseOffsetX: null,
-  _mouseOffsetY: null,
-
-  /** @private - drag&drop palette to new position. */
+  
+  /** @pivate */
+  isTranslucent: NO,
+  
+  /**
+    Is this a modal palette? Default is NO.
+    
+    @type Boolean
+  */
+  isModal: NO,
+  
+  /**
+  Is this an anchored palette? Default is NO.
+  
+    @type Boolean
+  */
+  isAnchored: NO,
+  
+  /** @private
+    drag&drop palette to new position.
+  */
   mouseDown: function(evt) {
-    var f=this.get("frame");
-    this._mouseOffsetX = f ? (f.x - evt.pageX) : 0;
-    this._mouseOffsetY = f ? (f.y - evt.pageY) : 0;
+    if (!this.get('isAnchored')) {
+      var f = this.get("frame") ;
+      this._mouseOffsetX = f ? (f.x - evt.pageX) : 0 ;
+      this._mouseOffsetY = f ? (f.y - evt.pageY) : 0 ;
+      
+      this.set('layout', {
+        width: f.width,
+        height: f.height,
+        left: this._mouseOffsetX + evt.pageX,
+        top: this._mouseOffsetY + evt.pageY
+      });
+      this.updateLayout() ; // required on panes...
+      
+      // just do dragging...
+      this.rootResponder.dragDidStart(this) ;
+      
+      return YES ;
+    }
+    else return NO ;
   },
-
+  
+  /** @private */
   mouseDragged: function(evt) {
-	  if(!this.isAnchored) {
-	    this.set('layout', { width: this.layout.width, height: this.layout.height, left: this._mouseOffsetX + evt.pageX, top: this._mouseOffsetY + evt.pageY });
-	    this.updateLayout();
-	  }
+    this.adjust({
+      top: this._mouseOffsetY + evt.pageY,
+      left: this._mouseOffsetX + evt.pageX,
+    });
+    this.updateLayout() ; // required on panes...
   }
   
- 
 });

@@ -85,16 +85,10 @@ SC.Pane = SC.View.extend({
   */
   isPane: YES,
   
-  /** 
-    Set to the current page when the pane is instantiated from a page object.
-    @property {SC.Page}
-  */
-  page: null,
-  
   // .......................................................
   // ROOT RESPONDER SUPPORT
   //
-
+  
   /**
     The rootResponder for this pane.  Whenever you add a pane to a document, 
     this property will be set to the rootResponder that is now forwarding 
@@ -144,7 +138,7 @@ SC.Pane = SC.View.extend({
     // walk up the responder chain looking for a method to handle the event
     if (!target) target = this.get('firstResponder') ;
     while(target && !target.tryToPerform(action, evt)) {
-
+      
       // even if someone tries to fill in the nextResponder on the pane, stop
       // searching when we hit the pane.
       target = (target === this) ? null : target.get('nextResponder') ;
@@ -155,7 +149,7 @@ SC.Pane = SC.View.extend({
       target = target.tryToPerform(action, evt) ? target : null ;
     }
         
-    return evt.mouseHandler || target ;
+    return target ;
   },
 
   // .......................................................
@@ -223,7 +217,7 @@ SC.Pane = SC.View.extend({
     responder to lose its responder status and possibly keyResponder status as
     well.
     
-    @param {SC.View} view
+    @param {SC.Responder} view
     @returns {SC.Pane} receiver
   */
   makeFirstResponder: function(view) {
@@ -540,7 +534,7 @@ SC.Pane = SC.View.extend({
     // because we don't need it for panes.
     return this ; 
   },
-
+  
   init: function() {
     // if a layer was set manually then we will just attach to existing 
     // HTML.

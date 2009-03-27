@@ -5,7 +5,7 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-require('views/panel');
+sc_require('views/panel');
 
 /**
   Displays a modal sheet pane animated drop down from top.
@@ -29,18 +29,6 @@ require('views/panel');
 */
 SC.SheetPane = SC.Panel.extend({
   
-  classNames: 'sc-sheet-pane',
-
-  init: function() {
-    sc_super() ;
-
-/** TODO: Implement Anition   
-    this.visibleAnimation = {
-      visible: 'top: 0px',
-      hidden: 'top: -500px',
-      duration: 300
-    } ;
-*/
-  }    
-
+  classNames: 'sc-sheet-pane'
+  
 });

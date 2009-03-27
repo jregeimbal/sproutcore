@@ -1863,6 +1863,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @test in layoutChildViews
   */
   layoutChildViewsIfNeeded: function(isVisible) {
+    // console.log('%@.layoutChildViewsIfNeeded(isVisible=%@)'.fmt(this, isVisible));
     if (!isVisible) isVisible = this.get('isVisibleInWindow');
     if (isVisible && this.get('childViewsNeedLayout')) {
       this.set('childViewsNeedLayout', NO);
@@ -1883,6 +1884,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @returns {void}
   */
   layoutChildViews: function() {
+    // console.log('%@.layoutChildViews()'.fmt(this));
     var set = this._needLayoutViews, len = set ? set.length : 0, idx;
     var view, context, layer;
     for(idx=0;idx<len;idx++) {
@@ -1906,6 +1908,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @test in layoutChildViews
   */
   updateLayout: function() {
+    // console.log('%@.updateLayout()'.fmt(this));
     var layer = this.get('layer'), context;
     if (layer) {
       context = this.renderContext(layer);

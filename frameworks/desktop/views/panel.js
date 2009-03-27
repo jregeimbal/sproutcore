@@ -4,38 +4,51 @@
 // Portions copyright ©2008 Apple, Inc.  All rights reserved.
 // ========================================================================
 
-/** 
-  Shadow views from top-left corner clockwise
-*/
+sc_require('mixins/translucent');
 
-/** @class
-
+/**
+  @class
+  
   Most SproutCore applications need modal panels. The default way to use the 
   panel pane is to simply add it to your page like this:
   
   {{{
     SC.Panel.create({
       contentView: SC.View.extend({
-        layout: { width: 400, height: 200, centerX: 0, centerY: 0 }
+        layout: { width: 400, height: 200, centerX: 0, centerY: 0 },
       })
-    }).append();
+    }).append() ;
   }}}
   
-  This will cause your panel to display.  The default layout for a Panel 
-  is to cover the entire document window with a semi-opaque background, and to 
-  resize with the window.
+  Panels by default fill the entire background and resize with the window. The
+  background is colored with a semi-opaque background.
   
   @extends SC.Pane
   @author Erich Ocean
   @since SproutCore 1.0
 */
-SC.Panel = SC.Pane.extend({
-
+SC.Panel = SC.Pane.extend(SC.Translucent, {
+  
+  /** @private */
   layout: { left:0, right:0, top:0, bottom:0 },
+  
+  /** @private */
   classNames: ['sc-panel'],
+  
+  /**
+    Can this panel become the key pane? Default is YES.
+    
+    @type Boolean
+  */
   acceptsKeyPane: YES,
-  isModal: true,
-
+  
+  /**
+    Is this a modal panel? Default is NO.
+    
+    @type Boolean
+  */
+  isModal: NO,
+  
   // ..........................................................
   // CONTENT VIEW
   // 
@@ -43,59 +56,24 @@ SC.Panel = SC.Pane.extend({
   /**
     Set this to the view you want to act as the content within the panel.
     
-    @property {SC.View}
+    @type SC.View
   */
   contentView: null,
   contentViewBindingDefault: SC.Binding.single(),
-
+  
   /**
-    Replaces any child views with the passed new content.  
+    This method is called to actually replace the content in the panel.  You 
+    may override this if you want to change how the view is swapped out.
     
-    This method is automatically called whenever your contentView property 
-    changes.  You can override it if you want to provide some behavior other
-    than the default.
-    
-    @param {SC.View} newContent the new panel view or null.
-    @returns {void}
+    @param {SC.View} newContent May be null.
   */
-  
-  render: function(context, firstTime) {
-    var s=this.contentView.get('layoutStyle');
-    var ss='';
-    for(key in s) {
-      value = s[key];
-      if (value!==null) {
-        ss=ss+key.dasherize()+': '+value+'; ';
-      }
-    }
-    context.push("<div style='position:absolute; "+ss+"'>");
-    this.renderChildViews(context, firstTime) ;
-    context.push("<div class='top-left-edge'></div>"+
-     "<div class='top-edge'></div>"+
-     "<div class='top-right-edge'></div>"+
-     "<div class='right-edge'></div>"+
-     "<div class='bottom-right-edge'></div>"+
-     "<div class='bottom-edge'></div>"+
-     "<div class='bottom-left-edge'></div>"+
-     "<div class='left-edge'></div>"+
-     "</div>");
-  },
-  
   replaceContent: function(newContent) {
     this.removeAllChildren() ;
-    if (newContent) this.appendChild(newContent) ;
+    if (newContent) {
+      this.appendChild(newContent) ;
+      this.set('layout', { top: 0, left: 0, right: 0, bottom: 0 }) ;
+     }
   },
-
-  /** @private */
-  createChildViews: function() {
-    // if contentView is defined, then create the content
-     var view = this.contentView ;
-        if (view) {
-          view = this.contentView = this.createChildView(view) ;
-          this.childViews = [view] ;
-        }
-  },
-
   
   /**
     Invoked whenever the content property changes.  This method will simply
@@ -103,21 +81,35 @@ SC.Panel = SC.Pane.extend({
     swapped out.
   */
   contentViewDidChange: function() {
-    this.replaceContent(this.get('contentView'));
+    this.replaceContent(this.get('contentView')) ;
   }.observes('contentView'),
-
+  
   // ..........................................................
   // INTERNAL SUPPORT
   //
    
-  /** @private - extends SC.Pane's method - make panel keyPane when shown */
+  /** @private */
+  createChildViews: function() {
+    // if contentView is defined, then create the content
+    var view = this.contentView ;
+    if (view) {
+      view = this.contentView = this.createChildView(view) ;
+      this.childViews = [view] ;
+    }
+  },
+  
+  /** @private
+    Extends SC.Pane's method - make panel keyPane when shown.
+  */
   paneDidAttach: function() {
-    var ret = sc_super();
-    this.get('rootResponder').makeKeyPane(this);
+    var ret = sc_super() ;
+    this.get('rootResponder').makeKeyPane(this) ;
     return ret ;
   },
 
-  /** @private - suppress all mouse events on panel itself. */
+  /** @private
+    Suppress all mouse events on panel itself.
+  */
   mouseDown: function(evt) { return YES; }
   
 });

@@ -5,8 +5,10 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-require('views/panel');
-require('views/button');
+sc_require('views/panel');
+sc_require('views/button');
+sc_require('mixins/shadow');
+
 /** 
   button1 : 1st button from the right. default:OK
   button2 : 2nd button from the right. Optional. Could be Cancel or 2nd action.
@@ -49,9 +51,10 @@ SC.BUTTON3_STATUS = 'button3';
   - *plain()* - displays an alert w/o any icon
   - *show()* - displays an alert with a customizable icon to the left
   
-  In addition to passing a message, description and caption, you can also customize
-  the title of the button 1 (OK) and add an optional button 2 and 3 (Cancel or Extra).  Just
-  pass these titles of these buttons to enable them or null to disable then.
+  In addition to passing a message, description and caption, you can also 
+  customize the title of the button 1 (OK) and add an optional button 2 and 3 
+  (Cancel or Extra).  Just pass these titles of these buttons to enable them 
+  or null to disable then.
   
   Additionally, you can pass a delegate object as the last parameter.  This
   delegate's 'alertPanelDidDismiss()' method will be called when the panel
@@ -104,7 +107,7 @@ SC.BUTTON3_STATUS = 'button3';
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.AlertPanel = SC.Panel.extend({
+SC.AlertPanel = SC.Panel.extend(SC.Shadow, {
   
   classNames: 'sc-alert-panel',
   
@@ -178,78 +181,84 @@ SC.AlertPanel = SC.Panel.extend({
     
     @property {SC.ButtonView}
   */
-  buttonOne: SC.outlet('contentView.childViews.1.childViews.1'),
+  // buttonOne: SC.outlet('contentView.childViews.1.childViews.1'),
+  buttonOne: SC.outlet('childViews.1.childViews.1'),
 
   /**
     The button view for the button 2 (Cancel).
     
     @property {SC.ButtonView}
   */
-  buttonTwo: SC.outlet('contentView.childViews.1.childViews.0'),
+  // buttonTwo: SC.outlet('contentView.childViews.1.childViews.0'),
+  buttonTwo: SC.outlet('childViews.1.childViews.0'),
 
   /**
     The button view for the button 3 (Extra).
     
     @property {SC.ButtonView}
   */
-  buttonThree: SC.outlet('contentView.childViews.2'),
+  // buttonThree: SC.outlet('contentView.childViews.2'),
+  buttonThree: SC.outlet('childViews.2'),
   
   /** @private - internal view that is actually displayed */
-  contentView: SC.View.extend({
-    layout: { centerX: 0, width: 460, top: 100, height: 'auto' },
+  // contentView: SC.View.extend({
+  //   layout: { centerX: 0, width: 460, top: 100, height: 'auto' },
     
-    childViews: [
-      SC.View.extend(SC.StaticLayout, {
-        classNames: ['info'],
-
-        render: function(context, firstTime) {
-          var pane = this.get('pane');
-          var blank = sc_static('blank') ;
-          if(pane.get('icon') == 'blank') context.addClass('plain');
-          context.push('<img src="%@" class="icon %@" />'.fmt(blank, pane.get('icon')));
-          context.begin('h1').text(pane.get('message') || '').end();
-          context.push(pane.get('displayDescription') || '');
-          context.push(pane.get('displayCaption') || '');
-          context.push('<div class="seperator" />');
-        }
-      }),
-
-      SC.View.extend({
-        layout: { bottom: 14, height: 23, right: 14, width: 'auto' },
-        childViews: [
-          SC.ButtonView.extend({
-            useStaticLayout: YES,
-            actionKey: SC.BUTTON2_STATUS,
-            localize: YES,
-            titleMinWidth: 80,
-            layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
-            title: "Cancel", 
-            action: "dismiss",
-            isVisible: NO
-          }),
-
-          SC.ButtonView.extend({
-            useStaticLayout: YES,
-            actionKey: SC.BUTTON1_STATUS,
-            localize: YES,
-            titleMinWidth: 80,
-            layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
-            title: "OK", 
-            action: "dismiss"
-          })]
-      }),
+  layout: { centerX: 0, width: 460, top: 100 },
+  
+  childViews: [
+    SC.View.extend(SC.StaticLayout, {
+      classNames: ['info'],
       
-      SC.ButtonView.extend({
-        actionKey: SC.BUTTON3_STATUS,
-        localize: YES,
-        titleMinWidth: 80,
-        layout: { bottom: 14, height: 21, left: 16, width: 'auto' },
-        title: "Extra", 
-        action: "dismiss",
-        isVisible: NO
-      })]
-  }),
-
+      render: function(context, firstTime) {
+        var pane = this.get('pane');
+        var blank = sc_static('blank') ;
+        if(pane.get('icon') == 'blank') context.addClass('plain');
+        context.push('<img src="%@" class="icon %@" />'.fmt(blank, pane.get('icon')));
+        context.begin('h1').text(pane.get('message') || '').end();
+        context.push(pane.get('displayDescription') || '');
+        context.push(pane.get('displayCaption') || '');
+        context.push('<div class="seperator" />');
+      }
+    }),
+    
+    SC.View.extend({
+      layout: { bottom: 14, height: 23, right: 14, width: 'auto' },
+      childViews: [
+        SC.ButtonView.extend({
+          useStaticLayout: YES,
+          actionKey: SC.BUTTON2_STATUS,
+          localize: YES,
+          titleMinWidth: 80,
+          layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
+          title: "Cancel", 
+          action: "dismiss",
+          isVisible: NO
+        }),
+        
+        SC.ButtonView.extend({
+          useStaticLayout: YES,
+          actionKey: SC.BUTTON1_STATUS,
+          localize: YES,
+          titleMinWidth: 80,
+          layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
+          title: "OK", 
+          action: "dismiss"
+        })]
+    }),
+    
+    SC.ButtonView.extend({
+      actionKey: SC.BUTTON3_STATUS,
+      localize: YES,
+      titleMinWidth: 80,
+      layout: { bottom: 14, height: 21, left: 16, width: 'auto' },
+      title: "Extra", 
+      action: "dismiss",
+      isVisible: NO
+    })
+  ],
+  // }),
+  
   /**
     Action triggered whenever any button is pressed.  Notifies any delegate
     and then hides the alert panel.
