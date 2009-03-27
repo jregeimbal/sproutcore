@@ -81,7 +81,7 @@ sc_require('mixins/picker_pointer');
   @extends SC.PalettePane
   @since SproutCore 1.0
 */
-SC.PickerPane = SC.PalettePane.extend(SC.PickerPointer, {
+SC.PickerPanel = SC.PalettePanel.extend(SC.PickerPointer, {
   
   /** @private */
   classNames: 'sc-picker-pane',

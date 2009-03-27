@@ -529,6 +529,14 @@ SC.Pane = SC.View.extend({
     return this ;
   },
   
+  /** @private
+    Since panes don't have parent views, they have to update their own layout.
+  */
+  // layoutDidChange: function() {
+  //   console.log('this.layoutDidChange()'.fmt(this));
+  //   this.updateLayout() ;
+  // }.observes('layout'),
+  
   updateLayerLocation: function() {
     // note: the normal code here to update node location is removed 
     // because we don't need it for panes.

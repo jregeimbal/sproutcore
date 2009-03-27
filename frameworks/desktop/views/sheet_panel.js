@@ -27,7 +27,7 @@ sc_require('views/panel');
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.SheetPane = SC.Panel.extend({
+SC.SheetPanel = SC.Panel.extend({
   
   classNames: 'sc-sheet-pane'
   

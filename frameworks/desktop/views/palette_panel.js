@@ -32,7 +32,7 @@ sc_require('mixins/shadow');
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.PalettePane = SC.Panel.extend(SC.Shadow, {
+SC.PalettePanel = SC.Panel.extend(SC.Shadow, {
   
   classNames: 'sc-palette-pane',
   
