@@ -631,6 +631,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @returns {SC.View} the item view or null
   */
   itemViewForEvent: function(evt) {
+    console.log('%@.itemViewForEvent(evt=%@)'.fmt(this, evt));
     var responder = this.getPath('pane.rootResponder') ;
     
     if (!responder) return null ; // fast path
@@ -642,6 +643,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var elementId = element.id.slice(0, baseGuidLen) ;
     while (elementId !== baseGuid) {
       element = element.parentNode ;
+      if (!element) return null ; // didn't find it!
       elementId = element.id.slice(0, baseGuidLen) ;
     }
     
