@@ -29,6 +29,45 @@ sc_require('views/panel');
 */
 SC.SheetPanel = SC.Panel.extend({
   
-  classNames: 'sc-sheet-pane'
+  classNames: 'sc-sheet-pane',
+  
+  init: function() {
+    sc_super() ;
+    this._targetLayout = this.get('layout') ;
+    var f = this.get('frame') ;
+    console.log(f);
+    this.set('layout', {
+      top: 0-f.height-20, // height of shadow...
+      centerX: 0,
+      width: f.width,
+      height: f.height
+    });
+  },
+  
+  render: function(context, firstTime) {
+    if (firstTime) {
+      context.addClass('sc-transition-ease-out') ;
+      if (SC.browser.webkit) this.invokeNext(this.applyTargetLayout) ;
+      else this.applyTargetLayout() ;
+    }
+    sc_super() ;
+  },
+  
+  applyTargetLayout: function() {
+    var layout = this.get('layout') ;
+    this.set('layout', this._targetLayout) ;
+    this.updateLayout() ;
+    this._targetLayout = layout ;
+  },
+  
+  remove: function() {
+    this.applyTargetLayout() ;
+    if (SC.browser.webkit) this.invokeLater(this.performRemove, 300) ;
+    else this.performRemove() ;
+  },
+  
+  performRemove: function() {
+    this.remove.base.apply(this) ;
+  }
   
 });

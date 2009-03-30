@@ -311,14 +311,14 @@ SC.PickerPanel = SC.PalettePanel.extend(SC.PickerPointer, {
     }
     var m = this.preferMatrix;
     //var pointer = this.contentView.childViews[this.contentView.childViews.length-1];
-
+    
     // initiated with fallback position
     // Will be used only if the following preferred alternative can not be found
     f.x = prefP1[m[4]][0] ;
     f.y = prefP1[m[4]][1] ;
     this.set('pointerPos', SC.POINTER_POSITIONS[m[4]]);
-
-    for(var i=0; i<SC.POINTER_POSITIONS.length; i++) {
+    
+    for (var i=0; i<SC.POINTER_POSITIONS.length; i++) {
       if (cutoffPrefP[m[i]][0]==0 && cutoffPrefP[m[i]][1]==0 && cutoffPrefP[m[i]][2]==0 && cutoffPrefP[m[i]][3]==0) {
         // alternative i in preferMatrix by priority
         if (m[4] != m[i]) {
@@ -326,14 +326,12 @@ SC.PickerPanel = SC.PalettePanel.extend(SC.PickerPointer, {
           f.y = prefP1[m[i]][1] ;
           this.set('pointerPos', SC.POINTER_POSITIONS[m[i]]);
         }
-        i = SC.POINTER_POSITIONS.length;
+        i = SC.POINTER_POSITIONS.length ;
       }
     }
-    return f ;    
+    return f ;
   },
   
-  
-
   // render: function(context, firstTime) {
   //     var s=this.contentView.get('layoutShadow');
   //     var ss='';

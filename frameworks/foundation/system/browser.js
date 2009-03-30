@@ -19,6 +19,9 @@ SC.browser = (function() {
     /** non-zero if webkit-based browser */
     safari: (/webkit/).test( userAgent ) ? version : 0,
     
+    /** non-zero if webkit-based browser */
+    webkit: (/webkit/).test( userAgent ) ? version : 0,
+    
     /** non-zero if this is an opera-based browser */
     opera: (/opera/).test( userAgent ) ? version : 0,
     

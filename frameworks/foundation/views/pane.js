@@ -379,7 +379,7 @@ SC.Pane = SC.View.extend({
   */
   remove: function() {
     if (!this.get('isVisibleInWindow')) return this; // nothing to do
-
+    
     // remove layer...
     var dom = this.get('layer') ;
     if (dom.parentNode) dom.parentNode.removeChild(dom);
