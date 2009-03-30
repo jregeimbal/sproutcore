@@ -10,12 +10,23 @@
 
   Displays a progress bar.  You can display both a defined and an 
   indeterminate progressbar.  The progress bar itself is designed to be styled
-  using CSS classes. with the following structure:
+  using CSS classes with the following structure:
   
   <div class="sc-progress-view"><div class="inner"></div></div>
   
   The outer can form the boundary of the bar while the inner will be adjusted 
   to fit the percentage of the progress.
+  
+  Creating a ProgressView accepts a number of properties, for example:
+  {
+    value: 50, 
+    minimum: 0, 
+    maximum: 100,
+    isIndeterminate: NO,
+    isEnabled: YES
+  }
+  
+  Default isEnabled value is YES.
 
   @extends SC.View
   @extends SC.Control
@@ -34,7 +45,6 @@ SC.ProgressView = SC.View.extend(SC.Control, {
   */
   value: 0.50,
   valueBindingDefault: SC.Binding.single().notEmpty(),
-  
   
   /**
     The minimum value of the progress.
@@ -129,7 +139,7 @@ SC.ProgressView = SC.View.extend(SC.Control, {
   
   render: function(context, firstTime) {
     
-    var isIndeterminate = this.get('isIndeterminate') ;
+    var isIndeterminate = this.get('isIndeterminate');
     var isRunning = this.get('isRunning');
     var isEnabled = this.get('isEnabled');
   
@@ -142,18 +152,18 @@ SC.ProgressView = SC.View.extend(SC.Control, {
     } else if (isIndeterminate) {
       value = "120%";
     } else {
-      var minimum = this.get('minimum') || 0.0 ;
-      var maximum = this.get('maximum') || 1.0 ;
-      value = this.get('value') || 0.0 ;
-      value = (value - minimum) / (maximum - minimum) ; 
-      if (value > 1.0) value = 1.0 ;
+      var minimum = this.get('minimum') || 0.0;
+      var maximum = this.get('maximum') || 1.0;
+      value = this.get('value') || 0.0;
+      value = (value - minimum) / (maximum - minimum);
+      if (value > 1.0) value = 1.0;
 
       if(isNaN(value)) value = 0.0;
       // cannot be smaller then minimum
       if(value<minimum) value = 0.0;
       // cannot be larger then maximum
       if(value>maximum) value = 1.0;
-      value = (value * 100) + "%" ;
+      value = (value * 100) + "%";
     }
 
     var classNames = {
@@ -163,14 +173,10 @@ SC.ProgressView = SC.View.extend(SC.Control, {
     };
     
     if(firstTime) {
-      // push all string instead of doing concatenation (IE optimization)
-      context.push('<div class="sc-outer-head"></div><div class="sc-inner ');
-      context.push(this._createClassNameString(classNames));
-      context.push('" style="width: ');
-      context.push(value);
-      context.push(';left: ');
-      context.push(offset);
-      context.push('"><div class="sc-inner-head"></div><div class="sc-inner-tail"></div></div><div class="sc-outer-tail"></div>');
+      var classString = this._createClassNameString(classNames);
+      context.push('<div class="sc-outer-head"></div>');
+      context.push('<div class="sc-inner ', classString, '" style="width: ', value, ';left: ', offset, '">');
+      context.push('<div class="sc-inner-head"></div><div class="sc-inner-tail"></div></div><div class="sc-outer-tail"></div>');
     }
     else {
       context.setClass(classNames);

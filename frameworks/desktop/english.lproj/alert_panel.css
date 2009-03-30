@@ -2,11 +2,18 @@
   background: sc_static('standard-white-fade') repeat ;
 }
 
+.sc-pane.sc-panel.sc-alert-panel > div > .sc-view {
+	overflow: visible;
+}
 
 .sc-alert-panel .info {
 	position: relative ;
 	min-height: 48px;
 	padding: 20px 12px 58px 74px;
+}
+
+.sc-alert-panel .info.plain {
+	padding: 20px 12px 58px 16px;
 }
 
 .sc-alert-panel .info img.icon {

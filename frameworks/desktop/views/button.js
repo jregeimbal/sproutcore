@@ -7,11 +7,6 @@
 
 /*jslint evil:true */
 
-sc_require('views/view') ;
-sc_require('mixins/control') ;
-sc_require('mixins/button');
-sc_require('mixins/static_layout');
-
 // Constants
 SC.TOGGLE_BEHAVIOR = 'toggle';
 SC.PUSH_BEHAVIOR =   'push';
@@ -168,7 +163,6 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
   displayProperties: ['href', 'icon', 'title', 'value'],
 
   render: function(context, firstTime) {
-    
     // add href attr if tagName is anchor...
     if (this.get('tagName') === 'a') {
       var href = this.get('href');
@@ -183,7 +177,6 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
     classes.icon = !!this.get('icon');
     context.attr('role', 'button')
       .setClass(classes).addClass(this.get('theme'));
-
     // render inner html 
     context = context.begin('span')
       .addClass('sc-button-inner').addStyle('minWidth', this.get('titleMinWidth'));

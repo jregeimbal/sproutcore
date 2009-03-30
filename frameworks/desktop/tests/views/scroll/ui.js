@@ -8,7 +8,7 @@
 /*global module test htmlbody ok equals same stop start */
 
 (function() {
-    var appleURL='http://weblogs.baltimoresun.com/business/consuminginterests/blog/apple-logo1.jpg';
+    var appleURL=static_url('debug/apple-logo1');
     var iv=SC.ImageView.design({value: appleURL, layout: {height:400, width:400}});
     var pane = SC.ControlTestPane.design({ height: 100 })
     .add("basic", SC.ScrollView, {
@@ -20,7 +20,8 @@
     })
 
     .add("basic3", SC.ScrollView, {
-      contentView: iv
+      contentView: iv,
+      isHorizontalScrollerVisible: NO
     })
     
     .add("disabled", SC.ScrollView, {

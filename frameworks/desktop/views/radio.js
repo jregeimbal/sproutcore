@@ -10,6 +10,49 @@
   A RadioView is used to create a group of radio buttons.  The user can use
   these buttons to pick from a choice of options.
   
+  This view renders simulated radio buttons that can display a mixed state and 
+  has other features not found in platform-native controls.
+  
+  The radio buttons themselves are designed to be styled using CSS classes with
+  the following structure:
+  
+  <label class="sc-radio-button">
+  <img class="button" src="some_image.gif"/>
+  <input type="radio" name="<sc-guid>" value=""/>
+  <span class="sc-button-label">Label for button1</span>
+  </label>
+  
+  Setting up a RadioView accepts a number of properties, for example:
+  {
+    items: [{ title: "Red", 
+              value: "red", 
+              enabled: YES, 
+              icon: "button_red" },
+            { title: "Green", 
+              value: "green", 
+              enabled: YES, 
+              icon: 'button_green' }],
+    value: 'red',
+    itemTitleKey: 'title',
+    itemValueKey: 'value',
+    itemIconKey: 'icon',
+    itemIsEnabledKey: 'enabled',
+    isEnabled: YES,
+    layoutDirection: SC.LAYOUT_HORIZONTAL
+  }
+  
+  Default layoutDirection is vertical. 
+  Default isEnabled is YES.
+  
+  The value property can be either a string, as above, or an array of strings
+  for pre-checking multiple values.
+  
+  The items array can contain either strings, or as in the example above a 
+  hash. When using a hash, make sure to also specify the itemTitleKey
+  and itemValueKey you are using. Similarly, you will have to provide 
+  itemIconKey if you are using icons radio buttons. The individual items 
+  enabled property is YES by default, and the icon is optional.
+  
   @extends SC.FieldView
   @since SproutCore 1.0
 */
@@ -20,27 +63,46 @@ SC.RadioView = SC.FieldView.extend(
   classNames: ['sc-radio-view'],
 
   /**
-    The value of the currently selected item.
+    The value of the currently selected item, and which will be checked in the 
+    UI. This can be either a string or an array with strings for checking 
+    multiple values.
   */
   value: null,
   
   layoutDirection: SC.LAYOUT_VERTICAL,
   
-  // escape the HTML in label text or not
+  // escape the HTML in label text
   escapeHTML: YES,
   
-  // ..........................................................
-  // ITEMS ARRAY
-  // 
-  
+  /** 
+    The items property can be either an array with strings, or a
+    hash. When using a hash, make sure to also specify the appropriate
+    itemTitleKey, itemValueKey, itemIsEnabledKey and itemIconKey.
+  */
   items: [],
 
+  /** 
+    If items property is a hash, specify which property will function as
+    the title with this itemTitleKey property.
+  */
   itemTitleKey: null,
   
+  /** 
+    If items property is a hash, specify which property will function as
+    the value with this itemValueKey property.
+  */
   itemValueKey: null,
   
+  /** 
+    If items property is a hash, specify which property will function as
+    the value with this itemIsEnabledKey property.
+  */
   itemIsEnabledKey: null,
   
+  /** 
+    If items property is a hash, specify which property will function as
+    the value with this itemIconKey property.
+  */
   itemIconKey: null,
   
   /** @private - 
@@ -128,7 +190,7 @@ SC.RadioView = SC.FieldView.extend(
   
   render: function(context, firstTime) {
     // if necessary, regenerate the radio buttons
-    var item, idx, selectionState, items = this.get('displayItems'), 
+    var item, idx, icon, name, itemsLength, url, className, disabled, labelText, selectionState, items = this.get('displayItems'), 
       value = this.get('value'), isArray = SC.isArray(value);
     
     context.addClass(this.get('layoutDirection'));
@@ -141,39 +203,29 @@ SC.RadioView = SC.FieldView.extend(
     
     if (firstTime) {
       // generate tags from this.
-      var name = SC.guidFor(this); // name for this group
-      for(idx=0;idx<items.length;idx++) {
-        var item = items[idx];
+      name = SC.guidFor(this); // name for this group
+      itemsLength = items.length;
+      for(idx=0;idx<itemsLength;idx++) {
+        item = items[idx];
         
         // get the icon from the item, if one exists...
-        var icon = item[3];
+        icon = item[3];
         if (icon) {
-          var url = (icon.indexOf('/')>=0) ? icon : static_url('blank');
-          var className = (url === icon) ? '' : icon ;
+          url = (icon.indexOf('/')>=0) ? icon : static_url('blank');
+          className = (url === icon) ? '' : icon ;
           icon = '<img src="%@" class="icon %@" alt="" />'.fmt(url, className);
         } else icon = '';
         
-        var selectionStateClassNames = this._getSelectionState(item, value, isArray, false);
-        var disabled = (!item[2]) || (!this.get('isEnabled')) ? 'disabled="disabled" ' : '';
+        selectionStateClassNames = this._getSelectionState(item, value, isArray, false);
+        disabled = (!item[2]) || (!this.get('isEnabled')) ? 'disabled="disabled" ' : '';
         
-        var labelText = this.escapeHTML ? SC.RenderContext.escapeHTML(item[0]) : item[0];
+        labelText = this.escapeHTML ? SC.RenderContext.escapeHTML(item[0]) : item[0];
+        var blankImage = static_url('blank');
         
-        // push all string instead of doing concatenation (IE optimization)
-        context.push('<label class="sc-radio-button ');
-        context.push(selectionStateClassNames);
-        context.push('"><img src="');
-        context.push(static_url('blank'));
-        context.push('" class="button" /><input type="radio" value="');
-        // value is index value so we can refer back to object value
-        context.push(idx);
-        context.push('" name="');
-        context.push(name);
-        context.push('" ');
-        context.push(disabled);
-        context.push('/><span class="sc-button-label">');
-        context.push(icon);
-        context.push(labelText);
-        context.push('</span></label>');
+        context.push('<label class="sc-radio-button ', selectionStateClassNames, '">');
+        context.push('<img src="', blankImage, '" class="button" />');
+        context.push('<input type="radio" value="', idx, '" name="', name, '" ', disabled, '/>');
+        context.push('<span class="sc-button-label">', icon, labelText, '</span></label>');
       }
       
       // first remove listener on existing radio buttons

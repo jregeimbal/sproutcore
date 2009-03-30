@@ -5,6 +5,8 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
+sc_require('views/split_divider');
+
 SC.RESIZE_BOTH = 'resize-both' ;
 SC.RESIZE_TOP_LEFT = 'resize-top-left' ;
 SC.RESIZE_BOTTOM_RIGHT = 'resize-bottom-right' ;
@@ -12,72 +14,63 @@ SC.RESIZE_BOTTOM_RIGHT = 'resize-bottom-right' ;
 /**
   @class
   
-  FIXME: Docs are out of date.
-
   A split view is used to show views that the user can resize or collapse.
-  To use the split view, you need to add a top left view followed by an
-  instance of SC.SplitDividerView followed by a bottom right view.
-
-  For example:
-
+  To use a split view you need to set a topLeftView, a bottomRightView and,
+  optionally, a splitDividerView.  You can also set various other properties
+  to control the minimum and maximum thickness allowed for the flexible views.
+  
+  h2. Example
+  
   {{{
-    <% view :workspace_container, :class => 'workspace_container' do %>
-      <% split_view :workspace, :class => 'sc-app-workspace', :direction => :vertical do %>
-        <% view :top_view, :can_collapse => false, :min_thickness => 50 do %>
-          <p>My top view</p>
-        <% end %>
-        <%= split_divider_view %>
-        <% view :bottom_view, :collapse_at_thickness => 100 do %>
-          <p>My bottom view</p>
-        <% end %>
-      <% end%>
-    <% end %>
+    SC.SplitView.design({
+      
+      // the left view...
+      topLeftView: SC.View.design({
+        // view contents
+      }),
+      
+      // the right view
+      bottomRightView: SC.View.design({
+        // view contents
+      })
+      
+    })
   }}}
-
+  
   When the user clicks and drags on a split divider view, it will
   automatically resize the views immediately before and after the split
   divider view. You can constrain the resizing allowed by the split view
   either by setting a minThickness and maxThickness property on the views
   themselves or by implementing the method splitViewConstrainThickness on
   a delegate object.
-
+  
   In addition to resizing views, users can also collapse views by double
   clicking on a split divider view.  When a view is collapsed, it's isVisible
   property is set to NO and its space it removed from the view.  Double
   clicking on a divider again will restore a collapsed view.  A user can also
   start to drag the divider to show the collapsed view.
-
+  
   You can programmatically control collapsing behavior using various properties
   on either the split view or its child views, and/or by implementing the
   method splitViewCanCollapse on a delegate object.
-
+  
   Finally, SplitViews can layout their child views either horizontally or
   vertically.  To choose the direction of layout set the layoutDirection
   property on the view (or the :direction option with the view helper).
   This property should be set when the view is created. Changing it
   dynamically will have an unknown effect.
-
+  
   @property {Boolean} layoutDirection Either SC.HORIZONTAL or SC.VERTICAL.
   Defaults to SC.HORIZONTAL. Use the :direction option with the split_view
-  viewhelper. 
-
+  viewhelper.
+  
   @property {Boolean} canCollapseViews Set to NO when you don't want any of
   the child views to collapse. Defaults to YES. Use the :can_collapse_views
   option with the split_view viewhelper.
-
+  
   In addition, the top/left and bottom/right child views can have these
   properties:
   
-  @property {Number} minThickness The minimum thickness of the child view
-  @property {Number} maxThickness The maximum thickness of the child view
-  @property {Number} collapseAtThickness When the divider is dragged beyond
-  the point where the thickness of this view would become less than the value
-  of this property, then collapse the view.
-  @property {Boolean} canCollapse Set to NO when you don't want the child view
-  to collapse. Defaults to YES.
-  @property {Boolean} isCollapsed YES if the child view is collapsed, NO
-  otherwise.
-
   @extends SC.View
   @since SproutCore 1.0
   
@@ -87,20 +80,22 @@ SC.RESIZE_BOTTOM_RIGHT = 'resize-bottom-right' ;
 */
 SC.SplitView = SC.View.extend(
 /** @scope SC.SplitView.prototype */ {
-
-  classNames: ['sc-split-view'],  
-
+  
+  classNames: ['sc-split-view'],
+  
   childLayoutProperties: 'layoutDirection dividerThickness autoresizeBehavior'.w(),
   
   displayProperties: ['layoutDirection'],
-
+  
   /**
     delegate for controlling split view behavior.
   */
   delegate: null,
-
+  
   /**
-    [RO] Direction of layout.  Must be SC.LAYOUT_HORIZONTAL || SC.LAYOUT_VERTICAL.
+    Direction of layout.  Must be SC.LAYOUT_HORIZONTAL or SC.LAYOUT_VERTICAL.
+    
+    @property {String}
   */
   layoutDirection: SC.LAYOUT_HORIZONTAL,
   
@@ -110,14 +105,21 @@ SC.SplitView = SC.View.extend(
   canCollapseViews: YES,
   
   /*
-    Configure which view(s) you want to autoresize when this split view's layout
-    changes.
+    Configure which view(s) you want to autoresize when this split view's 
+    layout changes.  Possible options are:
+    
+    | SC.RESIZE_BOTTOM_RIGHT | (default) resizes bottomRightView |
+    | SC.RESIZE_TOP_LEFT | resized topLeftView |
+    
   */
-  autoresizeBehavior: SC.RESIZE_TOP_LEFT,
+  autoresizeBehavior: SC.RESIZE_BOTTOM_RIGHT,
   
   /**
-    A number between 0.0 and 1.0 specify how much of the topLeftView should show
-    at startup.
+    Specifies how much space the fixed view should use when the view is setup.
+    A number less than one will be treated as a percentage, while a number 
+    greater than one will be treated as a pixel width.
+    
+    @property {Number}
   */
   topLeftDefaultThickness: 0.5,
   
@@ -318,7 +320,7 @@ SC.SplitView = SC.View.extend(
       switch (autoresizeBehavior) {
         case SC.RESIZE_BOTH:
           throw "SC.RESIZE_BOTH is currently unsupported.";
-          break ;
+          //break ;
         case SC.RESIZE_BOTTOM_RIGHT:
           layout.left = topLeftThickness + dividerThickness ;
           delete layout.width ;
@@ -335,7 +337,7 @@ SC.SplitView = SC.View.extend(
       switch (autoresizeBehavior) {
         case SC.RESIZE_BOTH:
           throw "SC.RESIZE_BOTH is currently unsupported.";
-          break ;
+          //break ;
         case SC.RESIZE_BOTTOM_RIGHT:
           layout.top = topLeftThickness + dividerThickness ;
           delete layout.height ;
@@ -366,7 +368,13 @@ SC.SplitView = SC.View.extend(
       
       var direction = this.get('layoutDirection') ;
       var splitViewThickness = (direction == SC.LAYOUT_HORIZONTAL) ? this.get('frame').width : this.get('frame').height ;
-      this._desiredTopLeftThickness = parseInt(splitViewThickness * (this.get('topLeftDefaultThickness') || 0.5)) ;
+      
+      // if topLeftDefaultThickness is < 1, treat as a percentage, otherwise
+      // treat as actual number.
+      var desired = this.get('topLeftDefaultThickness');
+      if (SC.none(desired) || (desired > 0 && desired < 1)) {
+        this._desiredTopLeftThickness =  Math.floor(splitViewThickness * (desired || 0.5)) ;
+      } else this._desiredTopLeftThickness = desired ;
       
       // make sure we don't exceed our min and max values, and that collapse 
       // settings are respected
@@ -483,15 +491,23 @@ SC.SplitView = SC.View.extend(
       this._uncollapsedThickness = this.getThicknessForView(view)  ;
       // and collapse
       // this.setThicknessForView(view, 0) ;
-      (view === this._topLeftView) ? this._topLeftViewThickness = 0 : this._bottomRightViewThickness = 0 ;
+      if (view === this._topLeftView) {
+        this._topLeftViewThickness = 0 ;
+      } else {
+        this._bottomRightViewThickness = 0 ;
+      }
+      
       // if however the splitview decided not to collapse, clear:
       if (!view.get("isCollapsed")) {
         this._uncollapsedThickness = null;
       }
     } else {
       // uncollapse to the last thickness in it's uncollapsed state
-      // this._splitView.setThicknessForView(view, view._uncollapsedThickness) ;
-      (view === this._topLeftView) ? this._topLeftViewThickness = this._uncollapsedThickness : this._bottomRightViewThickness = this._uncollapsedThickness ;
+      if (view === this._topLeftView) {
+        this._topLeftViewThickness = this._uncollapsedThickness ;
+      } else {
+        this._bottomRightViewThickness = this._uncollapsedThickness ;
+      }
       view._uncollapsedThickness = null ;
     }
     this._setCursorStyle() ;
@@ -522,15 +538,15 @@ SC.SplitView = SC.View.extend(
     var max = this.get('topLeftMaxThickness') ;
     var min = this.get('topLeftMinThickness') ;
     
-    if (max != null) thickness = Math.min(max, thickness) ;
-    if (min != null) thickness = Math.max(min, thickness) ;
+    if (!SC.none(max)) thickness = Math.min(max, thickness) ;
+    if (!SC.none(min)) thickness = Math.max(min, thickness) ;
     
     // constrain to thickness set on bottom/right
     max = this.get('bottomRightMaxThickness') ;
     min = this.get('bottomRightMinThickness') ;
-    bottomRightThickness = maxAvailable - thickness ;
-    if (max != null) bottomRightThickness = Math.min(max, bottomRightThickness) ;
-    if (min != null) bottomRightThickness = Math.max(min, bottomRightThickness) ;
+    var bottomRightThickness = maxAvailable - thickness ;
+    if (!SC.none(max)) bottomRightThickness = Math.min(max, bottomRightThickness) ;
+    if (!SC.none(min)) bottomRightThickness = Math.max(min, bottomRightThickness) ;
     thickness = maxAvailable - bottomRightThickness ;
     
     // constrain to thickness determined by delegate.
@@ -545,7 +561,7 @@ SC.SplitView = SC.View.extend(
     var tlCollapseAtThickness = topLeftView.get('collapseAtThickness') ;
     if (!tlCollapseAtThickness) tlCollapseAtThickness = 0 ;
     var brCollapseAtThickness = bottomRightView.get('collapseAtThickness') ;
-    brCollapseAtThickness = (brCollapseAtThickness == null) ? maxAvailable : (maxAvailable - brCollapseAtThickness);
+    brCollapseAtThickness = SC.none(brCollapseAtThickness) ? maxAvailable : (maxAvailable - brCollapseAtThickness);
     
     if ((proposedThickness <= tlCollapseAtThickness) && this.canCollapseView(topLeftView)) {
       // want to collapse top/left, check if this doesn't violate the max thickness of bottom/right
@@ -568,7 +584,7 @@ SC.SplitView = SC.View.extend(
       this._desiredTopLeftThickness = thickness ;
       
       // un-collapse if needed.
-      topLeftView.set('isCollapsed', thickness == 0) ;
+      topLeftView.set('isCollapsed', thickness === 0) ;
       bottomRightView.set('isCollapsed', thickness >= maxAvailable) ;
       
       // this.set('displayNeedsUpdate', YES);
@@ -632,4 +648,4 @@ SC.SplitView = SC.View.extend(
     return proposedThickness;
   }
 
-}) ;
+});
