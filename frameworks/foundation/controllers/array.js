@@ -385,8 +385,8 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
   
   /** @private */
   performCommitChanges: function() {
-    var content = this.get('content');
-    var ret     = true;
+    var content = this.get('content') ;
+    var ret = YES ;
     var idx ;
     
     // cannot commit changes to null content.  Return an error.
@@ -400,7 +400,7 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
     if (this._changelog) {
       var changelog = this._changelog ;
       var max = changelog.length;
-      for(idx=0;idx<max;idx++) {
+      for (idx=0;idx<max;idx++) {
         var change = changelog[idx];
         content.replace(change.idx, change.amt, change.objects) ;
       }
@@ -411,7 +411,7 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
     // sure the objects have not been re-added before doing this.
     if (this.get('destroyOnRemoval') && this._deletions && this._deletions.length>0) {
       idx = this._deletions.length;
-      while(--idx >= 0) {
+      while (--idx >= 0) {
         var obj = this._deletions[idx] ;
         if (obj && obj.destroy && (content.indexOf(obj) < 0)) {
           obj.destroy() ; 

@@ -563,9 +563,15 @@ SC.ListView = SC.CollectionView.extend(
   },
   
   insertionPointClass: SC.View.extend({
-    emptyElement: '<div><span class="anchor"></span></div>',
     classNames: ['sc-list-insertion-point'],
-    layout: { top: -6, height: 2, left: 4, right: 2 }
+    layout: { top: -6, height: 2, left: 4, right: 2 },
+    
+    render: function(context, firstTime) {
+      // console.log('%@.render');
+      if (firstTime) {
+        context.push('<span class="anchor"></span>') ;
+      }
+    }
   }),
   
   // TODO refactor code, remove duplication

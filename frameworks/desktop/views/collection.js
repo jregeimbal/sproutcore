@@ -1786,7 +1786,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     content on its own.
   */
   dragUpdated: function(drag, evt) {
-    // console.log('dragUpdated called in %@'.fmt(this));
+    // console.log('%@.dragUpdated(drag=%@, evt=%@)'.fmt(this, drag, evt));
     var state = this._computeDropOperationState(drag, evt) ;
     // console.log('state is %@'.fmt(state));
     var idx = state[0], dropOp = state[1], dragOp = state[2] ;
@@ -1794,7 +1794,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // if the insertion index or dropOp have changed, update the insertion point
     if (dragOp !== SC.DRAG_NONE) {
       if ((this._lastInsertionIndex !== idx) || (this._lastDropOperation !== dropOp)) {
-        var itemView = this.itemViewForContent(this.get('content').objectAt(idx));
+        // var itemView = this.itemViewForContent(this.get('content').objectAt(idx));
+        var itemView = this.itemViewAtContentIndex(idx) ;
         this.showInsertionPoint(itemView, dropOp) ;
       }
       
@@ -1977,7 +1978,8 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var orient = this.get('insertionOrientation') ;
     var ret=  null ;
     for(var idx=0; ((ret === null) && (idx<content.length)); idx++) {
-      itemView = this.itemViewForContent(content.objectAt(idx));
+      // itemView = this.itemViewForContent(content.objectAt(idx));
+      itemView = this.itemViewAtContentIndex(idx);
       f = this.convertFrameFromView(itemView.get('frame'), itemView) ;
       
       // if we are a horizontal orientation, look for the first item that 
@@ -2081,13 +2083,17 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   dragViewFor: function(dragContent) {
     var view = SC.View.create() ;
     
-    var ary = dragContent ;
+    var ary = dragContent, content = SC.makeArray(this.get('content')) ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
-      var itemView = this.itemViewForContent(ary[idx]) ;
-      if (itemView) view.$().append(itemView.rootElement.cloneNode(true)) ;
+      // var itemView = this.itemViewForContent(ary[idx]) ;
+      var itemView = this.itemViewAtContentIndex(content.indexOf(ary[idx])) ;
+      if (itemView) view.set('layer', itemView.get('layer').cloneNode(true)) ;
     }
     
-    var frame = this.convertFrameToView(this.get('clippingFrame'), null) ;
+    var frame = itemView.get('frame') ;
+    // console.log('%@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(itemView, frame.y, frame.x, frame.width, frame.height)) ;
+    frame = itemView.convertFrameToView(frame, null) ;
+    // console.log('%@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(view, frame.y, frame.x, frame.width, frame.height)) ;
     view.adjust({ top: frame.y, left: frame.x, width: frame.width, height: frame.height }) ;
     return view ;
   },
