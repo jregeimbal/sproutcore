@@ -631,7 +631,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     @returns {SC.View} the item view or null
   */
   itemViewForEvent: function(evt) {
-    console.log('%@.itemViewForEvent(evt=%@)'.fmt(this, evt));
+    // console.log('%@.itemViewForEvent(evt=%@)'.fmt(this, evt));
     var responder = this.getPath('pane.rootResponder') ;
     
     if (!responder) return null ; // fast path
