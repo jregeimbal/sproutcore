@@ -5,8 +5,10 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-require('views/panel');
-require('views/button');
+sc_require('views/panel');
+sc_require('views/button');
+sc_require('mixins/shadow');
+
 /** 
   button1 : 1st button from the right. default:OK
   button2 : 2nd button from the right. Optional. Could be Cancel or 2nd action.
@@ -49,9 +51,10 @@ SC.BUTTON3_STATUS = 'button3';
   - *plain()* - displays an alert w/o any icon
   - *show()* - displays an alert with a customizable icon to the left
   
-  In addition to passing a message, description and caption, you can also customize
-  the title of the button 1 (OK) and add an optional button 2 and 3 (Cancel or Extra).  Just
-  pass these titles of these buttons to enable them or null to disable then.
+  In addition to passing a message, description and caption, you can also 
+  customize the title of the button 1 (OK) and add an optional button 2 and 3 
+  (Cancel or Extra).  Just pass these titles of these buttons to enable them 
+  or null to disable then.
   
   Additionally, you can pass a delegate object as the last parameter.  This
   delegate's 'alertPanelDidDismiss()' method will be called when the panel
@@ -104,7 +107,7 @@ SC.BUTTON3_STATUS = 'button3';
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.AlertPanel = SC.Panel.extend({
+SC.AlertPanel = SC.Panel.extend(SC.Shadow, {
   
   classNames: 'sc-alert-panel',
   
@@ -179,6 +182,7 @@ SC.AlertPanel = SC.Panel.extend({
     @property {SC.ButtonView}
   */
   buttonOne: SC.outlet('contentView.childViews.1.childViews.1'),
+  // buttonOne: SC.outlet('childViews.1.childViews.1'),
 
   /**
     The button view for the button 2 (Cancel).
@@ -186,6 +190,7 @@ SC.AlertPanel = SC.Panel.extend({
     @property {SC.ButtonView}
   */
   buttonTwo: SC.outlet('contentView.childViews.1.childViews.0'),
+  // buttonTwo: SC.outlet('childViews.1.childViews.0'),
 
   /**
     The button view for the button 3 (Extra).
@@ -193,15 +198,18 @@ SC.AlertPanel = SC.Panel.extend({
     @property {SC.ButtonView}
   */
   buttonThree: SC.outlet('contentView.childViews.2'),
+  // buttonThree: SC.outlet('childViews.2'),
   
   /** @private - internal view that is actually displayed */
   contentView: SC.View.extend({
     layout: { centerX: 0, width: 460, top: 100, height: 'auto' },
     
+    layout: { centerX: 0, width: 460, top: 100 },
+  
     childViews: [
       SC.View.extend(SC.StaticLayout, {
         classNames: ['info'],
-
+      
         render: function(context, firstTime) {
           var pane = this.get('pane');
           var blank = sc_static('blank') ;
@@ -213,7 +221,7 @@ SC.AlertPanel = SC.Panel.extend({
           context.push('<div class="seperator" />');
         }
       }),
-
+    
       SC.View.extend({
         layout: { bottom: 14, height: 23, right: 14, width: 'auto' },
         childViews: [
@@ -227,7 +235,7 @@ SC.AlertPanel = SC.Panel.extend({
             action: "dismiss",
             isVisible: NO
           }),
-
+        
           SC.ButtonView.extend({
             useStaticLayout: YES,
             actionKey: SC.BUTTON1_STATUS,
@@ -238,7 +246,7 @@ SC.AlertPanel = SC.Panel.extend({
             action: "dismiss"
           })]
       }),
-      
+    
       SC.ButtonView.extend({
         actionKey: SC.BUTTON3_STATUS,
         localize: YES,
@@ -247,9 +255,10 @@ SC.AlertPanel = SC.Panel.extend({
         title: "Extra", 
         action: "dismiss",
         isVisible: NO
-      })]
+      })
+    ],
   }),
-
+  
   /**
     Action triggered whenever any button is pressed.  Notifies any delegate
     and then hides the alert panel.
@@ -310,7 +319,7 @@ SC.AlertPanel.show = function(message, description, caption, button1Title, butto
   
   // get the delegate and normalize the rest of the params
   var args = this._normalizeArguments(arguments);
-  console.log('SC.AlertPanel.show(%@)'.fmt(args.join(',')));
+  // console.log('SC.AlertPanel.show(%@)'.fmt(args.join(',')));
   
   // create basic AlertPanel
   var ret = this.create({

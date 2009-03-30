@@ -2,10 +2,10 @@
   background: sc_static('standard-white-fade') repeat ;
 }
 
-.sc-pane.sc-panel.sc-alert-panel > div > .sc-view {
-	overflow: visible;
+/*.sc-pane.sc-panel.sc-alert-panel > div > .sc-view {
+  overflow: visible;
 }
-
+*/
 .sc-alert-panel .info {
 	position: relative ;
 	min-height: 48px;

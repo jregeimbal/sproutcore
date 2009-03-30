@@ -1,6 +1,13 @@
 /** SC.Panel Support */
 
-.sc-pane.sc-panel > div > .sc-view {
+.sc-pane.sc-panel.sc-translucent > div.translucent {
+  opacity: 0.5;
+  background-color: gray ;
+  z-index: 1;
+}
+
+.sc-pane.sc-panel > .sc-view {
+	z-index: 2;
 	border: 0px #444 solid;
 	background-color: #fafafa ;
 }

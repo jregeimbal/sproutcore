@@ -1,0 +1,39 @@
+/** SC.PickerPane Support */
+
+.sc-picker-pointer > div.perfect-right {
+  background: static_url('images/panels/reveal-tabs.png') no-repeat 0px -64px;
+  position: absolute;
+  width: 25px;
+  height: 51px;
+  top: 20px;
+  left: -25px;
+}
+
+.sc-picker-pointer > div.perfect-left {
+  background: static_url('images/panels/reveal-tabs.png') no-repeat -32px -64px;
+  position: absolute;
+  width: 25px;
+  height: 51px;
+  top: 20px;
+  right: -25px;
+}
+
+.sc-picker-pointer > div.perfect-top {
+  background: static_url('images/panels/reveal-tabs.png') no-repeat 0px 0px;
+  position: absolute;
+  width: 51px;
+  height: 31px;
+  bottom: -41px;
+  left: 50%;
+  margin-left: -25px;
+}
+
+.sc-picker-pointer > div.perfect-bottom {
+  background: static_url('images/panels/reveal-tabs.png') no-repeat 0px -32px;
+  position: absolute;
+  width: 51px;
+  height: 19px;
+  top: -29px;
+  left: 50%;
+  margin-left: -25px;
+}

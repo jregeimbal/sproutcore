@@ -5,7 +5,7 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-require('views/panel');
+sc_require('views/panel');
 
 /**
   Displays a modal sheet pane animated drop down from top.
@@ -27,20 +27,47 @@ require('views/panel');
   @extends SC.Panel
   @since SproutCore 1.0
 */
-SC.SheetPane = SC.Panel.extend({
+SC.SheetPanel = SC.Panel.extend({
   
   classNames: 'sc-sheet-pane',
-
+  
   init: function() {
     sc_super() ;
-
-/** TODO: Implement Anition   
-    this.visibleAnimation = {
-      visible: 'top: 0px',
-      hidden: 'top: -500px',
-      duration: 300
-    } ;
-*/
-  }    
-
+    this._targetLayout = this.get('layout') ;
+    var f = this.get('frame') ;
+    console.log(f);
+    this.set('layout', {
+      top: 0-f.height-20, // height of shadow...
+      centerX: 0,
+      width: f.width,
+      height: f.height
+    });
+  },
+  
+  render: function(context, firstTime) {
+    if (firstTime) {
+      context.addClass('sc-transition-ease-out') ;
+      if (SC.browser.webkit) this.invokeNext(this.applyTargetLayout) ;
+      else this.applyTargetLayout() ;
+    }
+    sc_super() ;
+  },
+  
+  applyTargetLayout: function() {
+    var layout = this.get('layout') ;
+    this.set('layout', this._targetLayout) ;
+    this.updateLayout() ;
+    this._targetLayout = layout ;
+  },
+  
+  remove: function() {
+    this.applyTargetLayout() ;
+    if (SC.browser.webkit) this.invokeLater(this.performRemove, 300) ;
+    else this.performRemove() ;
+  },
+  
+  performRemove: function() {
+    this.remove.base.apply(this) ;
+  }
+  
 });
