@@ -1657,132 +1657,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @readOnly
   */
   layoutStyle: function() {
-    var layout = this.get('layout'), ret = {}, pdim = null;
-    
-    // X DIRECTION
-    
-    // handle left aligned and left/right
-    if (!SC.none(layout.left)) {
-      ret.left = Math.floor(layout.left);
-      if (layout.width !== undefined) {
-        ret.width = Math.floor(layout.width) ;
-        ret.right = null ;
-      } else {
-        ret.width = null ;
-        ret.right = Math.floor(layout.right || 0) ;
-      }
-      ret.marginLeft = 0 ;
-      
-    // handle right aligned
-    } else if (!SC.none(layout.right)) {
-      ret.right = Math.floor(layout.right) ;
-      ret.marginLeft = 0 ;
-      
-      if (SC.none(layout.width)) {
-        ret.left = 0;
-        ret.width = null;
-      } else {
-        ret.left = null ;
-        ret.width = Math.floor(layout.width || 0) ;
-      }
-      
-    // handle centered
-    } else if (!SC.none(layout.centerX)) {
-      ret.left = "50%";
-      ret.width = Math.floor(layout.width || 0) ;
-      ret.marginLeft = Math.floor(layout.centerX - ret.width/2) ;
-      ret.right = null ;
-    
-    // if width defined, assume top/left of zero
-    } else if (!SC.none(layout.width)) {
-      ret.left =  0;
-      ret.right = null;
-      ret.width = Math.floor(layout.width);
-      ret.marginLeft = 0;
-      
-    // fallback, full width.
-    } else {
-      ret.left = 0;
-      ret.right = 0;
-      ret.width = null ;
-      ret.marginLeft= 0;
-    }
-    
-    // handle min/max
-    ret.minWidth = (layout.minWidth === undefined) ? null : layout.minWidth;
-    ret.maxWidth = (layout.maxWidth === undefined) ? null : layout.maxWidth;
-    
-    // Y DIRECTION
-    
-    // handle left aligned and left/right
-    if (!SC.none(layout.top)) {
-      ret.top = Math.floor(layout.top);
-      if (layout.height !== undefined) {
-        ret.height = Math.floor(layout.height) ;
-        ret.bottom = null ;
-      } else {
-        ret.height = null ;
-        ret.bottom = Math.floor(layout.bottom || 0) ;
-      }
-      ret.marginTop = 0 ;
-      
-    // handle right aligned
-    } else if (!SC.none(layout.bottom)) {
-      ret.marginTop = 0 ;
-      ret.bottom = Math.floor(layout.bottom) ;
-      if (SC.none(layout.height)) {
-        ret.top = 0;
-        ret.height = null ;
-      } else {
-        ret.top = null ;
-        ret.height = Math.floor(layout.height || 0) ;
-      }
-      
-    // handle centered
-    } else if (!SC.none(layout.centerY)) {
-      ret.top = "50%";
-      ret.height = Math.floor(layout.height || 0) ;
-      ret.marginTop = Math.floor(layout.centerY - ret.height/2) ;
-      ret.bottom = null ;
-    
-    } else if (!SC.none(layout.height)) {
-      ret.top = 0;
-      ret.bottom = null;
-      ret.height = Math.floor(layout.height || 0);
-      ret.marginTop = 0;
-      
-    // fallback, full width.
-    } else {
-      ret.top = 0;
-      ret.bottom = 0;
-      ret.height = null ;
-      ret.marginTop= 0;
-    }
-    
-    // handle min/max
-    ret.minHeight = (layout.minHeight === undefined) ? null : layout.minHeight;
-    ret.maxHeight = (layout.maxHeight === undefined) ? null : layout.maxHeight;
-    
-    // if zIndex is set, use it.  otherwise let default shine through
-    ret.zIndex = SC.none(layout.zIndex) ? null : layout.zIndex.toString();
-
-    // if backgroundPosition is set, use it.  otherwise let default shine through
-    ret.backgroundPosition = SC.none(layout.backgroundPosition) ? null : layout.backgroundPosition.toString();
-    
-    // set default values to null to allow built-in CSS to shine through
-    // currently applies only to marginLeft & marginTop
-    var dims = SC._VIEW_DEFAULT_DIMS, loc = dims.length, x;
-    while(--loc >=0) {
-      x = dims[loc];
-      if (ret[x]===0) ret[x]=null;
-    }
-    
-    // convert any numbers into a number + "px".
-    for(var key in ret) {
-      var value = ret[key];
-      if (typeof value === SC.T_NUMBER) ret[key] = (value + "px");
-    }
-    return ret ;
+    return SC.View.layoutStyleForLayout(this.get('layout')) ;
   }.property().cacheable(),
   
   /**
@@ -1849,6 +1724,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
     @returns {void}
   */
   layoutDidChangeFor: function(childView) {
+    // console.log('%@.layoutDidChangeFor(childView=%@)'.fmt(this, childView));
     var set = this._needLayoutViews ;
     if (!set) set = this._needLayoutViews = SC.Set.create();
     set.add(childView);
@@ -1940,6 +1816,148 @@ SC.View.mixin(/** @scope SC.View @static */ {
 
   /** @private walk like a duck -- used by SC.Page */
   isViewClass: YES,
+  
+  /**
+    This method computes the layoutStyle for a given layout hash.  It is used 
+    internally by the layoutStyle() instance method.
+    
+    @param {Hash} layout
+    @returns {Hash}
+  */
+  layoutStyleForLayout: function(layout) {
+    var ret = {}, pdim = null ;
+    
+    // X DIRECTION
+    
+    // handle left aligned and left/right
+    if (!SC.none(layout.left)) {
+      ret.left = Math.floor(layout.left);
+      if (layout.width !== undefined) {
+        ret.width = Math.floor(layout.width) ;
+        ret.right = null ;
+      } else {
+        ret.width = null ;
+        ret.right = Math.floor(layout.right || 0) ;
+      }
+      ret.marginLeft = 0 ;
+      
+    // handle right aligned
+    } else if (!SC.none(layout.right)) {
+      ret.right = Math.floor(layout.right) ;
+      ret.marginLeft = 0 ;
+      
+      if (SC.none(layout.width)) {
+        ret.left = 0 ;
+        ret.width = null ;
+      } else {
+        ret.left = null ;
+        ret.width = Math.floor(layout.width || 0) ;
+      }
+      
+    // handle centered
+    } else if (!SC.none(layout.centerX)) {
+      ret.left = '50%' ;
+      ret.width = Math.floor(layout.width || 0) ;
+      ret.marginLeft = Math.floor(layout.centerX - ret.width/2) ;
+      ret.right = null ;
+      
+    // if width defined, assume top/left of zero
+    } else if (!SC.none(layout.width)) {
+      ret.left = 0 ;
+      ret.right = null ;
+      ret.width = Math.floor(layout.width) ;
+      ret.marginLeft = 0 ;
+      
+    // fallback, full width.
+    } else {
+      ret.left = 0 ;
+      ret.right = 0 ;
+      ret.width = null ;
+      ret.marginLeft= 0 ;
+    }
+    
+    // handle min/max
+    ret.minWidth = (layout.minWidth === undefined) ? null : layout.minWidth ;
+    ret.maxWidth = (layout.maxWidth === undefined) ? null : layout.maxWidth ;
+    
+    // Y DIRECTION
+    
+    // handle left aligned and left/right
+    if (!SC.none(layout.top)) {
+      ret.top = Math.floor(layout.top) ;
+      if (layout.height !== undefined) {
+        ret.height = Math.floor(layout.height) ;
+        ret.bottom = null ;
+      } else {
+        ret.height = null ;
+        ret.bottom = Math.floor(layout.bottom || 0) ;
+      }
+      ret.marginTop = 0 ;
+      
+    // handle right aligned
+    } else if (!SC.none(layout.bottom)) {
+      ret.marginTop = 0 ;
+      ret.bottom = Math.floor(layout.bottom) ;
+      if (SC.none(layout.height)) {
+        ret.top = 0;
+        ret.height = null ;
+      } else {
+        ret.top = null ;
+        ret.height = Math.floor(layout.height || 0) ;
+      }
+      
+    // handle centered
+    } else if (!SC.none(layout.centerY)) {
+      ret.top = '50%' ;
+      ret.height = Math.floor(layout.height || 0) ;
+      ret.marginTop = Math.floor(layout.centerY - ret.height/2) ;
+      ret.bottom = null ;
+      
+    } else if (!SC.none(layout.height)) {
+      ret.top = 0 ;
+      ret.bottom = null ;
+      ret.height = Math.floor(layout.height || 0) ;
+      ret.marginTop = 0 ;
+      
+    // fallback, full width.
+    } else {
+      ret.top = 0 ;
+      ret.bottom = 0 ;
+      ret.height = null ;
+      ret.marginTop= 0 ;
+    }
+    
+    // handle min/max
+    ret.minHeight = (layout.minHeight === undefined) ?
+      null :
+      layout.minHeight ;
+    ret.maxHeight = (layout.maxHeight === undefined) ?
+      null :
+      layout.maxHeight ;
+    
+    // if zIndex is set, use it.  otherwise let default shine through
+    ret.zIndex = SC.none(layout.zIndex) ? null : layout.zIndex.toString() ;
+    
+    // if backgroundPosition is set, use it.  otherwise let default shine through
+    ret.backgroundPosition = SC.none(layout.backgroundPosition) ?
+      null :
+      layout.backgroundPosition.toString() ;
+    
+    // set default values to null to allow built-in CSS to shine through
+    // currently applies only to marginLeft & marginTop
+    var dims = SC._VIEW_DEFAULT_DIMS, loc = dims.length, x ;
+    while(--loc >=0) {
+      x = dims[loc];
+      if (ret[x]===0) ret[x] = null ;
+    }
+    
+    // convert any numbers into a number + "px".
+    for(var key in ret) {
+      var value = ret[key] ;
+      if (typeof value === SC.T_NUMBER) ret[key] = (value + "px") ;
+    }
+    return ret ;
+  },
   
   /** 
     This method works just like extend() except that it will also preserve

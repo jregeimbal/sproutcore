@@ -181,83 +181,83 @@ SC.AlertPanel = SC.Panel.extend(SC.Shadow, {
     
     @property {SC.ButtonView}
   */
-  // buttonOne: SC.outlet('contentView.childViews.1.childViews.1'),
-  buttonOne: SC.outlet('childViews.1.childViews.1'),
+  buttonOne: SC.outlet('contentView.childViews.1.childViews.1'),
+  // buttonOne: SC.outlet('childViews.1.childViews.1'),
 
   /**
     The button view for the button 2 (Cancel).
     
     @property {SC.ButtonView}
   */
-  // buttonTwo: SC.outlet('contentView.childViews.1.childViews.0'),
-  buttonTwo: SC.outlet('childViews.1.childViews.0'),
+  buttonTwo: SC.outlet('contentView.childViews.1.childViews.0'),
+  // buttonTwo: SC.outlet('childViews.1.childViews.0'),
 
   /**
     The button view for the button 3 (Extra).
     
     @property {SC.ButtonView}
   */
-  // buttonThree: SC.outlet('contentView.childViews.2'),
-  buttonThree: SC.outlet('childViews.2'),
+  buttonThree: SC.outlet('contentView.childViews.2'),
+  // buttonThree: SC.outlet('childViews.2'),
   
   /** @private - internal view that is actually displayed */
-  // contentView: SC.View.extend({
-  //   layout: { centerX: 0, width: 460, top: 100, height: 'auto' },
+  contentView: SC.View.extend({
+    layout: { centerX: 0, width: 460, top: 100, height: 'auto' },
     
-  layout: { centerX: 0, width: 460, top: 100 },
+    layout: { centerX: 0, width: 460, top: 100 },
   
-  childViews: [
-    SC.View.extend(SC.StaticLayout, {
-      classNames: ['info'],
+    childViews: [
+      SC.View.extend(SC.StaticLayout, {
+        classNames: ['info'],
       
-      render: function(context, firstTime) {
-        var pane = this.get('pane');
-        var blank = sc_static('blank') ;
-        if(pane.get('icon') == 'blank') context.addClass('plain');
-        context.push('<img src="%@" class="icon %@" />'.fmt(blank, pane.get('icon')));
-        context.begin('h1').text(pane.get('message') || '').end();
-        context.push(pane.get('displayDescription') || '');
-        context.push(pane.get('displayCaption') || '');
-        context.push('<div class="seperator" />');
-      }
-    }),
+        render: function(context, firstTime) {
+          var pane = this.get('pane');
+          var blank = sc_static('blank') ;
+          if(pane.get('icon') == 'blank') context.addClass('plain');
+          context.push('<img src="%@" class="icon %@" />'.fmt(blank, pane.get('icon')));
+          context.begin('h1').text(pane.get('message') || '').end();
+          context.push(pane.get('displayDescription') || '');
+          context.push(pane.get('displayCaption') || '');
+          context.push('<div class="seperator" />');
+        }
+      }),
     
-    SC.View.extend({
-      layout: { bottom: 14, height: 23, right: 14, width: 'auto' },
-      childViews: [
-        SC.ButtonView.extend({
-          useStaticLayout: YES,
-          actionKey: SC.BUTTON2_STATUS,
-          localize: YES,
-          titleMinWidth: 80,
-          layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
-          title: "Cancel", 
-          action: "dismiss",
-          isVisible: NO
-        }),
+      SC.View.extend({
+        layout: { bottom: 14, height: 23, right: 14, width: 'auto' },
+        childViews: [
+          SC.ButtonView.extend({
+            useStaticLayout: YES,
+            actionKey: SC.BUTTON2_STATUS,
+            localize: YES,
+            titleMinWidth: 80,
+            layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
+            title: "Cancel", 
+            action: "dismiss",
+            isVisible: NO
+          }),
         
-        SC.ButtonView.extend({
-          useStaticLayout: YES,
-          actionKey: SC.BUTTON1_STATUS,
-          localize: YES,
-          titleMinWidth: 80,
-          layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
-          title: "OK", 
-          action: "dismiss"
-        })]
-    }),
+          SC.ButtonView.extend({
+            useStaticLayout: YES,
+            actionKey: SC.BUTTON1_STATUS,
+            localize: YES,
+            titleMinWidth: 80,
+            layout: { right: 0, height: 21, width: 'auto', bottom: 0 },
+            title: "OK", 
+            action: "dismiss"
+          })]
+      }),
     
-    SC.ButtonView.extend({
-      actionKey: SC.BUTTON3_STATUS,
-      localize: YES,
-      titleMinWidth: 80,
-      layout: { bottom: 14, height: 21, left: 16, width: 'auto' },
-      title: "Extra", 
-      action: "dismiss",
-      isVisible: NO
-    })
-  ],
-  // }),
+      SC.ButtonView.extend({
+        actionKey: SC.BUTTON3_STATUS,
+        localize: YES,
+        titleMinWidth: 80,
+        layout: { bottom: 14, height: 21, left: 16, width: 'auto' },
+        title: "Extra", 
+        action: "dismiss",
+        isVisible: NO
+      })
+    ],
+  }),
   
   /**
     Action triggered whenever any button is pressed.  Notifies any delegate
@@ -319,7 +319,7 @@ SC.AlertPanel.show = function(message, description, caption, button1Title, butto
   
   // get the delegate and normalize the rest of the params
   var args = this._normalizeArguments(arguments);
-  console.log('SC.AlertPanel.show(%@)'.fmt(args.join(',')));
+  // console.log('SC.AlertPanel.show(%@)'.fmt(args.join(',')));
   
   // create basic AlertPanel
   var ret = this.create({

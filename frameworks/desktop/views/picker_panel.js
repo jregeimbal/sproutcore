@@ -5,7 +5,7 @@
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('views/palette_pane');
+sc_require('views/palette_panel');
 sc_require('mixins/picker_pointer');
 
 /**
@@ -14,7 +14,7 @@ sc_require('mixins/picker_pointer');
   The default way to use the picker pane is to simply add it to your page like this:
   
   {{{
-    SC.PickerPane.create({
+    SC.PickerPanel.create({
       layout: { width: 400, height: 200 },
       contentView: SC.View.extend({
         layout: {} // doesn't matter...
@@ -33,37 +33,37 @@ sc_require('mixins/picker_pointer');
   
   1. default:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor);
   }}}
 
   2. menu below the anchor with default offset matrix [1,4,3]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_MENU);
   }}}
 
   3. menu on the right side of anchor with custom offset matrix [2,6,0]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_MENU, [2,6,0]);
   }}}
 
   4. fixed below the anchor with default offset matrix [1,4,3]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_FIXED);
   }}}
 
   5. fixed on the right side of anchor with custom offset matrix [-22,-17,0]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_FIXED, [-22,-17,0]);
   }}}
 
   6. pointer with default position pref matrix [0,1,2,3,2]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_POINTER);
   }}}
   perfect right (0) > perfect left (1) > perfect top (2) > perfect bottom (3)
@@ -71,7 +71,7 @@ sc_require('mixins/picker_pointer');
 
   7. pointer with custom position pref matrix [3,0,1,2,2]:   
   {{{
-    SC.PickerPane.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
+    SC.PickerPanel.create({contentView: SC.View.extend({layout: { width: 400, height: 200 }})
     }).popup(anchor, SC.PICKER_POINTER, [3,0,1,2,2]);
   }}}
 

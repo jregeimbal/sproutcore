@@ -54,6 +54,61 @@ SC.PalettePanel = SC.Panel.extend(SC.Shadow, {
   isAnchored: NO,
   
   /** @private
+    Override default layoutDidChange() behavior.
+  */
+  layoutDidChange: function() {
+    this.beginPropertyChanges() ;
+    if (this.frame) this.notifyPropertyChange('frame') ;
+    this.notifyPropertyChange('layoutStyle') ;
+    this.endPropertyChanges() ;
+    
+    // notify layoutView...
+    var layoutView = this.get('layoutView');
+    if (layoutView) {
+      layoutView.set('childViewsNeedLayout', YES);
+      layoutView.layoutDidChangeFor(this) ;
+      if (layoutView.get('childViewsNeedLayout')) {
+        layoutView.invokeOnce(layoutView.layoutChildViewsIfNeeded);
+      }
+     }
+    
+    return this ;
+  }.observes('layout'),
+  
+  /** @private
+    Override default layoutDidChangeFor() behavior.
+  */
+  layoutDidChangeFor: function(childView) {
+    // required to be compatible with SC.View's implementation...
+    var set = this._needLayoutViews ;
+    if (!set) set = this._needLayoutViews = SC.Set.create();
+    
+    // is the layout adjustable? not if it's our contentView...
+    var contentView = this.get('contentView') ;
+    if (childView === contentView) {
+      console.log("ignoring childView's layout because it is the palette's contentView") ;
+      // silently replace the contentView's layout to what it should be...
+      contentView.layout = { top:0, right:0, bottom:0, left: 0 } ;
+    } else sc_super() ;
+  },
+  
+  /** @private
+    Override default layout handling.
+  */
+  renderLayout: function(context, firstTime) {
+    // apply layout to our contentView initially
+    if (firstTime) {
+      var contentView = this.get('contentView') ;
+      if (contentView) {
+        console.log('setting the contentView\'s layout');
+        contentView.set('layout', { top:0, right:0, bottom:0, left: 0 }) ;
+      }
+    }
+    
+    context.addStyle(this.get('layoutStyle')) ;
+  },
+  
+  /** @private
     drag&drop palette to new position.
   */
   mouseDown: function(evt) {

@@ -14,8 +14,9 @@ sc_require('mixins/translucent');
   
   {{{
     SC.Panel.create({
+      layout: { width: 400, height: 200, centerX: 0, centerY: 0 },
       contentView: SC.View.extend({
-        layout: { width: 400, height: 200, centerX: 0, centerY: 0 },
+        
       })
     }).append() ;
   }}}
@@ -28,9 +29,6 @@ sc_require('mixins/translucent');
   @since SproutCore 1.0
 */
 SC.Panel = SC.Pane.extend(SC.Translucent, {
-  
-  /** @private */
-  layout: { left:0, right:0, top:0, bottom:0 },
   
   /** @private */
   classNames: ['sc-panel'],
@@ -106,7 +104,53 @@ SC.Panel = SC.Pane.extend(SC.Translucent, {
     this.get('rootResponder').makeKeyPane(this) ;
     return ret ;
   },
-
+  
+  /** @private
+    Override default layoutDidChange() behavior.
+  */
+  layoutDidChange: function() {
+    var contentView = this.get('contentView'), layout = this.get('layout') ;
+    var zIndex = layout.zIndex ;
+    
+    // zIndex is transferred to the panel, not applied to the contentView
+    if (zIndex !== undefined) {
+      layout = SC.clone(layout) ;
+      delete layout.zIndex ;
+    }
+    
+    // apply our layout to our contentView
+    if (contentView) contentView.set('layout', layout) ;
+    
+    // re-apply our own layout when our zIndex changes...
+    if (zIndex !== this._zIndex) sc_super() ;
+  }.observes('layout'),
+  
+  /** @private
+    Override default layout handling.
+  */
+  renderLayout: function(context, firstTime) {
+    var layout = this.get('layout') || {} ;
+    var zIndex = this._zIndex = layout.zIndex ;
+    var fullScreenLayout = { top:0, right:0, bottom:0, left: 0 } ;
+    
+    // include zIndex if defined...
+    if (zIndex !== undefined) fullScreenLayout.zIndex = zIndex ;
+    
+    // apply our layout to our contentView initially
+    if (firstTime) {
+      var contentView = this.get('contentView') ;
+      if (contentView) {
+        if (zIndex !== undefined) {
+          layout = SC.clone(layout) ;
+          delete layout.zIndex ;
+        }
+        contentView.set('layout', layout) ;
+      }
+    }
+    
+    context.addStyle(SC.View.layoutStyleForLayout(fullScreenLayout)) ;
+  },
+  
   /** @private
     Suppress all mouse events on panel itself.
   */

@@ -29,7 +29,7 @@ SC.Shadow = {
   
   /** @private */
   renderMixin: function(context, firstTime) {
-    console.log('%@.renderMixin<SC.Shadow>(context=%@, firstTime=%@)'.fmt(this, context, firstTime));
+    // console.log('%@.renderMixin<SC.Shadow>(context=%@, firstTime=%@)'.fmt(this, context, firstTime));
     if (firstTime) {
       context.push(
         '<div class="top-left-edge"></div>',
