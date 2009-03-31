@@ -640,14 +640,14 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var baseGuid = SC.guidFor(this) ;
     var baseGuidLen = baseGuid.length ;
     var element = evt.target ;
-    var elementId = element.id.slice(0, baseGuidLen) ;
+    var elementId = (element.id) ? element.id.slice(0, baseGuidLen) : '' ;
     while (elementId !== baseGuid) {
       element = element.parentNode ;
       if (!element) return null ; // didn't find it!
-      elementId = element.id.slice(0, baseGuidLen) ;
+      elementId = (element.id) ? element.id.slice(0, baseGuidLen) : '' ;
     }
     
-    if (element.id.length === baseGuidLen) {
+    if (element.id && element.id.length === baseGuidLen) {
       return null ; // we found ourself, so we're not over a child view
     }
     
