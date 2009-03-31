@@ -52,7 +52,7 @@ config :iphone_theme,
   :debug_required => ['sproutcore/debug']
 
 config :standard_theme, 
-  :required => :empty_theme, 
+  #:required => :empty_theme, 
   :theme_name => 'sc-theme',
   :test_required  => ['sproutcore/testing'],
   :debug_required => ['sproutcore/debug']
