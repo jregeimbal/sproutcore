@@ -264,18 +264,20 @@ SC.Drag = SC.Object.extend(
     var evt = this.event ;
     
     // compute the ghost offset from the original mouse location
-    var dragView = this.dragView ;
-    // var origin = dragView.convertFrameToView(dragView.get('frame'), null) ;
-    var origin = dragView.get('frame') ;
-    var loc = { x: evt.pageX, y: evt.pageY } ;
-    // console.log(loc) ;
-    // console.log(origin) ;
-    this.ghostOffset = { x: (loc.x-origin.x), y: (loc.y-origin.y) } ;
-    // this.ghostOffset = loc ;
-    // console.log(this.ghostOffset) ;
     
+    var loc = { x: evt.pageX, y: evt.pageY } ;
     this.set('location', loc) ;
     // console.log({ top: loc.y, left: loc.x });
+    
+    var dv = this.dragView ;
+    
+    // convert to global cooridinates
+    var f = dv.convertFrameToView(dv.get('clippingFrame'), null) ;
+    dv.adjust({ top: f.y, left: f.x, width: f.width, height: f.height });
+    
+    var origin = f ; // dv.convertFrameToView(dv.get('frame'), null) ;
+    var pointer = { x: this.event.pageX, y: this.event.pageY } ;
+    this.ghostOffset = { x: (pointer.x-origin.x), y: (pointer.y-origin.y) } ;
     
     // position the ghost view
     this._positionGhostView(evt) ;
@@ -312,9 +314,6 @@ SC.Drag = SC.Object.extend(
     // cache the current location to avoid processing duplicate mouseDragged 
     // calls
     this.set('location', { x: evt.pageX, y: evt.pageY }) ;
-    
-    // reposition the ghostView
-    this._positionGhostView(evt) ;
     
     // STEP 1: Determine the deepest drop target that allows an operation.
     // if the drop target selected the last time this method was called 
@@ -361,6 +360,9 @@ SC.Drag = SC.Object.extend(
      
     // notify source that the drag moved
     if (source && source.dragDidMove) source.dragDidMove(this, loc) ;
+    
+    // reposition the ghostView
+    this._positionGhostView(evt) ;
   },
   
   /**
@@ -441,7 +443,7 @@ SC.Drag = SC.Object.extend(
   */
   _positionGhostView: function(evt) {
     // console.log('%@._positionGhostView(evt=%@)'.fmt(this, evt));
-    var loc = { x: evt.pageX, y: evt.pageY } ;
+    var loc = this.get('location') ;
     // console.log(loc) ;
     loc.x -= this.ghostOffset.x ;
     loc.y -= this.ghostOffset.y ;

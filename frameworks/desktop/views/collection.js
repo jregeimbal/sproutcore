@@ -2101,16 +2101,10 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     
     var ary = dragContent, content = SC.makeArray(this.get('content')) ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
-      // var itemView = this.itemViewForContent(ary[idx]) ;
       var itemView = this.itemViewAtContentIndex(content.indexOf(ary[idx])) ;
       if (itemView) view.set('layer', itemView.get('layer').cloneNode(true)) ;
     }
     
-    var frame = itemView.get('frame') ;
-    // console.log('%@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(itemView, frame.y, frame.x, frame.width, frame.height)) ;
-    frame = itemView.convertFrameToView(frame, null) ;
-    // console.log('%@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(view, frame.y, frame.x, frame.width, frame.height)) ;
-    view.adjust({ top: frame.y, left: frame.x, width: frame.width, height: frame.height }) ;
     return view ;
   },
   
