@@ -1563,20 +1563,19 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
       if (this.get('dragDataTypes').get('length') > 0) {
         // Build the drag view to use for the ghost drag.  This 
         // should essentially contain any visible drag items.
-        // var view = this.ghostViewFor(dragContent) ;
+        //var view = this.ghostViewFor(dragContent) ;
         var view = this.invokeDelegateMethod(this.delegate, 'dragViewFor', dragContent, this);
         
         // Initiate the drag
-        var dragOptions = {
+        SC.Drag.start({
           event: this._mouseDownEvent,
           source: this,
           dragView: view,
           ghost: NO,
           slideBack: YES,
           dataSource: this
-        }; 
+        }); 
         
-        this.invokeDelegateMethod(this.delegate, 'collectionViewStartDrag', dragOptions);
         // Also use this opportunity to clean up since mouseUp won't 
         // get called.
         this._cleanupMouseDown() ;
@@ -1911,19 +1910,6 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   collectionViewShouldBeginDrag: function(view) {
     return this.get('canReorderContent') ;
   },
-  
-  
-  /**
-    This method is a wrapper for SC.Drag so a delegate can pass a different
-    Drag Method
-    
-    @param dragOptions {Object} the options passed to the drag
-  
-  */
-  collectionViewStartDrag: function(dragOptions) {
-    SC.Drag.start(dragOptions);
-  },
-  
   
   // concludeDragOperation: function(op, drag) {
   //   this.hideInsertionPoint() ;
