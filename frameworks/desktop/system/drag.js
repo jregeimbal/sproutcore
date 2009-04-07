@@ -283,7 +283,7 @@ SC.Drag = SC.Object.extend(
     this._positionGhostView(evt) ;
     
     // notify root responder that a drag is in process
-    this._ghostView.rootResponder.dragDidStart(this) ;
+    this.ghostView.rootResponder.dragDidStart(this) ;
     
     var source = this.source ;
     if (source && source.dragDidBegin) source.dragDidBegin(this, loc) ;
@@ -414,16 +414,13 @@ SC.Drag = SC.Object.extend(
     this._dragInProgress = NO ; // required by autoscroll (invoked by a timer)
   },
   
-  /** @private */
-  _ghostView: null,
-  
   /** @private
     This will create the ghostView and add it to the document.
   */
   _createGhostView: function() {
     var that = this ;
     var frame = this.dragView.get('frame') ;
-    var view = this._ghostView = SC.Pane.create({
+    var view = this.ghostView = SC.Pane.create({
       classNames:['sc-ghost-view'],
       layout: { top: frame.y, left: frame.x, width: frame.width, height: frame.height },
       owner: this,
@@ -433,7 +430,7 @@ SC.Drag = SC.Object.extend(
     });
     
     // console.log('dragView %@ frame is { top: %@, left: %@, width: %@, height: %@ }'.fmt(this.dragView, frame.y, frame.x, frame.width, frame.height)) ;
-    // console.log(this._ghostView);
+    // console.log(this.ghostView);
     view.append() ;  // add to window
   },
   
@@ -448,16 +445,16 @@ SC.Drag = SC.Object.extend(
     loc.x -= this.ghostOffset.x ;
     loc.y -= this.ghostOffset.y ;
     // console.log({ top: loc.y, left: loc.x });
-    // console.log(this._ghostView);
-    this._ghostView.adjust({ top: loc.y, left: loc.x }) ;   
-    this._ghostView.invokeOnce('updateLayout') ;
+    // console.log(this.ghostView);
+    this.ghostView.adjust({ top: loc.y, left: loc.x }) ;   
+    this.ghostView.invokeOnce('updateLayout') ;
   },
   
   /** @private */
   _destroyGhostView: function() {
-    if (this._ghostView) {
-      this._ghostView.remove() ;
-      this._ghostView = null ; // this will allow the GC to collect it.
+    if (this.ghostView) {
+      this.ghostView.remove() ;
+      this.ghostView = null ; // this will allow the GC to collect it.
     }
   },
   
