@@ -658,10 +658,12 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var content = SC.makeArray(this.get('content')) ;
     var idx = SC.minRange(nowShowingRange) ;
     var max = SC.maxRange(nowShowingRange) ;
+    
     var c = content.objectAt(idx) ;
     while (SC.guidFor(c) !== contentGuid) {
-      c = content.objectAt(idx++) ;
+      idx++ ;
       if (idx > max) return null ; // couldn't find the content...
+      c = content.objectAt(idx) ;
     }
     
     // then create the view for that content
@@ -2083,7 +2085,9 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   hideInsertionPoint: function() {},
   
   dragViewFor: function(dragContent) {
+    // console.log('%@.dragViewFor(dragContent=%@)'.fmt(this, dragContent)) ;
     var view = SC.View.create() ;
+    view.set('parentView', this ) ;
     
     var ary = dragContent, content = SC.makeArray(this.get('content')) ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
