@@ -750,7 +750,7 @@ SC.Record.mixin(
   // This will add a property function for your record with a collection
   // of records with the given type that belong to your record.
   hasMany: function(recordTypeString,conditionKey,opts) {
-    opts = (opts === undefined) ? {} : Object.clone(opts) ;
+    opts = (opts === undefined) ? {} : SC.clone(opts) ;
     var conditions = opts.conditions || {} ;
     opts.conditions = conditions ;
 
