@@ -297,7 +297,7 @@ SC.Record = SC.Object.extend(
     @returns {Object} the current attributes of the receiver
   **/
   attributes: function() {
-    return Object.clone(this._attributes) ;
+    return SC.clone(this._attributes) ;
   }.property(),
   
   /**
