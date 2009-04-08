@@ -648,6 +648,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     var content = SC.makeArray(this.get('content')) ;
     var idx = SC.minRange(nowShowingRange) ;
     var max = SC.maxRange(nowShowingRange) ;
+    
     var c = content.objectAt(idx) ;
     while (SC.guidFor(c) !== contentGuid) {
       idx++ ;
