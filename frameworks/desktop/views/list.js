@@ -273,6 +273,7 @@ SC.ListView = SC.CollectionView.extend(
   // 
   
   render: function(context, firstTime) {
+    // console.log('%@.render(context=%@, firstTime=%@)'.fmt(this, context ,firstTime ? 'YES' : 'NO'));
     if (SC.BENCHMARK_RENDER) {
       var bkey = '%@.render'.fmt(this) ;
       SC.Benchmark.start(bkey);
@@ -428,10 +429,17 @@ SC.ListView = SC.CollectionView.extend(
     // This will also make it possible to do partial updates during content
     // and selection changes. Now we always do a full update.
     
+    if (SC.DEBUG_PARTIAL_RENDER) {
+      if (childSet.length === 0) console.log('doing a full render');
+      else console.log('doing a partial render');
+    }
+    
     while (--idx >= range.start) {
       c = content.objectAt(idx) ;
-      if (SC.DEBUG_PARTIAL_RENDER) console.log('rendering content(%@) at index %@'.fmt(c.unread, idx));
-      
+      if (SC.DEBUG_PARTIAL_RENDER) {
+        console.log('rendering content(%@) at index %@, content =>'.fmt(c.unread, idx));
+        console.log(c);
+      }
       // use cache of item view guids to avoid creating temporary objects
       guid = SC.guidFor(c);
       if (!(key = guids[guid])) key = guids[guid] = baseKey+guid;
@@ -451,7 +459,10 @@ SC.ListView = SC.CollectionView.extend(
       idx = SC.maxRange(range2) ;
       while (--idx >= range2.start) {
         c = content.objectAt(idx) ;
-        if (SC.DEBUG_PARTIAL_RENDER) console.log('rendering content(%@) at index %@'.fmt(c.unread, idx));
+        if (SC.DEBUG_PARTIAL_RENDER) {
+          console.log('rendering content(%@) at index %@, content =>'.fmt(c.unread, idx));
+          console.log(c);
+        }
         
         // use cache of item view guids to avoid creating temporary objects
         guid = SC.guidFor(c);
