@@ -273,7 +273,6 @@ SC.Drag = SC.Object.extend(
     var pane = dv.get('pane') ;
     var pv = dv.get('parentView') ;
     var clippingFrame = dv.get('clippingFrame') ;
-    
     // convert to global cooridinates
     var f = pv ? pv.convertFrameToView(clippingFrame, null) : clippingFrame ;
     var pf = pane ? pane.get('frame') : {x:0, y: 0};
@@ -284,11 +283,22 @@ SC.Drag = SC.Object.extend(
       width: f.width,
       height: f.height
     });
+    //get frame in global cords after pane adjustment
+    var dvf = dv.get('frame');
     
-    var origin = f ; // dv.convertFrameToView(dv.get('frame'), null) ;
-    var pointer = { x: this.event.pageX, y: this.event.pageY } ;
-    this.ghostOffset = { x: (pointer.x-origin.x), y: (pointer.y-origin.y) } ;
+    var origin = f;//pv.convertFrameToView(dv.get('frame'), null) ;
     
+    // console.log("clipping Frame x: %@ y: %@ ".fmt(clippingFrame.x, clippingFrame.y));
+    // console.log("dvf x: %@ y: %@ ".fmt(dvf.x, dvf.y));
+    // 
+    // console.log("f x: %@ y: %@ ".fmt(f.x, f.y));
+    // console.log("loc x: %@ loc: %@ ".fmt(loc.x, loc.y));
+    // console.log("pf x: %@ pf: %@ ".fmt(pf.x, pf.y));
+    
+    this.ghostOffset = { x: (loc.x-origin.x), y: (loc.y-origin.y) } ;
+    // console.log("ghost Offset x: %@ pf: %@ ".fmt(this.ghostOffset.x, this.ghostOffset.y));
+    
+    this.mouseGhostOffset = {x: loc.x - (dvf.x), y: loc.y - (dvf.y)}
     // position the ghost view
     this._positionGhostView(evt) ;
     
@@ -400,7 +410,7 @@ SC.Drag = SC.Object.extend(
       // notify last drop target that the drag exited, to allow it to cleanup
       if (target && target.dragExited) target.dragExited(this, evt) ;
     } catch (e) {
-      onsole.log('Exception in SC.Drag.mouseUp(target.dragExited): %@'.fmt(e)) ;
+      //onsole.log('Exception in SC.Drag.mouseUp(target.dragExited): %@'.fmt(e)) ;
     }
     
     // notify all drop targets that the drag ended
