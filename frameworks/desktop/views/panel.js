@@ -67,10 +67,7 @@ SC.Panel = SC.Pane.extend(SC.Translucent, {
   */
   replaceContent: function(newContent) {
     this.removeAllChildren() ;
-    if (newContent) {
-      this.appendChild(newContent) ;
-      this.set('layout', { top: 0, left: 0, right: 0, bottom: 0 }) ;
-     }
+    if (newContent) this.appendChild(newContent) ;
   },
   
   /**

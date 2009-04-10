@@ -113,7 +113,8 @@ SC.PalettePanel = SC.Panel.extend(SC.Shadow, {
   */
   mouseDown: function(evt) {
     if (!this.get('isAnchored')) {
-      var f = this.get("frame") ;
+      var f = this.get('frame') ;
+      
       this._mouseOffsetX = f ? (f.x - evt.pageX) : 0 ;
       this._mouseOffsetY = f ? (f.y - evt.pageY) : 0 ;
       

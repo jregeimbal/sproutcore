@@ -2087,12 +2087,15 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   dragViewFor: function(dragContent) {
     // console.log('%@.dragViewFor(dragContent=%@)'.fmt(this, dragContent)) ;
     var view = SC.View.create() ;
-    view.set('parentView', this ) ;
+    var layer = this.get('layer').cloneNode(false) ;
+    
+    view.set('parentView', this) ;
+    view.set('layer', layer) ;
     
     var ary = dragContent, content = SC.makeArray(this.get('content')) ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
       var itemView = this.itemViewAtContentIndex(content.indexOf(ary[idx])) ;
-      if (itemView) view.set('layer', itemView.get('layer').cloneNode(true)) ;
+      if (itemView) layer.appendChild(itemView.get('layer').cloneNode(true)) ;
     }
     
     return view ;
