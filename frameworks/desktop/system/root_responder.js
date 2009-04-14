@@ -473,6 +473,7 @@ SC.RootResponder = SC.RootResponder.extend(
       console.log('Exception during mousedown: %@'.fmt(e)) ;
       this._mouseDownView = null ;
       this._mouseCanDrag = NO ;
+      throw e;
       return NO ;
     }
     
@@ -536,6 +537,7 @@ SC.RootResponder = SC.RootResponder.extend(
     } catch (e) {
       console.log('Exception during mouseup: %@'.fmt(e)) ;
       this._drag = null; this._mouseCanDrag = NO; this._mouseDownView = null ;
+      throw e;
       return NO ;
     }
     return (handler) ? evt.hasCustomEventHandling : YES ;
@@ -621,6 +623,7 @@ SC.RootResponder = SC.RootResponder.extend(
       }
     } catch (e) {
       console.log('Exception during mousemove: %@'.fmt(e)) ;
+      throw e;
     }
     SC.RunLoop.end();
   },
