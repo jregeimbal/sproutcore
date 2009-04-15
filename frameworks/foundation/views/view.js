@@ -486,7 +486,7 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
       }
     }
     return value ;
-  }.property('isVisibleInWindow').cacheable(),
+  }.property('isVisibleInWindow'), // .cacheable(),
   
   /**
     Set to YES to retain a layer's DOM even when the view is not in the view 
