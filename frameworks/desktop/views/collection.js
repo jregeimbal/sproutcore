@@ -1663,6 +1663,11 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // do any data valdidation, just to map the location to an insertion 
     // index.
     var loc = drag.get('location') ;
+    var _loc = this._loc ;
+    if (_loc && loc.x == _loc.x && loc.y == _loc.y) {
+      return this._dropOperationState ;
+    } else this._loc = loc ;
+    
     loc = this.convertFrameFromView(loc, null) ;
     var dropOp = SC.DROP_BEFORE ;
     var dragOp = SC.DRAG_NONE ;
@@ -1683,7 +1688,7 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     // then it will return DRAG_NONE, in which case we will try again with
     // drop before.
     if (dropOp == SC.DROP_ON) {
-      // console.log('dropOp === SC.DROP_ON');
+      console.log('dropOp === SC.DROP_ON');
       
       // Now save the insertion index and the dropOp.  This may be changed by
       // the collection delegate.
@@ -1761,8 +1766,10 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
     dropOp = this.get('proposedDropOperation') ;
     this._dropInsertionIndex = this._dropOperation = null ;
     
+    this._dropOperationState = [idx, dropOp, dragOp] ;
+    
     // return generated state
-    return [idx, dropOp, dragOp] ;
+    return this._dropOperationState ;
   },
   
   /** 
