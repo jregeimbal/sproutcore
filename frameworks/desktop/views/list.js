@@ -711,10 +711,11 @@ SC.ListView = SC.CollectionView.extend(
     }
     
     if (idx !== this._idx || retOp !== this._retOp) {
-      // console.log('insertionIndex is %@, op is %@'.fmt(idx, retOp));
       this._idx = idx ;
       this._retOp = retOp ;
     }
+    
+    // console.log('insertionIndex is %@, op is %@'.fmt(idx, retOp));
     
     // console.log('[ret, retOp] is [%@, %@]'.fmt(ret, retOp));
     return [idx, retOp] ;
