@@ -588,7 +588,13 @@ SC.CollectionView = SC.View.extend(SC.CollectionViewDelegate,
   // ......................................
   // RENDERING
   //
-  
+
+  itemViewForContent: function(content) {
+		var cnt = SC.makeArray(this.get('content'));
+		var idx = cnt.indexOf(content);
+		return this.itemViewAtContentIndex(idx);
+  },
+
   itemViewAtContentIndex: function(contentIndex) {
     var range = this.get('nowShowingRange') ;
     var itemView = this.createExampleView() ;
