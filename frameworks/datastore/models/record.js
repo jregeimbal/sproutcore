@@ -516,16 +516,20 @@ SC.Record = SC.Object.extend(
   // PRIVATE
   //
   
+  //FIXME: this method is called over 2520 times in landing page get calls.  Probably somehting in core_server.js 
+  //but removing it here to improve performance
+  
   toString: function() {
-    var that = this ;  
-    var ret = this.get('properties').map(function(key) {
-      var value = that.get(key) ; 
-      if (typeof(value) == "string") value = '"' + value + '"' ;
-      if (value === undefined) value = "(undefined)" ;
-      if (value === null) value = "(null)" ;
-      return [key,value].join('=') ;
-    }) ;
-    return this.constructor.toString() + '({ ' + ret.join(', ') + ' })' ;
+    // var that = this ;  
+    // var ret = this.get('properties').map(function(key) {
+    //   var value = that.get(key) ; 
+    //   if (typeof(value) == "string") value = '"' + value + '"' ;
+    //   if (value === undefined) value = "(undefined)" ;
+    //   if (value === null) value = "(null)" ;
+    //   return [key,value].join('=') ;
+    // }) ;
+    // return this.constructor.toString() + '({ ' + ret.join(', ') + ' })' ;
+    return "";
   },
   
   propertyObserver: function(observing,target,key,value) {
