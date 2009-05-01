@@ -1075,7 +1075,7 @@ SC.Observable = {
     @param revision {Number} a revision you can use to quickly detect changes.
     @returns {void}
   */
-  propertyObserver: function(target,key,value, revision) {},
+  propertyObserver: function(observer, target,key,value, revision) {},
 
   /**
     Convenience method to call propertyWillChange/propertyDidChange.
