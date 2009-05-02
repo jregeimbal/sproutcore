@@ -649,10 +649,15 @@ SC.View = SC.Object.extend(SC.Responder, SC.DelegateSupport,
   updateLayerIfNeeded: function(isVisible) {
     if (!isVisible) isVisible = this.get('isVisibleInWindow') ;
     if (isVisible && this.get('layerNeedsUpdate')) {
-      this.beginPropertyChanges() ;
-      this.set('layerNeedsUpdate', NO) ;
-      this.updateLayer() ;
-      this.endPropertyChanges() ;
+      // only update a layer if it already exists
+      if (this.get('layer')) {
+        this.beginPropertyChanges() ;
+        this.set('layerNeedsUpdate', NO) ;
+        this.updateLayer() ;
+        this.endPropertyChanges() ;
+        
+      // clear our layerNeedsUpdate flag so we can respond to changes later
+      } else this.set('layerNeedsUpdate', NO) ;
     }
     return this ;
   },
