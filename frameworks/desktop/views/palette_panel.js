@@ -138,7 +138,7 @@ SC.PalettePanel = SC.Panel.extend(SC.Shadow, {
   mouseDragged: function(evt) {
     this.adjust({
       top: this._mouseOffsetY + evt.pageY,
-      left: this._mouseOffsetX + evt.pageX,
+      left: this._mouseOffsetX + evt.pageX
     });
     this.updateLayout() ; // required on panes...
   }

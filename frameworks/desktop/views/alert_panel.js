@@ -256,7 +256,7 @@ SC.AlertPanel = SC.Panel.extend(SC.Shadow, {
         action: "dismiss",
         isVisible: NO
       })
-    ],
+    ]
   }),
   
   /**
