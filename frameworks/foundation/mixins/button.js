@@ -204,8 +204,7 @@ SC.Button = {
       // tree)
       return this.triggerAction(evt);
     }
-    //return YES;
-    return NO;
+    return YES;
   },
 
   /**
