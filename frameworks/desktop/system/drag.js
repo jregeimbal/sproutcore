@@ -445,8 +445,8 @@ SC.Drag = SC.Object.extend(
       classNames:['sc-ghost-view'],
       layout: { top: frame.y, left: frame.x, width: frame.width, height: frame.height },
       owner: this,
-      render: function(context, firstTime) {
-        if (firstTime) context.push(that.dragView.$().html()) ;
+      didCreateLayer: function() {
+        this.get('layer').appendChild(that.dragView.get('layer').cloneNode(true));
       }
     });
     
