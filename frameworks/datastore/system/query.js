@@ -904,31 +904,15 @@ SC.Query.mixin( /** @scope SC.Query */ {
       
       // Set tmp variable because we can't pass variables to sort function.
       // Do this instead of generating a temporary closure function for perf
-      SC.Query._TMP_STORE = store;
-      SC.Query._TMP_QUERY_KEY = query;
-      storeKeys.sort(query.compareStoreKeys);
-      SC.Query._TMP_STORE = SC.Query._TMP_QUERY_KEY = null;
+      storeKeys.sort( function(storeKey1, storeKey2) {
+        var record1 = store.materializeRecord(storeKey1);
+        var record2 = store.materializeRecord(storeKey2);
+        
+        return query.compare.call(query, record1, record2);
+      });
     }
     
     return storeKeys;
-  },
-  
-  /** 
-    Default sort method that is used when calling containsStoreKeys()
-    or containsRecords() on this query. Simply materializes two records based 
-    on storekeys before passing on to compare() .
- 
-    @param {Number} storeKey1 a store key
-    @param {Number} storeKey2 a store key
-    @returns {Number} -1 if record1 < record2,  +1 if record1 > record2, 0 if equal
-  */
- 
-  compareStoreKeys: function(storeKey1, storeKey2) {
-    var store    = SC.Query._TMP_STORE,
-        queryKey = SC.Query._TMP_QUERY_KEY,
-        record1  = store.materializeRecord(storeKey1),
-        record2  = store.materializeRecord(storeKey2);
-    return queryKey.compare(record1, record2);
   }
   
 });
