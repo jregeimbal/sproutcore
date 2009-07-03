@@ -441,7 +441,7 @@ SC.DateTime.mixin(
     // nextWeekday or lastWeekday
     var prefix = key.slice(0, 4);
     var suffix = key.slice(4);
-    if (prefix === 'last' || prefix === 'next') {
+    if (prefix === 'last' || prefix === 'next') {
       var currentWeekday = d.getDay();
       var targetWeekday = this._englishDayNames.indexOf(suffix);    
       if (targetWeekday >= 0) {
@@ -470,12 +470,10 @@ SC.DateTime.mixin(
     if ( !SC.none(opts.hour) && SC.none(opts.minute)) {
       opts.minute = 0;
     }
-    if (!(SC.none(opts.hour) && SC.none(opts.minute))
-        && SC.none(opts.second)) {
+    if (!(SC.none(opts.hour) && SC.none(opts.minute)) && SC.none(opts.second)) {
       opts.second = 0;
     }
-    if (!(SC.none(opts.hour) && SC.none(opts.minute) && SC.none(opts.second))
-        && SC.none(opts.millisecond)) {
+    if (!(SC.none(opts.hour) && SC.none(opts.minute) && SC.none(opts.second)) && SC.none(opts.millisecond)) {
       opts.millisecond = 0;
     }
 
@@ -614,7 +612,7 @@ SC.DateTime.mixin(
   },
   
   /** @private
-    Converts the x parameter into a string padded with 0s so that the string’s
+    Converts the x parameter into a string padded with 0s so that the string's
     length is at least equal to the len parameter.
     
     @param x the object to convert to a string
@@ -703,6 +701,9 @@ SC.DateTime.mixin(
                        0 if a == b
   */
   compareDate: function(a, b) {
+    if (!a && b) return 1;
+    if (a && !b) return -1;
+    if (!a && !b) return 0;
     var d1 = this._adjust({hour: 0}, a._ms)._date.getTime();
     var d2 = this._adjust({hour: 0}, b._ms)._date.getTime();
     return d1 < d2 ? -1 : d1 === d2 ? 0 : 1;
