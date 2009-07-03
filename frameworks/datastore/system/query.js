@@ -142,6 +142,9 @@ SC.Query = SC.Object.extend({
     // if called for the first time we have to parse the query
     if (!this.isReady) this.parseQuery();
 
+    // if wildCardValues were not provided, use parameters instead
+    if (wildCardValues === undefined) wildCardValues = this.parameters;
+    
     // if parsing worked we check if record is contained
     // if parsing failed no record will be contained
     return this.isReady && this.tokenTree.evaluate(record, wildCardValues);
@@ -839,7 +842,6 @@ SC.Query.mixin( /** @scope SC.Query */ {
     @param {SC.Store} store to materialize record from during sort
     @returns {Array} array instance of store keys matching the SC.Query (sorted)
   */
-  
   containsStoreKeys: function(query, storeKeys, store) {
     var ret = [], idx, len, rec, status, K = SC.Record;
     var recType = query.get('recordType');

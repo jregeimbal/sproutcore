@@ -183,6 +183,20 @@ SC.Array = {
   },
   
   /**
+    Search the array for the passed set of objects and remove any occurrences
+    of the. 
+    
+    @param {SC.Enumerable} objects the objects to remove
+    @returns {SC.Array} receiver
+  */
+  removeObjects: function(objects) {
+    this.beginPropertyChanges();
+    objects.forEach(function(obj) { this.removeObject(obj); }, this);
+    this.endPropertyChanges();
+    return this;
+  },
+  
+  /**
     Push the object onto the end of the array.  Works just like push() but it 
     is KVO-compliant.
   */
@@ -191,6 +205,21 @@ SC.Array = {
     return obj ;
   },
   
+  
+  /**
+    Add the objects in the passed numerable to the end of the array.  Defers
+    notifying observers of the change until all objects are added.
+    
+    @param {SC.Enumerable} objects the objects to add
+    @returns {SC.Array} receiver
+  */
+  pushObjects: function(objects) {
+    this.beginPropertyChanges();
+    objects.forEach(function(obj) { this.pushObject(obj); }, this);
+    this.endPropertyChanges();
+    return this;
+  },
+
   /**
     Pop object from array or nil if none are left.  Works just like pop() but 
     it is KVO-compliant.
@@ -222,6 +251,21 @@ SC.Array = {
   unshiftObject: function(obj) {
     this.insertAt(0, obj) ;
     return obj ;
+  },
+
+  
+  /**
+    Adds the named objects to the beginning of the array.  Defers notifying
+    observers until all objects have been added.
+    
+    @param {SC.Enumerable} objects the objects to add
+    @returns {SC.Array} receiver
+  */
+  unshiftObjects: function(objects) {
+    this.beginPropertyChanges();
+    objects.forEach(function(obj) { this.unshiftObject(obj); }, this);
+    this.endPropertyChanges();
+    return this;
   },
   
   /**  
@@ -368,15 +412,26 @@ SC.Array = {
   */
   enumerableContentDidChange: function(start, amt, delta) {
     var rangeob = this._array_rangeObservers, 
-        length, changes ;
-        
+        oldlen  = this._array_oldLength,
+        newlen, length, changes ;
+
+    this.beginPropertyChanges();    
+    this.notifyPropertyChange('length'); // flush caches
+
+    // schedule info for range observers
     if (rangeob && rangeob.length>0) {
+
+      // if no oldLength has been cached, just assume 0
+      if (oldlen === undefined) oldlen = 0;    
+      this._array_oldLength = newlen = this.get('length');
       
       // normalize input parameters
+      // if delta was not passed, assume it is the different between the 
+      // new and old length.
       if (start === undefined) start = 0;
-      if (delta === undefined) delta = 0 ;
+      if (delta === undefined) delta = newlen - oldlen ;
       if (delta !== 0 || amt === undefined) {
-        length = this.get('length') - start ;
+        length = newlen - start ;
         if (delta<0) length -= delta; // cover removed range as well
       } else {
         length = amt ;
@@ -387,7 +442,9 @@ SC.Array = {
       changes.add(start, length);
     }
     
-    this.notifyPropertyChange('[]').notifyPropertyChange('length') ;
+    this.notifyPropertyChange('[]') ;
+    this.endPropertyChanges();
+    
     return this ;
   },
   

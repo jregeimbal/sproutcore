@@ -2198,10 +2198,24 @@ SC.CollectionView = SC.View.extend(
     
     indexes.forEach(function(i) {
       var itemView = this.itemViewForContentIndex(i),
-          layer    = itemView ? itemView.get('layer') : null;
+          isSelected, layer;
+        
+      // render item view without isSelected state.  
+      if (itemView) {
+        isSelected = itemView.get('isSelected');
+        itemView.set('isSelected', NO);
+        
+        itemView.updateLayerIfNeeded();
+        layer = itemView.get('layer');
+        if (layer) layer = layer.cloneNode(true);
+        
+        itemView.set('isSelected', isSelected);
+        itemView.updateLayerIfNeeded();
+      }
 
-      if (layer) dragLayer.appendChild(layer.cloneNode(true));
+      if (layer) dragLayer.appendChild(layer);
       layer = null;
+      
     }, this);
 
     dragLayer = null;
@@ -2228,7 +2242,7 @@ SC.CollectionView = SC.View.extend(
       key = this.get('reorderDataType');
       if (ret.indexOf(key) < 0) ret.push(key);          
     }
-
+        
     return ret ? ret : [];
   }.property(),
   
@@ -2254,6 +2268,14 @@ SC.CollectionView = SC.View.extend(
   /**
     Implements the SC.DropTarget interface.  The default implementation will
     consult the collection view delegate, if you implement those methods.
+    
+    This method is called once when the drag enters the view area.  It's 
+    return value will be stored on the drag object as allowedDragOperations,
+    possibly further constrained by the drag source.
+    
+    @param {SC.Drag} drag the drag object
+    @param {SC.Event} evt the event triggering this change, if available
+    @returns {Number} logical OR'd mask of allowed drag operations.
   */
   computeDragOperations: function(drag, evt) {
 
@@ -2279,8 +2301,13 @@ SC.CollectionView = SC.View.extend(
     Determines the allowed drop operation insertion point, operation type,
     and the drag operation to be performed.  Used by dragUpdated() and 
     performDragOperation().
+
+    @param {SC.Drag} drag the drag object
+    @param {SC.Event} evt source of this request, if available
+    @param {Number} dragOp allowed drag operation mask
+    Returns three params: [drop index, drop operation, allowed drag ops]
   */
-  _computeDropOperationState: function(drag, evt) {
+  _computeDropOperationState: function(drag, evt, dragOp) {
     
     // get the insertion index for this location.  This can be computed
     // by a subclass using whatever method.  This method is not expected to
@@ -2288,7 +2315,6 @@ SC.CollectionView = SC.View.extend(
     // index.
     var loc    = this.convertFrameFromView(drag.get('location'), null),
         dropOp = SC.DROP_BEFORE,
-        dragOp = SC.DRAG_NONE,
         del    = this.get('selectionDelegate'),
         canReorder = this.get('canReorderContent'),
         objects, content, isPreviousInDrag, isNextInDrag, len;
@@ -2308,7 +2334,7 @@ SC.CollectionView = SC.View.extend(
     // delegate method.  If the delegate method does not support dropping on,
     // then it will return DRAG_NONE, in which case we will try again with
     // drop before.
-    if (dropOp == SC.DROP_ON) {
+    if (dropOp === SC.DROP_ON) {
       
       // Now save the insertion index and the dropOp.  This may be changed by
       // the collection delegate.
@@ -2395,8 +2421,9 @@ SC.CollectionView = SC.View.extend(
   */
   dragUpdated: function(drag, evt) {
     
-    var state = this._computeDropOperationState(drag, evt) ;
-    var idx = state[0], dropOp = state[1], dragOp = state[2] ;
+    var op     = drag.get('allowedDragOperations'),
+        state  = this._computeDropOperationState(drag, evt, op),
+        idx    = state[0], dropOp = state[1], dragOp = state[2];
     
     // if the insertion index or dropOp have changed, update the insertion 
     // point
@@ -2481,6 +2508,7 @@ SC.CollectionView = SC.View.extend(
       
       // now insert objects into new insertion locaiton
       content.replace(idx, 0, objects);
+      this.select(SC.IndexSet.create(idx, objects.length));
       content.endPropertyChanges(); // restart notifications
 
       // make the op into its actual value
