@@ -266,7 +266,10 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
       
       var childViews = this.get('childViews'), len = childViews.length, idx;
       for(idx=0;idx<len;idx++) {
-        childViews[idx].recomputeIsVisibleInWindow(cur);
+        var cv = childViews[idx];
+        if (cv) {
+          cv.recomputeIsVisibleInWindow(cur);
+        }
       }
         
       // if we just became visible, update layer + layout if needed...
@@ -1769,7 +1772,9 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var cvs = this.get('childViews'), len = cvs.length, idx, cv ;
     for (idx=0; idx<len; ++idx) {
       cv = cvs[idx] ;
-      if (!cv.hasStaticLayout) cv.notifyPropertyChange('clippingFrame') ;
+      if (cv) {
+        if (!cv.hasStaticLayout) cv.notifyPropertyChange('clippingFrame') ;
+      }
     }
   }.observes('clippingFrame'),
     
@@ -1814,7 +1819,10 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var cv = this.childViews, len = cv.length, idx, view ;
     for (idx=0; idx<len; ++idx) {
       view = cv[idx] ;
-      if (view.parentViewDidResize) view.parentViewDidResize() ;
+      if (view) {
+        if (view.parentViewDidResize) view.parentViewDidResize() ;
+      }
+      
     }
   }.observes('layout'),
   
