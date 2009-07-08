@@ -461,9 +461,11 @@ SC.Drag = SC.Object.extend(
       didCreateLayer: function() {
         if (that.dragView) {
           var layer = that.dragView.get('layer') ;
-          var clone = layer.cloneNode(true);
-          clone.setAttribute('style','');
-          if (layer) this.get('layer').appendChild(clone);
+          if(layer){
+            var clone = layer.cloneNode(true);
+            clone.setAttribute('style','');
+            this.get('layer').appendChild(clone);
+          }
         }
       }
     });
