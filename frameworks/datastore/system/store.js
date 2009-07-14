@@ -808,12 +808,15 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {SC.Array} array instance - usually SC.RecordArray
   */
   recordsFor: function(recordType) {
-    var storeKeys     = [], 
-        storeKeysById = recordType.storeKeysById(),
-        id, storeKey, ret;
+    var storeKeys = [], id, storeKey, ret,
+        storeKeysById = recordType._storeKeysById ;
+    
+    if (!storeKeysById) {
+      storeKeysById = recordType._storeKeysById = recordType.storeKeysById() ;
+    }
     
     // collect all non-empty store keys
-    for(id in storeKeysById) {
+    for (id in storeKeysById) {
       storeKey = storeKeysById[id]; // get the storeKey
       if (this.readStatus(storeKey) !== SC.RECORD_EMPTY) {
         storeKeys.push(storeKey);
@@ -1173,7 +1176,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if (!isArray) recordType = recordTypes;
     
     // if no storeKeys were passed, map recordTypes + ids
-    for(idx=0;idx<len;idx++) {
+    for (idx=0;idx<len;idx++) {
       
       // collect store key
       if (storeKeys) {
@@ -1804,9 +1807,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     var ret = [], storeKey;
     if(!this.statuses) return;
     
+    var K = SC.Record.EMPTY ;
     for(storeKey in this.statuses) {
       // if status is not empty
-      if(this.statuses[storeKey] != SC.Record.EMPTY) {
+      if(this.statuses[storeKey] !== K) {
         ret.push(parseInt(storeKey,0));
       }
     }
@@ -1909,9 +1913,12 @@ SC.Store.mixin({
     this.idsByStoreKey[storeKey] = primaryKey ;
     
     // then the other...
-    var storeKeys = recordType.storeKeysById() ;
-    delete storeKeys[oldPrimaryKey];
-    storeKeys[primaryKey] = storeKey;     
+    var storeKeysById = recordType._storeKeysById ;
+    if (!storeKeysById) {
+      storeKeysById = recordType._storeKeysById = recordType.storeKeysById() ;
+    }
+    delete storeKeysById[oldPrimaryKey] ;
+    storeKeysById[primaryKey] = storeKey ;
     
     return this ;
   },

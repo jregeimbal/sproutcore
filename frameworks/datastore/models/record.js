@@ -500,8 +500,9 @@ SC.Record.mixin( /** @scope SC.Record */ {
     @returns {Number} a storeKey.
   */
   storeKeyFor: function(id) {
-    var storeKeys = this.storeKeysById(),
-        ret       = storeKeys[id];
+    var storeKeys = this._storeKeysById ;
+    if (!storeKeys) storeKeys = this._storeKeysById = this.storeKeysById() ;
+    var ret = storeKeys[id] ;
     
     if (!ret) {
       ret = SC.Store.generateStoreKey();
@@ -522,10 +523,9 @@ SC.Record.mixin( /** @scope SC.Record */ {
     @returns {Number} a storeKey.
   */
   storeKeyExists: function(id) {
-    var storeKeys = this.storeKeysById(),
-        ret       = storeKeys[id];
-    
-    return ret ;
+    var storeKeys = this._storeKeysById ;
+    if (!storeKeys) storeKeys = this._storeKeysById = this.storeKeysById() ;
+    return storeKeys[id] ;
   },
 
   /** 
