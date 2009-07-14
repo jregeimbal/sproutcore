@@ -207,7 +207,7 @@ SC.ListItemView = SC.View.extend(
     
     
     // handle checkbox
-    key = this.getDelegateProperty('contentCheckboxKey', del) ;
+    key = this.getDelegateProperty('contentCheckboxKey', content, del) ;
     if (key) {
       value = content ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderCheckbox(working, value);
@@ -215,7 +215,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle icon
-    if (this.getDelegateProperty('hasContentIcon', del)) {
+    if (this.getDelegateProperty('hasContentIcon', content, del)) {
       key = this.getDelegateProperty('contentIconKey', del) ;
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
       
@@ -224,7 +224,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle label -- always invoke
-    key = this.getDelegateProperty('contentValueKey', del) ;
+    key = this.getDelegateProperty('contentValueKey', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : content ;
     if (value && SC.typeOf(value) !== SC.T_STRING) value = value.toString();
     if (this.get('escapeHTML')) value = SC.RenderContext.escapeHTML(value);
@@ -240,7 +240,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle unread count
-    key = this.getDelegateProperty('contentUnreadCountKey', del) ;
+    key = this.getDelegateProperty('contentUnreadCountKey', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (!SC.none(value) && (value !== 0)) {
       this.renderCount(working, value) ;
@@ -252,7 +252,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle action 
-    key = this.getDelegateProperty('listItemActionProperty', del) ;
+    key = this.getDelegateProperty('listItemActionProperty', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (value) {
       this.renderAction(working, value);
@@ -260,8 +260,8 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle branch
-    if (this.getDelegateProperty('hasContentBranch', del)) {
-      key = this.getDelegateProperty('contentIsBranchKey', del);
+    if (this.getDelegateProperty('hasContentBranch', content, del)) {
+      key = this.getDelegateProperty('contentIsBranchKey', content, del);
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderBranch(working, value);
       classArray.push('has-branch');
