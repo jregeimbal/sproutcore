@@ -336,7 +336,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     the server.
     
     Note that you can optionally pass a new status to go along with this. If
-    you do not pass a status, it will change the status to SC.RECORD_EMPTY
+    you do not pass a status, it will change the status to SC.Record.EMPTY
     (assuming you just unloaded the record).  If you are deleting the record
     you may set it to SC.Record.DESTROYED_CLEAN.
     
@@ -363,7 +363,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   
   /**
     Reads the current status for a storeKey.  This will also lock the data 
-    hash.  If no status is found, returns SC.RECORD_EMPTY.
+    hash.  If no status is found, returns SC.Record.EMPTY.
     
     @param {Number} storeKey the store key
     @returns {String} status
@@ -811,15 +811,14 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     var storeKeys = [], id, storeKey, ret,
         storeKeysById = recordType._storeKeysById ;
     
-    if (!storeKeysById) {
-      storeKeysById = recordType._storeKeysById = recordType.storeKeysById() ;
-    }
+    if (!storeKeysById) storeKeysById = this.storeKeysById() ;
     
     // collect all non-empty store keys
+    var K = SC.Record.EMPTY ;
     for (id in storeKeysById) {
-      storeKey = storeKeysById[id]; // get the storeKey
-      if (this.readStatus(storeKey) !== SC.RECORD_EMPTY) {
-        storeKeys.push(storeKey);
+      storeKey = storeKeysById[id] ; // get the storeKey
+      if (this.readStatus(storeKey) !== K) {
+        storeKeys.push(storeKey) ;
       }
     }
     

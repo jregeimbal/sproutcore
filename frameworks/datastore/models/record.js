@@ -484,7 +484,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
   storeKeysById: function() {
     var key = SC.keyFor('storeKey', SC.guidFor(this)),
         ret = this[key];
-    if (!ret) ret = this[key] = {};
+    if (!ret) ret = this._storeKeysById = this[key] = {};
     return ret;
   },
   
@@ -501,9 +501,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
   */
   storeKeyFor: function(id) {
     var storeKeysById = this._storeKeysById ;
-    if (!storeKeysById) {
-      storeKeysById = this._storeKeysById = this.storeKeysById() ;
-    }
+    if (!storeKeysById) storeKeysById = this.storeKeysById() ;
     var ret = storeKeysById[id] ;
     
     if (!ret) {
@@ -526,9 +524,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
   */
   storeKeyExists: function(id) {
     var storeKeysById = this._storeKeysById ;
-    if (!storeKeysById) {
-      storeKeysById = this._storeKeysById = this.storeKeysById() ;
-    }
+    if (!storeKeysById) storeKeysById = this.storeKeysById() ;
     return storeKeysById[id] ;
   },
 
