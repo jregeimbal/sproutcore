@@ -1773,9 +1773,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var cvs = this.get('childViews'), len = cvs.length, idx, cv ;
     for (idx=0; idx<len; ++idx) {
       cv = cvs[idx] ;
-      if (cv) {
-        if (!cv.hasStaticLayout) cv.notifyPropertyChange('clippingFrame') ;
-      }
+      if (cv && !cv.hasStaticLayout) cv.notifyPropertyChange('clippingFrame') ;
     }
   }.observes('clippingFrame'),
     
@@ -1820,10 +1818,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var cv = this.childViews, len = cv.length, idx, view ;
     for (idx=0; idx<len; ++idx) {
       view = cv[idx] ;
-      if (view) {
-        if (view.parentViewDidResize) view.parentViewDidResize() ;
-      }
-      
+      if (view && view.parentViewDidResize) view.parentViewDidResize() ;
     }
   }.observes('layout'),
   
