@@ -68,7 +68,9 @@ SC.Record = SC.Object.extend(
     @property {Number}
   */
   status: function() {
-    return this.store.readStatus(this.storeKey);
+    var store = this.get('store') ;
+    if (!store) return SC.Record.EMPTY ;
+    return store.readStatus(this.storeKey) ;
   }.property('storeKey').cacheable(),
 
   /**
@@ -226,6 +228,7 @@ SC.Record = SC.Object.extend(
   **/
   attributes: function() {
     var store = this.get('store'), storeKey = this.storeKey;
+    if (!store) return {} ;
     return store.readEditableDataHash(storeKey);
   }.property(),
   

@@ -7,10 +7,8 @@
 
 sc_require('models/record');
 
-/**
-  @class
-
-
+/** @class
+  
   The Store is where you can find all of your dataHashes. Stores can be 
   chained for editing purposes and committed back one chain level at a time 
   all the way back to a persistent data source.
@@ -22,12 +20,12 @@ sc_require('models/record');
   Internally, the store will keep track of changes to your json data hashes
   and manage syncing those changes with your data source.  A data source may
   be a server, local storage, or any other persistent code.
-
+  
   @extends SC.Object
   @since SproutCore 1.0
 */
 SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
-
+  
   /**
     An array of all the chained stores that current rely on the receiver 
     store.
@@ -35,7 +33,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @property {Array}
   */
   nestedStores: null,
-
+  
   /**
     The data source is the persistent storage that will provide data to the
     store and save changes.  You normally will set your data source when you
@@ -156,7 +154,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     while(store && (store !== this)) store = store.get('parentStore');
     return store === this ;
   },
-
+  
   // ..........................................................
   // SHARED DATA STRUCTURES 
   // 
@@ -165,18 +163,18 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     JSON data hashes indexed by store key.  
     
     *IMPORTANT: Property is not observable*
-
+    
     Shared by a store and its child stores until you make edits to it.
     
     @property {Hash}
   */
   dataHashes: null,
-
+  
   /** @private
     The current status of a data hash indexed by store key.
     
     *IMPORTANT: Property is not observable*
-
+    
     Shared by a store and its child stores until you make edits to it.
     
     @property {Hash}
@@ -196,13 +194,13 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @property {Hash}
   */
   revisions: null,
-
+  
   /** @private
     Stores three sets of record property changes (storeKeys, statuses
     and recordTypes) which is used when _notifyRecordPropertyChange is 
     called. Makes it possible to only execute once at the end of 
     the runloop.
-  
+    
     @property {Hash}
   */
   recordPropertyChanges: { 
@@ -228,7 +226,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     A set of storeKeys that need to be committed back to the data source. If
     you call commitRecords() without passing any other parameters, the keys
     in this set will be committed instead.
-  
+    
     @property {Hash}
   */
   changelog: null,
@@ -237,7 +235,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     A set of SC.RecordArray that have been returned from findAll with an 
     SC.Query. These will all be notified with _notifyRecordArraysWithQuery() 
     whenever the store changes.
-  
+    
     @property {Array}
   */
   recordArraysWithQuery: null,
@@ -306,7 +304,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     Note that the hash you set here must be a different object from the 
     original data hash.  Once you make a change here, you must also call
     dataHashDidChange() to register the changes.
-
+    
     If the data hash does not yet exist in the store, this method will add it.
     Pass the optional status to edit the status as well.
     
@@ -328,7 +326,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this ;
   },
-
+  
   /**
     Removes the data hash from the store.  This does not imply a deletion of
     the record.  You could be simply unloading the record.  Eitherway, 
@@ -415,18 +413,15 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       storeKey = storeKeys;
     }
     
-    SC.RunLoop.begin();
     for(idx=0;idx<len;idx++) {
       if (isArray) storeKey = storeKeys[idx];
       this.revisions[storeKey] = rev;
       this._notifyRecordPropertyChange(storeKey, statusOnly);
     }
     
-    SC.RunLoop.end();
-    
     return this ;
   },
-
+  
   /** @private 
     Will push all changes to a the recordPropertyChanges property
     and execute flushRecordChanges() once at the end of the runloop.
@@ -467,10 +462,13 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       }
     }
     
-    this._flushRecordChanges();
+    // this.invokeOnce(this._flushRecordChanges) ;
+    this._flushRecordChanges() ;
     
-    return this;
+    return this ;
   },
+  
+  goSlow: YES,
   
   /** @private 
     Will notify any record instances of the property change at the end of 
@@ -481,6 +479,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   
   _flushRecordChanges: function() {
+    // console.log('_flushRecordChanges') ;
     var storeKeys = this.recordPropertyChanges.storeKeys, 
       statusOnly = this.recordPropertyChanges.statusOnly,
       records = this.recordPropertyChanges.records, rec, 
@@ -544,11 +543,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     this.dataHashes = {} ;
     this.revisions  = {} ;
     this.statuses   = {} ;
-
+    
     // also reset temporary objects
     this.chainedChanges = this.locks = this.editables = null;
     this.changelog = null ;
-
+    
     var records = this.records, storeKey;
     if (records) {
       SC.RunLoop.begin();
@@ -572,7 +571,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     force flag then this detection phase will be skipped and the changes will
     be applied even if another resource has modified the store in the mean
     time.
-  
+    
     @param {SC.Store} nestedStore the child store
     @param {Array} changes the array of changed store keys
     @param {Boolean} force
@@ -598,11 +597,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     chDataHashes = nestedStore.dataHashes;
     chRevisions  = nestedStore.revisions ;
     chStatuses   = nestedStore.statuses;
-
+    
     SC.RunLoop.begin();
     for(i=0;i<len;i++) {
       storeKey = changes[i];
-
+      
       // now copy changes
       myDataHashes[storeKey] = chDataHashes[storeKey];
       myStatuses[storeKey]   = chStatuses[storeKey];
@@ -624,7 +623,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this ;
   },
-
+  
   /** @private
     Verifies that the passed lock revisions match the current revisions 
     in the receiver store.  If the lock revisions do not match, then the 
@@ -641,7 +640,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         storeKey = changes[i];
         lock = locks[storeKey] || 1;
         rev  = revs[storeKey] || 1;
-
+        
         // if the save revision for the item does not match the current rev
         // the someone has changed the data hash in this store and we have
         // a conflict. 
@@ -699,7 +698,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // now we have the storeKey, materialize the record and return it.
     return storeKey ? this.materializeRecord(storeKey) : null ;
   },
-
+  
   /**
     Retrieves records from the persistent store.  You should pass in a named
     query that will be understood by one of the persistent stores you have
@@ -834,12 +833,12 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     Given a storeKey, return a materialized record.  You will not usually
     call this method yourself.  Instead it will used by other methods when
     you find records by id or perform other searches.
-
+    
     If a recordType has been mapped to the storeKey, then a record instance
     will be returned even if the data hash has not been requested yet.
     
     Each Store instance returns unique record instances for each storeKey.
-
+    
     @param {Integer} storeKey The storeKey for the dataHash.
     @returns {SC.Record} Returns a record instance.
   */
@@ -862,7 +861,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return ret ;
   },
-
+  
   // ..........................................................
   // CORE RECORDS API
   // 
@@ -873,14 +872,14 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     Creates a new record instance with the passed recordType and dataHash.
     You can also optionally specify an id or else it will be pulled from the 
     data hash.
-
+    
     Note that the record will not yet be saved back to the server.  To save
     a record to the server, call commitChanges() on the store.
-
+    
     @param {SC.Record} recordType the record class to use on creation
     @param {Hash} dataHash the JSON attributes to assign to the hash.
     @param {String} id (optional) id to assign to record
-
+    
     @returns {SC.Record} Returns the created record
   */
   createRecord: function(recordType, dataHash, id) {
@@ -977,7 +976,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   destroyRecord: function(recordType, id, storeKey) {
     if (storeKey === undefined) storeKey = recordType.storeKeyFor(id);
     var status = this.readStatus(storeKey), changelog, K = SC.Record;
-
+    
     // handle status - ignore if destroying or destroyed
     if ((status === K.BUSY_DESTROYING) || (status & K.DESTROYED)) {
       return this; // nothing to do
@@ -1000,19 +999,19 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // remove the data hash, set new status
     this.writeStatus(storeKey, status);
     this.dataHashDidChange(storeKey);
-
+    
     // add/remove change log
     changelog = this.changelog;
     if (!changelog) changelog = this.changelog = SC.Set.create();
-
+    
     ((status & K.DIRTY) ? changelog.add(storeKey) : changelog.remove(storeKey));
     this.changelog=changelog;
-
+    
     // if commit records is enabled
     if(this.get('commitRecordsAutomatically')){
       this.invokeLast(this.commitRecords);
     }
-        
+    
     return this ;
   },
   
@@ -1025,7 +1024,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     you pass a single recordType, then the record type will be used for each
     record.  If you pass an array, then each id must have a matching record 
     type in the array.
-
+    
     You can optionally pass an array of storeKeys instead of the recordType
     and ids.  In this case the first two parameters will be ignored.  This
     is usually only used by low-level internal methods.  You will not usually
@@ -1070,7 +1069,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   recordDidChange: function(recordType, id, storeKey) {
     if (storeKey === undefined) storeKey = recordType.storeKeyFor(id);
     var status = this.readStatus(storeKey), changelog, K = SC.Record;
-
+    
     // BUSY_LOADING, BUSY_CREATING, BUSY_COMMITTING, BUSY_REFRESH_CLEAN
     // BUSY_REFRESH_DIRTY, BUSY_DESTROYING
     if (status & K.BUSY) {
@@ -1102,7 +1101,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this ;
   },
-
+  
   /**
     Mark a group of records as dirty.  The records will be committed to the
     server the next time you commit changes on the root store.  If you have a 
@@ -1113,7 +1112,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     you pass a single recordType, then the record type will be used for each
     record.  If you pass an array, then each id must have a matching record 
     type in the array.
-
+    
     You can optionally pass an array of storeKeys instead of the recordType
     and ids.  In this case the first two parameters will be ignored.  This
     is usually only used by low-level internal methods.  
@@ -1142,9 +1141,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
           this.recordDidChange(undefined, undefined, storeKey);
         }
       }
-      return this ;  
+      return this ;
   },
-
+  
   /**
     Retrieves a set of records from the server.  If the records has 
     already been loaded in the store, then this method will simply return.  
@@ -1193,7 +1192,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         this.writeStatus(storeKey, K.BUSY_LOADING);
         this.dataHashDidChange(storeKey, rev, YES);
         ret.push(storeKey);
-
+        
       // otherwise, ignore record unless isRefresh is YES.
       } else if (isRefresh) {
         // K.READY_CLEAN, K.READY_DIRTY, ignore K.READY_NEW
@@ -1201,11 +1200,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
           this.writeStatus(storeKey, K.BUSY_REFRESH | (status & 0x03)) ;
           this.dataHashDidChange(storeKey, rev, YES);
           ret.push(storeKey);
-
+          
         // K.BUSY_DESTROYING, K.BUSY_COMMITTING, K.BUSY_CREATING
         } else if ((status == K.BUSY_DESTROYING) || (status == K.BUSY_CREATING) || (status == K.BUSY_COMMITTING)) {
           throw K.BUSY_ERROR ;
-
+          
         // K.DESTROY_DIRTY, bad state...
         } else if (status == K.DESTROYED_DIRTY) {
           throw K.BAD_STATE_ERROR ;
@@ -1235,7 +1234,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     This will not actually create a record instance but it will initiate a 
     load of the record from the server.  You can subsequently get a record 
     instance itself using materializeRecord()
-
+    
     @param {SC.Record} recordType class
     @param {String} id id to retrieve
     @param {Number} storeKey (optional) store key
@@ -1259,7 +1258,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     array.length = 0 ;
     return ret[0];
   },
-
+  
   /**
     Refreshes a record from the server.  If the record has already been loaded
     in the store, then this method will request a refresh from the dataSource.
@@ -1273,7 +1272,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   refreshRecord: function(recordType, id, storeKey) {
     return this.retrieveRecord(recordType, id, storeKey, YES);
   },
-
+  
   /**
     Refreshes a set of records from the server.  If the records has already been loaded
     in the store, then this method will request a refresh from the dataSource.
@@ -1295,7 +1294,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     @param {String} id to id of the record to load
     @param {SC.Record} recordType the expected record type
-
+    
     @returns {SC.Bool} if the action was succesful.
   */
   commitRecords: function(recordTypes, ids, storeKeys) {
@@ -1305,10 +1304,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         rev       = SC.Store.generateStoreKey(),
         K         = SC.Record,
         recordType, idx, storeKey, status, key, ret, len ;
-
+        
     // If no params are passed, look up storeKeys in the changelog property.
     // Remove any committed records from changelog property.
-
+    
     if(recordTypes===undefined && ids===undefined && storeKeys===undefined){
       storeKeys=this.changelog;
     }
@@ -1364,7 +1363,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     }
     return ret ;
   },
-
+  
   /**
     Commits the passed store key.  Based on the current state of the 
     record, this will ask the data source to perform the appropriate action
@@ -1374,7 +1373,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     @param {String} id to id of the record to load
     @param {SC.Record} recordType the expected record type
-
+    
     @returns {SC.Bool} if the action was succesful.
   */
   commitRecord: function(recordType, id, storeKey) {
@@ -1422,11 +1421,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       if(storeKeys===undefined){
         storeKey = recordType.storeKeyFor(id);
       }else{
-        storeKey = storeKeys ? storeKeys[idx] : undefined ;        
+        storeKey = storeKeys ? storeKeys[idx] : undefined ;
       }
       if(storeKey) {
         status = this.readStatus(storeKey);
-
+        
         if ((status == K.EMPTY) || (status == K.ERROR)) {
           throw K.NOT_FOUND_ERROR ;
         }
@@ -1438,12 +1437,12 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this ;
   },
-
+  
   /**
     Cancels an inflight request for the passed record.  Depending on the 
     server implementation, this could cancel an entire request, causing 
     other records to also transition their current state.
-  
+    
     @param {SC.Record|Array} recordTypes class or array of classes
     @param {Array} ids ids to destroy
     @param {Array} storeKeys (optional) store keys to destroy
@@ -1519,7 +1518,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   // DATA SOURCE CALLBACKS
   // 
   // Mathods called by the data source on the store
-
+  
   /**
     Called by a dataSource when it cancels an inflight operation on a 
     record.  This will transition the record back to it non-inflight state.
@@ -1614,7 +1613,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   dataSourceDidDestroy: function(storeKey) {
     var status = this.readStatus(storeKey), K = SC.Record;
-
+    
     // EMPTY, ERROR, READY_CLEAN, READY_NEW, READY_DIRTY, DESTROYED_CLEAN,
     // DESTROYED_DIRTY
     if (!(status & K.BUSY)) {
@@ -1626,10 +1625,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     } 
     this.removeDataHash(storeKey, status) ;
     this.dataHashDidChange(storeKey);
-
+    
     return this ;
   },
-
+  
   /**
     Converts the passed record into an error object.
     
@@ -1638,7 +1637,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   dataSourceDidError: function(storeKey, error) {
     var status = this.readStatus(storeKey), K = SC.Record;
-
+    
     // EMPTY, ERROR, READY_CLEAN, READY_NEW, READY_DIRTY, DESTROYED_CLEAN,
     // DESTROYED_DIRTY
     if (!(status & K.BUSY)) {
@@ -1650,10 +1649,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     } 
     this.writeStatus(storeKey, status) ;
     this.dataHashDidChange(storeKey, null, YES);
-
+    
     return this ;
   },
-
+  
   // ..........................................................
   // PUSH CHANGES FROM DATA SOURCE
   // 
@@ -1698,10 +1697,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     //conflicted (destroy)
     return NO;
   },
-
+  
   pushError: function(recordType, id, error, storeKey) {
     var K = SC.Record, status;
-
+    
     if(storeKey===undefined){
       storeKey = recordType.storeKeyFor(id);
     }
@@ -1724,15 +1723,14 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     sc_super();
     this.reset();
   },
-
-
+  
   // ..........................................................
   // PRIMARY KEY CONVENIENCE METHODS
   // 
-
+  
   /** 
     Given a storeKey, return the primaryKey.
-  
+    
     @param {Number} storeKey the store key
     @returns {String} primaryKey value
   */
@@ -1829,9 +1827,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   },
   
   query: function(hash) {
-    var SCQuery = this._SC_Query ;
-    if (!SCQuery) SCQuery = this._SC_Query = SC.Query ;
-    return this.findAll(SCQuery.create(hash)) ;
+    return this.findAll(SC.Query.create(hash)) ;
   }
   
 });
@@ -1841,7 +1837,7 @@ SC.Store.mixin({
   CHAIN_CONFLICT_ERROR: new Error("Nested Store Conflict"),
   NO_PARENT_STORE_ERROR: new Error("Parent Store Required"),
   NESTED_STORE_UNSUPPORTED_ERROR: new Error("Unsupported In Nested Store"),
-
+  
   EDITABLE:  'editable',
   LOCKED:    'locked',
   INHERITED: 'inherited',

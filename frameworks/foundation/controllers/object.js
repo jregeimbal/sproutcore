@@ -184,8 +184,15 @@ SC.ObjectController = SC.Controller.extend(
     @returns {void}
   */
   contentPropertyDidChange: function(target, key) {
-    if (key === '*') this.allPropertiesDidChange();
-    else this.notifyPropertyChange(key);
+    var allowsMultipleContent = this.get('allowsMultipleContent') ;
+    var observableContent = this.get('observableContent') ;
+    // console.log('observableContent is %@'.fmt(observableContent));
+    // console.log('target is %@'.fmt(target));
+    if (!allowsMultipleContent && target === observableContent) {
+      // console.log('notifying observers of property change to %@'.fmt(key));
+      if (key === '*') this.allPropertiesDidChange();
+      else this.notifyPropertyChange(key);
+    }
   },
   
   /** 

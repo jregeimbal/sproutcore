@@ -141,7 +141,15 @@ SC.Query = SC.Object.extend({
   contains: function(record, wildCardValues) {
     // if called for the first time we have to parse the query
     if (!this.isReady) this.parseQuery();
-
+    
+    var recType = this.get('recordType');
+    if (recType && SC.typeOf(recType) === SC.T_STRING) {
+      recType = SC.objectForPropertyPath(recType) ;
+      this.set('recordType', recType) ;
+    }
+    
+    if (recType && !SC.instanceOf(record, recType)) return NO ;
+    
     // if wildCardValues were not provided, use parameters instead
     if (wildCardValues === undefined) wildCardValues = this.parameters;
     
@@ -844,6 +852,7 @@ SC.Query.mixin( /** @scope SC.Query */ {
     @returns {Array} array instance of store keys matching the SC.Query (sorted)
   */
   containsStoreKeys: function(query, storeKeys, store) {
+    // console.log('SC.Query.containsStoreKeys(%@,%@,%@)'.fmt(query, storeKeys, store));
     var ret = [], idx, len, rec, status, K = SC.Record;
     var recType = query.get('recordType');
     if (recType && SC.typeOf(recType) === SC.T_STRING) {
@@ -861,17 +870,25 @@ SC.Query.mixin( /** @scope SC.Query */ {
       }
     }
     
+//     console.log('recType is %@'.fmt(recType));
+    
     for(idx=0,len=storeKeys.length;idx<len;idx++) {
       rec = store.materializeRecord(storeKeys[idx]);
-      status = rec.get('status');
-      // do not include EMPTY or DESTROYED records
-      if(rec && !(status & K.EMPTY) && !(status & K.DESTROYED) && query.contains(rec)) {
-        ret.push(storeKeys[idx]);
+      if (!rec) {
+        // console.log('skipping record with storeKey %@'.fmt(storeKeys[idx]));
+      } else {
+        status = rec.get('status');
+        // do not include EMPTY or DESTROYED records
+        if (!(status & K.EMPTY) && !(status & K.DESTROYED) && query.contains(rec)) {
+          if (recType && !SC.instanceOf(rec, recType)) debugger ;
+          ret.push(storeKeys[idx]);
+        }
       }
     }
     
     SC.Query.orderStoreKeys(ret, query, store);
     
+    // console.log('returning %@'.fmt(ret));
     return ret;
   },
   

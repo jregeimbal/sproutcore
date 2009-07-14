@@ -165,7 +165,22 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     @param {Boolean} notify to send length notifyPropertyChange()
   */
   applyQuery: function(changedStoreKeys, recordTypes, notify) {
+    var ary = this._ary || [] ;
+    var idx, len = changedStoreKeys.length ;
+    for (idx=0; idx<len; ++idx) ary.push(changedStoreKeys[idx]) ;
+    this._ary = ary ;
+    var set = this._set || SC.Set.create() ;
+    recordTypes.forEach(function(recordType) { set.push(recordType); });
+    this._set = set ;
+    this._notify = this._notify || notify ;
+    this.invokeOnce(this._applyQuery) ;
+  },
+  
+  _applyQuery: function() {
+    var changedStoreKeys = this._ary.slice(), recordTypes = this._set.copy(),
+        notify = this._notify ;
     // console.log('%@.applyQuery(%@, %@, %@)'.fmt(this, changedStoreKeys, recordTypes, notify));
+    // console.log('recordType is %@'.fmt(this.get('queryKey').recordType));
     var newStoreKeys = this.get('storeKeys'), inChangedStoreKeys, 
       inMatchingStoreKeys, idx, len, storeKey, queryKey = this.get('queryKey'),
       store = this.get('store');
@@ -203,6 +218,8 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       var rev = newStoreKeys.propertyRevision ;
       this._storeKeysContentDidChange(newStoreKeys, '[]', newStoreKeys, rev) ;
     }
+    
+    this._ary = this._set = this._notify = NO ;
   },
   
   /**
@@ -238,7 +255,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       prev.removeObserver('[]', this, f);
       prev.removeObserver('state', this, fs);
     }
-
+    
     this._prevStoreKeys = storeKeys;
     
     if (storeKeys) {
@@ -283,6 +300,4 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     this._storeKeysDidChange();
   }
   
-  
 });
-
