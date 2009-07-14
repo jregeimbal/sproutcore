@@ -20,7 +20,7 @@ config :foundation, :required => [:runtime]
 config :datastore,  :required => [:runtime]
 
 # APP-LEVEL FRAMEWORKS
-%w(desktop mobile designer).each do |app_framework|
+%w(desktop mobile).each do |app_framework|
   config app_framework, :required => [:runtime, :datastore, :foundation]
 end
 
@@ -30,6 +30,7 @@ config :mobile,
 
 # WRAPPER FRAMEWORKS
 config :deprecated, :required => :desktop
+config :designer, :required => :desktop
 config :sproutcore, :required => :desktop
 
 # SPECIAL FRAMEWORKS AND THEMES
