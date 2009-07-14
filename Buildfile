@@ -30,8 +30,8 @@ config :mobile,
 
 # WRAPPER FRAMEWORKS
 config :deprecated, :required => :desktop
-config :designer, :required => :desktop
 config :sproutcore, :required => :desktop
+config :designer, :required => [:runtime, :foundation]
 
 # SPECIAL FRAMEWORKS AND THEMES
 # These do not require any of the built-in SproutCore frameworks
