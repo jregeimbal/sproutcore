@@ -711,6 +711,19 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
       if (!this._styles && this._elem) {
         // parse style...
         attr = this._elem.getAttribute('style');
+
+        ////// TODO :LOOK OUT I ADDED TOLOWERCASE BECAUSE IE IS ALWAYS RETURNING STYLE KEYS IN CAPS
+        ////// THAT MESSES UP CAMELIZING AND WE END UP WITH stuff like c-olor in the styles
+        ////// I have to add more unit test 
+        ////// JUAN
+        
+        if (SC.browser.msie) {
+          // In IE7 this._elem.getAttribute('style') is returning the style object.
+          // this._elem.getAttribute('style').cssText returns the actually css string
+          if (attr.cssText) attr = attr.cssText;
+          
+          attr = attr.toLowerCase();
+        }
         
         if (attr && (attr = attr.toString()).length>0) {
           if(SC.browser.msie){ 
