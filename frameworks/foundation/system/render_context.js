@@ -717,7 +717,13 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         ////// I have to add more unit test 
         ////// JUAN
         
-        if(SC.browser.msie) attr = attr.toLowerCase();
+        if (SC.browser.msie) {
+          // In IE7 this._elem.getAttribute('style') is returning the style object.
+          // this._elem.getAttribute('style').cssText returns the actually css string
+          if (attr.cssText) attr = attr.cssText;
+          
+          attr = attr.toLowerCase();
+        }
         
         if (attr && (attr = attr.toString()).length>0) {
           styles = {};
