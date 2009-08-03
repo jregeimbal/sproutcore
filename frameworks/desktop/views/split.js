@@ -126,6 +126,13 @@ SC.SplitView = SC.View.extend(
   defaultThickness: 0.5,
   
   /**
+    Specifies how much room to use for the divider view. Default is 7 pixels.
+    
+    @property {Number}
+  */
+  dividerThickness: 7,
+  
+  /**
     Yes, we're a split view.
   */
   isSplitView: YES,
@@ -211,7 +218,7 @@ SC.SplitView = SC.View.extend(
     var dividerView = this.get('dividerView') ;
     var direction = this.get('layoutDirection') ;
     var topLeftThickness = this._desiredTopLeftThickness ;
-    var dividerThickness = this.get('dividerThickness') || 7 ;
+    var dividerThickness = this.get('dividerThickness') ;
     var splitViewThickness = (direction == SC.LAYOUT_HORIZONTAL) ? this.get('frame').width : this.get('frame').height ;
     var bottomRightThickness = splitViewThickness - dividerThickness - topLeftThickness ;
     var autoresizeBehavior = this.get('autoresizeBehavior') ;
@@ -398,7 +405,7 @@ SC.SplitView = SC.View.extend(
       if (autoResizeBehavior === SC.RESIZE_BOTTOM_RIGHT) {
         this._desiredTopLeftThickness = desiredThickness ;
       } else { // (autoResizeBehavior === SC.RESIZE_TOP_LEFT)
-        var dividerThickness = this.get('dividerThickness') || 7 ;
+        var dividerThickness = this.get('dividerThickness') ;
         this._desiredTopLeftThickness =  splitViewThickness - dividerThickness - desiredThickness ;
       }
       
