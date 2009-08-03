@@ -938,6 +938,9 @@ SC.CollectionView = SC.View.extend(
     if (isGroupView) attrs.classNames = this._GROUP_COLLECTION_CLASS_NAMES;
     else attrs.classNames = this._COLLECTION_CLASS_NAMES;
     
+    attrs.isFirst = (idx === 0) ;
+    attrs.isLast = (idx+1) === this.get('length') ;
+    
     layout = this.layoutForContentIndex(idx);
     if (layout) {
       attrs.layout = layout;
