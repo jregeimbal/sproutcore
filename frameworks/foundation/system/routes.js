@@ -296,6 +296,7 @@ SC.routes = SC.Object.create(
       _setWindowLocation: function(loc) {
         var cloc = this._cloc ;
         if (cloc != loc) {
+          if (!this._backStack) return ; // HACK to work around startup error
           this._backStack.push(this._cloc) ;
           this._forwardStack.length = 0 ;
           this._cloc = loc ;          
