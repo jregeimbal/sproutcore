@@ -1137,7 +1137,11 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
   didBecomeKeyResponderFrom: function(responder) {},
     
   /**
-    This method will process a key input event, attempting to convert it to an appropriate action method and sending it up the responder chain.  The event is converted using the SC.KEY_BINDINGS hash, which maps key events into method names.  If no key binding is found, then the key event will be passed along using an insertText() method.
+    This method will process a key input event, attempting to convert it to an
+    appropriate action method and sending it up the responder chain.  The 
+    event is converted using the SC.KEY_BINDINGS hash, which maps key events 
+    into method names.  If no key binding is found, then the key event will be
+    passed along using an insertText() method.
     
     @param {SC.Event} event
     @returns {Object} object that handled event, if any
