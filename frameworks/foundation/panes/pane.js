@@ -171,6 +171,27 @@ SC.Pane = SC.View.extend({
     return evt.mouseHandler || target ;
   },
 
+  performKeyEquivalent: function(keystring, evt) {
+    ret = sc_super() ; // try normal view behavior first
+    if (!ret) {
+      var defaultResponder = this.get('defaultResponder') ;
+      if (defaultResponder) {
+        // try default responder's own performKeyEquivalent method,
+        // if it has one...
+        if (defaultResponder.performKeyEquivalent) {
+          ret = defaultResponder.performKeyEquivalent(keystring, evt) ;
+        }
+        
+        // even if it does have one, if it doesn't handle the event, give
+        // methodName-style key equivalent handling a try
+        if (!ret) {
+          ret = defaultResponder.tryToPerform(keystring, evt) ;
+        }
+      }
+    }
+    return ret ;
+  },
+
   // .......................................................
   // HANDLE FIRST RESPONDER AND KEY RESPONDER STATUS
   //
