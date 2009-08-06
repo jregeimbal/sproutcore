@@ -301,15 +301,23 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     
     // convert view's frame to an offset from the contentView origin.  This
     // will become the new scroll offset after some adjustment.
-    vf = contentView.convertFrameFromView(vf, null);
+    vf = contentView.convertFrameFromView(vf, view.get('parentView'));
     var cf = contentView.get('frame');
     vf.x -= cf.x;
     vf.y -= cf.y;
     
     // find current visible frame.
     var vo = this.get('containerView').get('frame');
+    
     vo.x = this.get('horizontalScrollOffset');
     vo.y = this.get('verticalScrollOffset');
+    
+    // add in offset of container
+    layer = this.get('containerView').get('layer');
+    cf = SC.viewportOffset(layer);
+    
+    vo.x += cf.x ;
+    vo.y += cf.y ;
     
     // if top edge is not visible, shift origin
     vo.y -= Math.max(0, SC.minY(vo) - SC.minY(vf)) ;
@@ -318,6 +326,10 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     // if bottom edge is not visible, shift origin
     vo.y += Math.max(0, SC.maxY(vf) - SC.maxY(vo)) ;
     vo.x += Math.max(0, SC.maxX(vf) - SC.maxX(vo)) ;
+    
+    // remove offset of container
+    vo.x -= cf.x ;
+    vo.y -= cf.y ;
     
     // scroll to that origin.
     return this.scrollTo(vo.x, vo.y) ;

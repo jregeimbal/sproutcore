@@ -1262,13 +1262,13 @@ SC.CollectionView = SC.View.extend(
     if (extend && (sel = this.get('selection'))) sel = sel.copy();
     else sel = SC.SelectionSet.create();
     if (indexes) sel.add(content, indexes);
-
+    
     // give delegate one last chance
     sel = del.collectionViewSelectionForProposedSelection(this, sel);
     if (!sel) sel = SC.SelectionSet.create(); // empty
     
     // if we're not extending the selection, clear the selection anchor
-    this._selectionAnchor = null ;
+    if (!extend) this._selectionAnchor = null ;
     this.set('selection', sel.freeze()) ;  
     return this;
   },
@@ -1317,7 +1317,7 @@ SC.CollectionView = SC.View.extend(
    @param {Number} bottom optional bottom of selection use as fallback
    @returns {Number} next selectable index. 
   */
-  _findNextSelectableItemFromIndex: function(proposedIndex, bottom) {
+  _findNextSelectableItemFromIndex: function(proposedIndex, bottom, extend) {
     
     var lim     = this.get('length'),
         range   = SC.IndexSet.create(), 
@@ -1338,7 +1338,7 @@ SC.CollectionView = SC.View.extend(
     while (proposedIndex < lim) {
       if (!groupIndexes || !groupIndexes.contains(proposedIndex)) {
         range.add(proposedIndex);
-        ret = del.collectionViewShouldSelectIndexes(this, range);
+        ret = del.collectionViewShouldSelectIndexes(this, range, extend);
         if (ret && ret.get('length') >= 1) return proposedIndex ;
         range.remove(proposedIndex);
       }
@@ -1362,7 +1362,7 @@ SC.CollectionView = SC.View.extend(
    @returns {Integer} the previous selectable index. This will always be in the range of the top of the current selection index and the proposed index.
    @private
   */
-  _findPreviousSelectableItemFromIndex: function(proposedIndex, top) {
+  _findPreviousSelectableItemFromIndex: function(proposedIndex, top, extend) {
     var range   = SC.IndexSet.create(), 
         content = this.get('content'),
         del     = this.get('selectionDelegate'),
@@ -1383,7 +1383,7 @@ SC.CollectionView = SC.View.extend(
     while (proposedIndex >= 0) {
       if (!groupIndexes || !groupIndexes.contains(proposedIndex)) {
         range.add(proposedIndex);
-        ret = del.collectionViewShouldSelectIndexes(this, range);
+        ret = del.collectionViewShouldSelectIndexes(this, range, extend);
         if (ret && ret.get('length') >= 1) return proposedIndex ;
         range.remove(proposedIndex);
       }
@@ -1422,19 +1422,21 @@ SC.CollectionView = SC.View.extend(
     
     var selTop    = sel ? sel.get('min') : -1,
         selBottom     = sel ? sel.get('max')-1 : -1,
-        anchor        = this._selectionAnchor;
+        anchor        = this._selectionAnchor,
+        deselecting   = false;
     if (SC.none(anchor)) anchor = selTop;
-
+    
     // if extending, then we need to do some fun stuff to build the array
     if (extend) {
 
       // If the selBottom is after the anchor, then reduce the selection
       if (selBottom > anchor) {
+        deselecting = true ;
         selBottom = selBottom - numberOfItems ;
         
       // otherwise, select the previous item from the top 
       } else {
-        selTop = this._findPreviousSelectableItemFromIndex(selTop - numberOfItems);
+        selTop = this._findPreviousSelectableItemFromIndex(selTop - numberOfItems, selTop, extend);
       }
       
       // Ensure we are not out of bounds
@@ -1443,7 +1445,7 @@ SC.CollectionView = SC.View.extend(
       
     // if not extending, just select the item previous to the selTop
     } else {
-      selTop = this._findPreviousSelectableItemFromIndex(selTop - numberOfItems);
+      selTop = this._findPreviousSelectableItemFromIndex(selTop - numberOfItems, selTop, extend);
       if (SC.none(selTop) || (selTop < 0)) selTop = 0 ;
       selBottom = selTop ;
       anchor = null ;
@@ -1452,11 +1454,13 @@ SC.CollectionView = SC.View.extend(
     var scrollToIndex = selTop ;
     
     // now build new selection
-    sel = SC.IndexSet.create(selTop, selBottom+1-selTop);
+    if (deselecting) sel = SC.IndexSet.create(selBottom+1, numberOfItems);
+    else sel = SC.IndexSet.create(selTop, selBottom+1-selTop);
     
     // ensure that the item is visible and set the selection
     this.scrollToContentIndex(scrollToIndex) ;
-    this.select(sel) ;
+    if (deselecting) this.deselect(sel) ;
+    else this.select(sel, extend) ;
     this._selectionAnchor = anchor ;
     return this ;
   },
@@ -1484,7 +1488,8 @@ SC.CollectionView = SC.View.extend(
     var selTop    = sel ? sel.get('min') : -1,
         selBottom = sel ? sel.get('max')-1 : -1,
         anchor    = this._selectionAnchor,
-        lim       = this.get('length');
+        lim       = this.get('length'),
+        deselecting   = false;
         
     if (SC.none(anchor)) anchor = selTop;
 
@@ -1493,11 +1498,12 @@ SC.CollectionView = SC.View.extend(
       
       // If the selTop is before the anchor, then reduce the selection
       if (selTop < anchor) {
+        deselecting = true ;
         selTop = selTop + numberOfItems ;
         
       // otherwise, select the next item after the bottom 
       } else {
-        selBottom = this._findNextSelectableItemFromIndex(selBottom + numberOfItems, selBottom);
+        selBottom = this._findNextSelectableItemFromIndex(selBottom + numberOfItems, selBottom, extend);
       }
       
       // Ensure we are not out of bounds
@@ -1506,7 +1512,7 @@ SC.CollectionView = SC.View.extend(
       
     // if not extending, just select the item next to the selBottom
     } else {
-      selBottom = this._findNextSelectableItemFromIndex(selBottom + numberOfItems, selBottom);
+      selBottom = this._findNextSelectableItemFromIndex(selBottom + numberOfItems, selBottom, extend);
       
       if (selBottom >= lim) selBottom = lim-1;
       selTop = selBottom ;
@@ -1516,11 +1522,13 @@ SC.CollectionView = SC.View.extend(
     var scrollToIndex = selBottom ;
     
     // now build new selection
-    sel = SC.IndexSet.create(selTop, selBottom-selTop+1);
+    if (deselecting) sel = SC.IndexSet.create(selTop-numberOfItems, numberOfItems);
+    else sel = SC.IndexSet.create(selTop, selBottom-selTop+1);
     
     // ensure that the item is visible and set the selection
     this.scrollToContentIndex(scrollToIndex) ;
-    this.select(sel) ;
+    if (deselecting) this.deselect(sel) ;
+    else this.select(sel, extend) ;
     this._selectionAnchor = anchor ;
     return this ;
   },
