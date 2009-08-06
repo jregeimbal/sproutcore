@@ -211,6 +211,10 @@ SC.SelectionSupport = {
     if (!this.get('allowsSelection') && sel.get('length')>0) {
       ret = SC.SelectionSet.EMPTY ;
       
+    // empty selection is not allowed, let the selection() property handle it
+    } else if (!this.get('allowsEmptySelection') && sel.get('length')==0) {
+      ret = sel.copy().freeze() ;
+      
     // selection is allowed, make sure it is valid
     } else {
       
@@ -220,7 +224,6 @@ SC.SelectionSupport = {
       len     = content ? content.get('length') : 0 ;
       max     = indexes ? indexes.get('max') : 0 ;
       if (max > len) { ret = sel.copy().constrain(content).freeze(); }
-      else { ret = sel.copy().freeze(); }
     }
     
     if (ret) this.set('selection', ret) ;

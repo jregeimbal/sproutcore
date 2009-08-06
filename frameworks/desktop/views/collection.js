@@ -1109,7 +1109,7 @@ SC.CollectionView = SC.View.extend(
     observing the selection for changes.
     
   */
-  _cv_selectionDidChange: function() {  
+  _cv_selectionDidChange: function() {
     var sel  = this.get('selection'),
         last = this._cv_selection,
         func = this._cv_selectionContentDidChange;
