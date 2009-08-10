@@ -880,7 +880,7 @@ SC.Query.mixin( /** @scope SC.Query */ {
         status = rec.get('status');
         // do not include EMPTY or DESTROYED records
         if (!(status & K.EMPTY) && !(status & K.DESTROYED) && query.contains(rec)) {
-          if (recType && !SC.instanceOf(rec, recType)) debugger ;
+          // if (recType && !SC.instanceOf(rec, recType)) debugger ;
           ret.push(storeKeys[idx]);
         }
       }
