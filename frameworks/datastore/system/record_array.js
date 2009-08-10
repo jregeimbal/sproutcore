@@ -177,6 +177,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
   
   _applyQuery: function() {
+    if (this._ary.slice === undefined) return ; // HACK avoid error on next line
     var changedStoreKeys = this._ary.slice(), recordTypes = this._set.copy(),
         notify = this._notify ;
     // console.log('%@.applyQuery(%@, %@, %@)'.fmt(this, changedStoreKeys, recordTypes, notify));

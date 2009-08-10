@@ -228,7 +228,7 @@ SC.SelectionSupport = {
     }
     
     if (ret) this.set('selection', ret) ;
-    else this.set('selection', sel.copy().freeze()) ; // don't want sel.frozenCopy() !
+    // else this.set('selection', sel.copy().freeze()) ; // don't want sel.frozenCopy() !
     return this ;
   }
     
