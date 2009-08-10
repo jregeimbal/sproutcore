@@ -235,6 +235,18 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     return this.get('store').findAll(queryKey, null, this);
   },
   
+  // HACK to be able to refresh a query-backed record array from the server
+  refresh: function() {
+    var store = this.get('store') ;
+    if (!store) return ;
+    var source = store._getDataSource() ; // TODO why is this private?
+    if (!source || source.fetch === undefined) return ;
+    var fetchKey = this.get('queryKey') ;
+    if (!fetchKey) return ;
+    source.fetch.call(source, store, fetchKey, null) ;
+    return this ;
+  },
+  
   // ..........................................................
   // INTERNAL SUPPORT
   // 
