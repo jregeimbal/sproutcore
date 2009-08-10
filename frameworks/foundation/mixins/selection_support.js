@@ -106,7 +106,7 @@ SC.SelectionSupport = {
       this._scsel_selection = value ;
       
     // read only mode
-    } else return this._scsel_selection ;
+    } else return this._scsel_selection || SC.SelectionSet.EMPTY ;
     
   }.property('arrangedObjects', 'allowsEmptySelection', 
       'allowsMultipleSelection', 'allowsSelection').cacheable(),
