@@ -201,6 +201,7 @@ SC.SelectionSupport = {
     selection always remains up-to-date and valid.
   */
   updateSelectionAfterContentChange: function() {
+    // console.log('%@.updateSelectionAfterContentChange()'.fmt(this));
     var content = this.get('arrangedObjects'),
         sel     = this.get('selection'),
         indexes, len, max, ret;
@@ -227,6 +228,7 @@ SC.SelectionSupport = {
     }
     
     if (ret) this.set('selection', ret) ;
+    else this.set('selection', sel.copy().freeze()) ; // don't want sel.frozenCopy() !
     return this ;
   }
     
