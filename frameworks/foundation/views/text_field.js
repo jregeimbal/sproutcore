@@ -465,6 +465,11 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     // our key/mouse down/up handlers (such as the user choosing Select All
     // from a menu).
     SC.Event.add(input, 'select', this, this._textField_selectionDidChange);
+    
+    if (SC.browser.msie === '7.0') {
+      var hint = this.$('.sc-hint');
+      SC.Event.add(hint, 'focus', this, this._hint_did_click);
+    }
   },
 
   willDestroyLayer: function() {
@@ -474,6 +479,15 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     SC.Event.remove(input, 'focus', this, this._textField_fieldDidFocus);
     SC.Event.remove(input, 'blur',  this, this._textField_fieldDidBlur);
     SC.Event.remove(input, 'select',  this, this._textField_selectionDidChange);
+    
+    if (SC.browser.msie === '7.0') {
+      var hint = this.$('.sc-hint');
+      SC.Event.remove(hint, 'focus', this, this._hint_did_click);
+    }
+  },
+  
+  _hint_did_click: function(evt) {
+    this.$field().get(0).focus();
   },
 
   _textField_fieldDidFocus: function(evt) {
