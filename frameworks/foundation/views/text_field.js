@@ -383,6 +383,11 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     var input = this.$field();
     SC.Event.add(input, 'focus', this, this._textField_fieldDidFocus);
     SC.Event.add(input, 'blur',  this, this._textField_fieldDidBlur);
+    
+    if (SC.browser.msie === '7.0') {
+      var hint = this.$('.sc-hint');
+      SC.Event.add(hint, 'focus', this, this._hint_did_click);
+    }
   },
   
   willDestroyLayer: function() {
@@ -391,6 +396,15 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     var input = this.$field();
     SC.Event.remove(input, 'focus', this, this._textField_fieldDidFocus);
     SC.Event.remove(input, 'blur',  this, this._textField_fieldDidBlur);
+    
+    if (SC.browser.msie === '7.0') {
+      var hint = this.$('.sc-hint');
+      SC.Event.remove(hint, 'focus', this, this._hint_did_click);
+    }
+  },
+  
+  _hint_did_click: function(evt) {
+    this.$field().get(0).focus();
   },
   
   _textField_fieldDidFocus: function(evt) {
