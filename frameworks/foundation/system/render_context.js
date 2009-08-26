@@ -325,21 +325,38 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
       for(key in value) {
         if (!value.hasOwnProperty(key)) continue;
         if (value[key] === null) { // remove empty attrs
-          elem.removeAttribute(key);
+          if (SC.browser.msie === '7.0') {
+            elem[key] = '';
+          } else {
+            elem.removeAttribute(key);
+          }
+          
         } else {
-          elem.setAttribute(key, value[key]);
+          if (SC.browser.msie === '7.0') {
+            elem[key] = value[key];
+          } else {
+            elem.setAttribute(key, value[key]);
+          }
         }
       }
     }
     
     // class="foo bar"
     if (this._classNamesDidChange && (value = this._classNames)) {
-      elem.setAttribute('class', value.join(' '));
+      if (SC.browser.msie === '7.0') {
+        elem.className = value.join(' ');
+      } else {
+        elem.setAttribute('class', value.join(' '));
+      }
     }
     
     // id="foo"
     if (this._idDidChange && (value = this._id)) {
-      elem.setAttribute('id', value);
+      if (SC.browser.msie === '7.0') {
+        elem.id = value;
+      } else {
+        elem.setAttribute('id', value);
+      }
     }
     
     // style="a:b; c:d;"
@@ -353,8 +370,12 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         pair[0] = key.dasherize(); pair[1] = value;
         joined.push(pair.join(': '));
       }
+      if (SC.browser.msie === '7.0') {
+        elem.style.cssText = joined.join('; ');
+      } else {
+        elem.setAttribute('style', joined.join('; '));
+      }
       
-      elem.setAttribute('style', joined.join('; '));
       joined.length = 0; // reset temporary object
     }
     
