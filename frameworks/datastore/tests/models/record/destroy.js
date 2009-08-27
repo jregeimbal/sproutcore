@@ -37,8 +37,10 @@ test("calling destroy on a newRecord will mark the record as destroyed and calls
   equals(MyApp.foo.get('status'), SC.Record.READY_NEW, 'precond - status is READY_NEW');
 
   MyApp.foo.destroy();
+  var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
+  var id = store.idFor(storeKey) ;
 
-  same(callInfo, [null, null, MyApp.foo.storeKey], 'destroyRecords() should not be called');
+  same(callInfo, [MyApp.foo.constructor, id, storeKey], 'destroyRecords() should not be called');
     
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_CLEAN, 'status should be SC.Record.DESTROYED_CLEAN');
 });
@@ -52,8 +54,10 @@ test("calling destroy on existing record should call destroyRecord() on store", 
   equals(MyApp.foo.get('status'), SC.Record.READY_CLEAN, 'precond - status is READY CLEAN');
 
   MyApp.foo.destroy();
+  var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
+  var id = store.idFor(storeKey) ;
 
-  same(callInfo, [null, null, MyApp.foo.storeKey], 'destroyRecord() should not be called');
+  same(callInfo, [MyApp.foo.constructor, id, storeKey], 'destroyRecord() should not be called');
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_DIRTY, 'status should be SC.Record.DESTROYED_DIRTY');
 });
 
