@@ -507,7 +507,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
   */
   storeKeysById: function() {
     var crt = this.coreRecordType || SC.Record,
-        key = SC.keyFor('storeKey', crt),
+        key = SC.keyFor('storeKey', SC.guidFor(crt)),
         ret = crt[key];
     if (!ret) ret = crt[key] = {};
     return ret;
