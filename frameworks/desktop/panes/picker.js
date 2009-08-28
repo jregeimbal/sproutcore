@@ -142,7 +142,7 @@ SC.PickerPane = SC.PalettePane.extend({
     @returns {SC.PickerPane} receiver
   */
   popup: function(anchorViewOrElement, preferType, preferMatrix) {
-    var anchor = anchorViewOrElement.isView ? anchorViewOrElement.get('layerId') : anchorViewOrElement;
+    var anchor = anchorViewOrElement.isView ? anchorViewOrElement.get('layer') : anchorViewOrElement;
     this.beginPropertyChanges();
     this.set('anchorElement',anchor) ;
     if (preferType) this.set('preferType',preferType) ;
@@ -209,7 +209,7 @@ SC.PickerPane = SC.PalettePane.extend({
     This method will return ret (x, y, width, height) from a rectangular element
   */  
   computeAnchorRect: function(anchor) {
-    var ret = SC.viewportOffset(SC.$('#%@'.fmt(anchor)).get(0)); // get x & y
+    var ret = SC.viewportOffset(anchor); // get x & y
     var cq = SC.$(anchor);
     ret.width = cq.width();
     ret.height = cq.height();
