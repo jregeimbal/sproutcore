@@ -678,6 +678,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {SC.Record} record instance or null
   */
   find: function(recordType, id, isRefresh) {
+    console.log("%@.find(%@, %@, %@)".fmt(this, recordType, id, isRefresh));
     // if recordType is passed as string, find object
     if(SC.typeOf(recordType)===SC.T_STRING) {
       recordType = SC.objectForPropertyPath(recordType);
@@ -685,6 +686,12 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     // first attempt to find the record in the local store
     var storeKey = recordType.storeKeyFor(id);
+    
+    // need to get the correct recordType for storeKey -- could be polymorphic
+    if (recordType === recordType.coreRecordType) {
+      console.log('trying to get a new recordType for storeKey %@'.fmt(storeKey));
+      recordType = this.recordTypeFor(storeKey) ;
+    }
     
     if (this.readStatus(storeKey) === SC.Record.EMPTY) {
       storeKey = this.retrieveRecord(recordType, id);
