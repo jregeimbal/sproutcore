@@ -176,11 +176,12 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   createRecord: function(store, storeKey) {
     var id         = store.idFor(storeKey),
         recordType = store.recordTypeFor(storeKey),
+        crt        = recordType.coreRecordType || SC.Record,
         dataHash   = store.readDataHash(storeKey), 
-        fixtures   = this.fixturesFor(recordType);
+        fixtures   = this.fixturesFor(crt);
         
     if (!id) id = this.generateIdFor(recordType, dataHash, store, storeKey);
-    this._invalidateCachesFor(recordType, storeKey, id);
+    this._invalidateCachesFor(crt, storeKey, id);
     fixtures[id] = dataHash;
 
     store.dataSourceDidComplete(storeKey, null, id);
@@ -197,9 +198,10 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   destroyRecord: function(store, storeKey) {
     var id         = store.idFor(storeKey),
         recordType = store.recordTypeFor(storeKey),
+        crt        = recordType.coreRecordType || SC.Record,
         fixtures   = this.fixturesFor(recordType);
 
-    this._invalidateCachesFor(recordType, storeKey, id);
+    this._invalidateCachesFor(crt, storeKey, id);
     if (id) delete fixtures[id];
     store.dataSourceDidDestroy(storeKey);  
     return YES ;
@@ -214,7 +216,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
     needed.  The default generates a storekey and formats it as a string.
   */
   generateIdFor: function(recordType, dataHash, store, storeKey) {
-    return "@id%@".fmt(SC.Store.generateStoreKey());
+    return "@id%@_%@".fmt(SC.Store.generateStoreKey(), SC.guidFor(recordType));
   },
   
   /**
@@ -258,16 +260,17 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   fixturesFor: function(recordType) {
     // get basic fixtures hash.
     if (!this._fixtures) this._fixtures = {};
-    var fixtures = this._fixtures[SC.guidFor(recordType)];
+    var fixtures = this._fixtures[SC.guidFor(recordType.coreRecordType || SC.Record)];
     if (fixtures) return fixtures ; 
     
     // need to load fixtures.
     var dataHashes = recordType ? recordType.FIXTURES : null,
         len        = dataHashes ? dataHashes.length : 0,
         primaryKey = recordType ? recordType.prototype.primaryKey : 'guid',
+        crt        = recordType.coreRecordType || SC.Record,
         idx, dataHash, id ;
 
-    this._fixtures[SC.guidFor(recordType)] = fixtures = {} ; 
+    this._fixtures[SC.guidFor(crt)] = fixtures = {} ; 
     for(idx=0;idx<len;idx++) {      
       dataHash = dataHashes[idx];
       id = dataHash[primaryKey];
@@ -285,7 +288,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   */
   fixturesLoadedFor: function(recordType) {
     if (!this._fixtures) return NO;
-    var ret = [], fixtures = this._fixtures[SC.guidFor(recordType)];
+    var ret = [], fixtures = this._fixtures[SC.guidFor(recordType.coreRecordType || SC.Record)];
     return fixtures ? YES: NO;
   },
   
@@ -301,7 +304,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   */
   _invalidateCachesFor: function(recordType, storeKey, id) {
     var cache = this._storeKeyCache;
-    if (cache) delete cache[SC.guidFor(recordType)]
+    if (cache) delete cache[SC.guidFor(recordType.coreRecordType || SC.Record)]
     return this ;
   }
   
