@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -107,8 +107,10 @@ SC.Record = SC.Object.extend(
     
     @returns {SC.Record} receiver
   */
-  refresh: function() { 
-    this.get('store').refreshRecord(null, null, this.get('storeKey'));
+  refresh: function() {
+    var storeKey = this.get('storeKey'), store = this.get('store') ;
+    var id = store.idFor(storeKey) ;
+    store.refreshRecord(this.constructor, id, storeKey) ;
     return this ;
   },
   
@@ -121,7 +123,9 @@ SC.Record = SC.Object.extend(
     @returns {SC.Record} receiver
   */
   destroy: function() { 
-    this.get('store').destroyRecord(null, null, this.get('storeKey'));
+    var storeKey = this.get('storeKey'), store = this.get('store') ;
+    var id = store.idFor(storeKey) ;
+    store.destroyRecord(this.constructor, id, storeKey) ;
     return this ;
   },
 
@@ -136,7 +140,9 @@ SC.Record = SC.Object.extend(
     @returns {SC.Record} reciever
   */
   recordDidChange: function() {
-    this.get('store').recordDidChange(null, null, this.get('storeKey'));
+    var storeKey = this.get('storeKey'), store = this.get('store') ;
+    // id is not necessarily defined when recordDidChange() is called
+    store.recordDidChange(this.constructor, null, storeKey) ;
     return this ;
   },
   
@@ -344,6 +350,17 @@ SC.Record = SC.Object.extend(
     return this.readAttribute(key);
   },
   
+  /**
+    Lets you commit this specific record to the store which will trigger
+    the appropriate methods in the data source for you.
+    
+    @param {Hash} params optional additonal params that will passed down
+      to the data source
+  */
+  commitRecord: function(params) {
+    this.get('store').commitRecord(undefined, undefined, this.get('storeKey'), params);
+  },
+  
   // ...............................
   // PRIVATE
   //
@@ -412,6 +429,13 @@ SC.Record.mixin( /** @scope SC.Record */ {
   RECORD_EXISTS_ERROR: new Error("Record Exists"),
   NOT_FOUND_ERROR:     new Error("Not found "),
   BUSY_ERROR:          new Error("Busy"),
+  
+  /** @private Needed to support single-table inheritance. */
+  extend: function() {
+    var ret = SC.Object.extend.apply(this,arguments) ;
+    if (SC.none(ret.coreRecordType)) ret.coreRecordType = ret ;
+    return ret ;
+  },
   
   /**
     Helper method returns a new SC.RecordAttribute instance to map a simple
@@ -485,9 +509,10 @@ SC.Record.mixin( /** @scope SC.Record */ {
     @returns {Hash}
   */
   storeKeysById: function() {
-    var key = SC.keyFor('storeKey', SC.guidFor(this)),
-        ret = this[key];
-    if (!ret) ret = this._storeKeysById = this[key] = {};
+    var crt = this.coreRecordType || SC.Record,
+        key = SC.keyFor('storeKey', SC.guidFor(crt)),
+        ret = crt[key];
+    if (!ret) ret = this._storeKeysById = crt[key] = {};
     return ret;
   },
   

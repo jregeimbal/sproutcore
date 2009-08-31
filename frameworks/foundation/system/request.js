@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 /*global ActiveXObject */
@@ -195,11 +195,11 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
   
   numberOfCurrentRequests: function() {
     return this.get('currentRequests').length ;
-  }.property('.currentRequests.[]'),
+  }.property('currentRequests'),
   
   numberOfRequests: function() {
     return this.get('queue').length ;
-  }.property('.queue.[]'),
+  }.property('queue'),
   
   sendRequest: function(request) {
     if(!request) return;
@@ -226,7 +226,7 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
     var r, xhrRequest;
     this.set('queue', []);
     var activeRequests=this.get('currentRequests');
-    while(r=activeRequests.popObject()){
+    while(r=activeRequests.shiftObject()){
       xhrRequest = r.get('request');
       xhrRequest.abort();
     }
@@ -236,7 +236,7 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
   fireRequestIfNeeded: function() {
     if (this.canLoadAnotherRequest()) {
       this.propertyWillChange('queue') ;
-      var item = this.get('queue').popObject() ;
+      var item = this.get('queue').shiftObject() ;
       this.propertyDidChange('queue') ;
       
       if (item) {
@@ -252,13 +252,12 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
         }
       }
     }
-  },
+  }.observes('currentRequests'),
   
   _transportDidOpen: function(transport) {
     this.propertyWillChange('currentRequests') ;
     this.get('currentRequests').pushObject(transport) ;
     this.propertyDidChange('currentRequests') ;
-    
     transport.fire() ;
   },
   

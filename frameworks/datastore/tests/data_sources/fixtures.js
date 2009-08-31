@@ -1,6 +1,6 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2009 Apple, Inc. and contributors.
+// Copyright: ©2006-2009 Apple Inc. and contributors.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 /*globals module ok equals same test MyApp Sample */
@@ -8,7 +8,9 @@
 var store, fds, storeKey1,storeKey2;
 
 module("SC.FixturesDataSource", {
-  setup: function() {  
+  setup: function() {
+    SC.RunLoop.begin();
+    
     var Sample = (window.Sample= SC.Object.create());
     Sample.File = SC.Record.extend({ test:'hello'});
 
@@ -26,7 +28,11 @@ module("SC.FixturesDataSource", {
     ];
     
     store = SC.Store.create().from(SC.Record.fixtures);
-  }    
+  },
+  
+  teardown: function() {
+    SC.RunLoop.end();
+  }
 });
 
 test("Verify findAll() loads all fixture data", function() {

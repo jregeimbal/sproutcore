@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -143,7 +143,7 @@ SC.ProgressView = SC.View.extend(SC.Control, {
     var isRunning = this.get('isRunning');
     var isEnabled = this.get('isEnabled');
   
-    var offset = (isIndeterminate && isRunning) ? (-16+Math.floor(Date.now()/75)%16) : 0;
+    var offset = (isIndeterminate && isRunning) ? (-24+Math.floor(Date.now()/75)%24) : 0;
   
     // compute value for setting the width of the inner progress
     var value;
@@ -196,7 +196,7 @@ SC.ProgressView = SC.View.extend(SC.Control, {
   },
   
   _createClassNameString: function(classNames) {
-    var classNameArray = [];
+    var classNameArray = [], key;
     for(key in classNames) {
       if(!classNames.hasOwnProperty(key)) continue;
       if(classNames[key]) classNameArray.push(key);

@@ -1,6 +1,6 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2009 Apple, Inc. and contributors.
+// Copyright: ©2006-2009 Apple Inc. and contributors.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 /*globals module ok equals same test MyApp */
@@ -33,7 +33,9 @@ module("SC.Record#refresh", {
 
 test("calling refresh should call refreshRecord() on store", function() {
   MyApp.foo.refresh();
-  same(callInfo, [null,null,MyApp.foo.storeKey], 'refreshRecord() should be called on parent');
+  var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
+  var id = store.idFor(storeKey) ;
+  same(callInfo, [MyApp.foo.constructor, id, storeKey], 'refreshRecord() should be called on parent');
 });
 
 test("should return receiver", function() {

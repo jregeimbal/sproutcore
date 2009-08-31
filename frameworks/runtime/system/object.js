@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -35,7 +35,7 @@ SC.BENCHMARK_OBJECTS = NO;
   @returns {Hash} base hash
 */
 SC._object_extend = function _object_extend(base, ext) {
-  if (!ext) return base; // nothing to do
+  if (!ext) throw "SC.Object.extend expects a non-null value.  Did you forget to 'sc_require' something?";
 
   // set _kvo_cloned for later use
   base._kvo_cloned = null;

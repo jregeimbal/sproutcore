@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -87,51 +87,16 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   },
   
   /**
-    Load fixtures for a given fetchKey into the store
-    and push it to the ret array.
-    
-    @param {SC.Store} store
-    @param {SC.Record} fetchKey
-    @param {SC.Array} ret
-  */
-  loadFixturesFor: function(store, fetchKey, ret) {
-    var dataHashes, i, storeKey, hashes = [];
-    dataHashes = this.fixturesFor(fetchKey);
-    for(i in dataHashes){
-      storeKey = fetchKey.storeKeyFor(i);
-      hashes.push(dataHashes[i]);
-      ret.push(storeKey);
-    }
-    store.loadRecords(fetchKey, hashes);
-  },
-  
-  /**
-    Load fixtures for a given fetchKey into the store
-    and push it to the ret array.
-    
-    @param {SC.Store} store
-    @param {SC.Record} fetchKey
-    @param {SC.Array} ret
-  */
-  loadFixturesFor: function(store, fetchKey, ret) {
-    var dataHashes, i, storeKey, hashes = [];
-    dataHashes = this.fixturesFor(fetchKey);
-    for(i in dataHashes){
-      storeKey = fetchKey.storeKeyFor(i);
-      hashes.push(dataHashes[i]);
-      ret.push(storeKey);
-    }
-    store.loadRecords(fetchKey, hashes);
-  },
-  
-  /**
     Retrieve a record from fixtures.
     
     @param {SC.Store} store
     @param {Number} storeKey
     @param {SC.Array} ret
+    @param {Hash} params to be passed down to data source. originated
+      from the commitRecords() call on the store
+    @returns {Array} storeKeys
   */
-  retrieveRecord: function(store, storeKey) {
+  retrieveRecord: function(store, storeKey, params) {
     var ret = [], recordType = SC.Store.recordTypeFor(storeKey),
         id = store.idFor(storeKey),
         hash = this.fixtureForStoreKey(store, storeKey);
@@ -157,9 +122,11 @@ SC.FixturesDataSource = SC.DataSource.extend( {
     
     @param {SC.Store} store
     @param {Number} storeKey
+    @param {Hash} params to be passed down to data source. originated
+      from the commitRecords() call on the store
     @returns {Boolean} YES if handled
   */
-  updateRecord: function(store, storeKey) {
+  updateRecord: function(store, storeKey, params) {
     this.setFixtureForStoreKey(store, storeKey, store.readDataHash(storeKey));
     store.dataSourceDidComplete(storeKey);  
     return YES ;
@@ -171,16 +138,19 @@ SC.FixturesDataSource = SC.DataSource.extend( {
     
     @param {SC.Store} store the store
     @param {Number} storeKey the store key
+    @param {Hash} params to be passed down to data source. originated
+      from the commitRecords() call on the store
     @returns {Boolean} YES if successful
   */
-  createRecord: function(store, storeKey) {
+  createRecord: function(store, storeKey, params) {
     var id         = store.idFor(storeKey),
         recordType = store.recordTypeFor(storeKey),
+        crt        = recordType.coreRecordType || SC.Record,
         dataHash   = store.readDataHash(storeKey), 
-        fixtures   = this.fixturesFor(recordType);
+        fixtures   = this.fixturesFor(crt);
         
     if (!id) id = this.generateIdFor(recordType, dataHash, store, storeKey);
-    this._invalidateCachesFor(recordType, storeKey, id);
+    this._invalidateCachesFor(crt, storeKey, id);
     fixtures[id] = dataHash;
 
     store.dataSourceDidComplete(storeKey, null, id);
@@ -192,14 +162,17 @@ SC.FixturesDataSource = SC.DataSource.extend( {
     
     @param {SC.Store} store the store
     @param {Number} storeKey the store key
+    @param {Hash} params to be passed down to data source. originated
+      from the commitRecords() call on the store
     @returns {Boolean} YES if successful
   */
-  destroyRecord: function(store, storeKey) {
+  destroyRecord: function(store, storeKey, params) {
     var id         = store.idFor(storeKey),
         recordType = store.recordTypeFor(storeKey),
+        crt        = recordType.coreRecordType || SC.Record,
         fixtures   = this.fixturesFor(recordType);
 
-    this._invalidateCachesFor(recordType, storeKey, id);
+    this._invalidateCachesFor(crt, storeKey, id);
     if (id) delete fixtures[id];
     store.dataSourceDidDestroy(storeKey);  
     return YES ;
@@ -214,7 +187,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
     needed.  The default generates a storekey and formats it as a string.
   */
   generateIdFor: function(recordType, dataHash, store, storeKey) {
-    return "@id%@".fmt(SC.Store.generateStoreKey());
+    return "@id%@_%@".fmt(SC.Store.generateStoreKey(), SC.guidFor(recordType));
   },
   
   /**
@@ -258,16 +231,17 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   fixturesFor: function(recordType) {
     // get basic fixtures hash.
     if (!this._fixtures) this._fixtures = {};
-    var fixtures = this._fixtures[SC.guidFor(recordType)];
+    var fixtures = this._fixtures[SC.guidFor(recordType.coreRecordType || SC.Record)];
     if (fixtures) return fixtures ; 
     
     // need to load fixtures.
     var dataHashes = recordType ? recordType.FIXTURES : null,
         len        = dataHashes ? dataHashes.length : 0,
         primaryKey = recordType ? recordType.prototype.primaryKey : 'guid',
+        crt        = recordType.coreRecordType || SC.Record,
         idx, dataHash, id ;
 
-    this._fixtures[SC.guidFor(recordType)] = fixtures = {} ; 
+    this._fixtures[SC.guidFor(crt)] = fixtures = {} ; 
     for(idx=0;idx<len;idx++) {      
       dataHash = dataHashes[idx];
       id = dataHash[primaryKey];
@@ -285,7 +259,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   */
   fixturesLoadedFor: function(recordType) {
     if (!this._fixtures) return NO;
-    var ret = [], fixtures = this._fixtures[SC.guidFor(recordType)];
+    var ret = [], fixtures = this._fixtures[SC.guidFor(recordType.coreRecordType || SC.Record)];
     return fixtures ? YES: NO;
   },
   
@@ -301,7 +275,7 @@ SC.FixturesDataSource = SC.DataSource.extend( {
   */
   _invalidateCachesFor: function(recordType, storeKey, id) {
     var cache = this._storeKeyCache;
-    if (cache) delete cache[SC.guidFor(recordType)]
+    if (cache) delete cache[SC.guidFor(recordType.coreRecordType || SC.Record)]
     return this ;
   }
   

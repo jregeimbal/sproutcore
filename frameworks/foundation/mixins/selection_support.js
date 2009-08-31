@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -83,27 +83,27 @@ SC.SelectionSupport = {
           // if that's not allowed, set to the first available item in 
           // arrangedObjects
           case 0:
-            empty   = this.get('allowsEmptySelection') ;
-            content = this.get('arrangedObjects') ;
-            if (!empty && content && content.get('length')>0) {
-                value = SC.SelectionSet.create().add(content, 0).freeze() ;
+            empty   = this.get('allowsEmptySelection');
+            content = this.get('arrangedObjects');
+            if (empty && content && content.get('length')>0) {
+                value = SC.SelectionSet.create().add(content, 0).freeze();
             } else value = null ;
-            break ;
+            break;
             
           // single items are always allows
           case 1:
-            break ;
-            
+            break;
+
           // fall through for >= 2, only allow if configured for multi-select
           default:
-            if (!this.get('allowsMultipleSelection')) value = null ;
-            break ;
+            if (!this.get('allowsMultipleSelection')) value = null;
+            break;
         }
-      } else value = null ;
+      } else value = null;
       
       // always make selection into something then save
-      if (!value) value = SC.SelectionSet.EMPTY ;
-      this._scsel_selection = value ;
+      if (!value) value = SC.SelectionSet.EMPTY;
+      this._scsel_selection = value;
       
     // read only mode
     } else return this._scsel_selection || SC.SelectionSet.EMPTY ;
@@ -201,16 +201,15 @@ SC.SelectionSupport = {
     selection always remains up-to-date and valid.
   */
   updateSelectionAfterContentChange: function() {
-    // console.log('%@.updateSelectionAfterContentChange()'.fmt(this));
     var content = this.get('arrangedObjects'),
         sel     = this.get('selection'),
         indexes, len, max, ret;
     
-    if (!sel) sel = SC.SelectionSet.EMPTY ;
+    if (!sel) sel = SC.SelectionSet.EMPTY;
     
     // if selection is not allowed, just force to be empty.
     if (!this.get('allowsSelection') && sel.get('length')>0) {
-      ret = SC.SelectionSet.EMPTY ;
+      ret = SC.SelectionSet.EMPTY;
       
     // empty selection is not allowed, let the selection() property handle it
     } else if (!this.get('allowsEmptySelection') && sel.get('length')==0) {
@@ -228,7 +227,6 @@ SC.SelectionSupport = {
     }
     
     if (ret) this.set('selection', ret) ;
-    // else this.set('selection', sel.copy().freeze()) ; // don't want sel.frozenCopy() !
     return this ;
   }
     

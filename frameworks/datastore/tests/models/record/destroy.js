@@ -1,6 +1,6 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2009 Apple, Inc. and contributors.
+// Copyright: ©2006-2009 Apple Inc. and contributors.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 /*globals module ok equals same test MyApp */
@@ -8,6 +8,7 @@
 var MyFoo = null, callInfo ;
 module("SC.Record#destroy", {
   setup: function() {
+    SC.RunLoop.begin();
     MyApp = SC.Object.create({
       store: SC.Store.create()
     })  ;
@@ -30,15 +31,19 @@ module("SC.Record#destroy", {
       callInfo = SC.A(arguments) ; // save method call
       MyApp.store.__orig.apply(MyApp.store, arguments); 
     };
+    SC.RunLoop.end();
   }
 });
 
 test("calling destroy on a newRecord will mark the record as destroyed and calls destroyRecords on the store", function() {
   equals(MyApp.foo.get('status'), SC.Record.READY_NEW, 'precond - status is READY_NEW');
-
+  SC.RunLoop.begin();
   MyApp.foo.destroy();
 
-  same(callInfo, [null, null, MyApp.foo.storeKey], 'destroyRecords() should not be called');
+  var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
+  var id = store.idFor(storeKey) ;
+
+  same(callInfo, [MyApp.foo.constructor, id, storeKey], 'destroyRecords() should not be called');
     
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_CLEAN, 'status should be SC.Record.DESTROYED_CLEAN');
 });
@@ -50,20 +55,33 @@ test("calling destroy on existing record should call destroyRecord() on store", 
     .dataHashDidChange(MyApp.foo.storeKey, null, YES);
     
   equals(MyApp.foo.get('status'), SC.Record.READY_CLEAN, 'precond - status is READY CLEAN');
-
+  
+  SC.RunLoop.begin();
   MyApp.foo.destroy();
-
+<<<<<<< HEAD:frameworks/datastore/tests/models/record/destroy.js
+  SC.RunLoop.end();
+  
   same(callInfo, [null, null, MyApp.foo.storeKey], 'destroyRecord() should not be called');
+=======
+  var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
+  var id = store.idFor(storeKey) ;
+
+  same(callInfo, [MyApp.foo.constructor, id, storeKey], 'destroyRecord() should not be called');
+>>>>>>> 7ba4d71... update datastore unit tests for coreRecordType support:frameworks/datastore/tests/models/record/destroy.js
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_DIRTY, 'status should be SC.Record.DESTROYED_DIRTY');
 });
 
 test("calling destroy on a record that is already destroyed should do nothing", function() {
 
   // destroy once
+  SC.RunLoop.begin();
   MyApp.foo.destroy();
+  SC.RunLoop.end();
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_CLEAN, 'status should be DESTROYED_CLEAN');
   
+  SC.RunLoop.begin();
   MyApp.foo.destroy();
+  SC.RunLoop.end();
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_CLEAN, 'status should be DESTROYED_CLEAN');
 });
 

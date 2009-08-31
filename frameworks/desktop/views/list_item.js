@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            portions copyright @2009 Apple, Inc.
+//            portions copyright @2009 Apple Inc.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -170,7 +170,7 @@ SC.ListItemView = SC.View.extend(
     
     
     // handle checkbox
-    key = this.getDelegateProperty('contentCheckboxKey', del) ;
+    key = this.getDelegateProperty('contentCheckboxKey', content, del) ;
     if (key) {
       value = content ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderCheckbox(working, value);
@@ -178,7 +178,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle icon
-    if (this.getDelegateProperty('hasContentIcon', del)) {
+    if (this.getDelegateProperty('hasContentIcon', content, del)) {
       key = this.getDelegateProperty('contentIconKey', del) ;
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
       
@@ -187,19 +187,19 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle label -- always invoke
-    key = this.getDelegateProperty('contentValueKey', del) ;
+    key = this.getDelegateProperty('contentValueKey', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : content ;
     if (value && SC.typeOf(value) !== SC.T_STRING) value = value.toString();
     if (this.get('escapeHTML')) value = SC.RenderContext.escapeHTML(value);
     this.renderLabel(working, value);
     
     // handle unread count
-    key = this.getDelegateProperty('contentUnreadCountKey', del) ;
+    key = this.getDelegateProperty('contentUnreadCountKey', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (!SC.none(value) && (value !== 0)) this.renderCount(working, value) ;
     
     // handle action 
-    key = this.getDelegateProperty('listItemActionProperty', del) ;
+    key = this.getDelegateProperty('listItemActionProperty', content, del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (value) {
       this.renderAction(working, value);
@@ -207,8 +207,8 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle branch
-    if (this.getDelegateProperty('hasContentBranch', del)) {
-      key = this.getDelegateProperty('contentIsBranchKey', del);
+    if (this.getDelegateProperty('hasContentBranch', content, del)) {
+      key = this.getDelegateProperty('contentIsBranchKey', content, del);
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderBranch(working, value);
       context.addClass('has-branch');
@@ -407,7 +407,7 @@ SC.ListItemView = SC.View.extend(
     occurred inside of it.
   */
   _isInsideDisclosure: function(evt) {
-    if (this.get('disclosureSate')===SC.LEAF_NODE) return NO;
+    if (this.get('disclosureState')===SC.LEAF_NODE) return NO;
     return this._isInsideElementWithClassName('disclosure', evt);
   },
   
@@ -581,7 +581,7 @@ SC.ListItemView = SC.View.extend(
    var oldLineHeight = el.css('lineHeight');
    var fontSize = el.css('fontSize');
    var top = this.$().css('top');
-   if(top) top = parseInt(top.substring(0,top.length-2),00);
+   if(top) top = parseInt(top.substring(0,top.length-2),0);
    else top =0;
    var lineHeight = oldLineHeight;
    var lineHeightShift = 0;

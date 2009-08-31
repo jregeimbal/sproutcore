@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -370,6 +370,15 @@ SC.ListView = SC.CollectionView.extend(
     }
     
     end++; // end should be after start
+    
+    // if height is greater than 0, on some platforms we should just render
+    // to specific windows in order to minimize render time.
+    if (height > 0 && !SC.browser.msie) {
+      start = start - (start % 50);
+      if (start < 0) start = 0 ;
+      end   = end - (end % 50) + 50;
+    }
+    
     if (end<start) end = start;
     if (end>len) end = len ;
     

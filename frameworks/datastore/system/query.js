@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -557,13 +557,15 @@ SC.Query = SC.Object.extend({
     
     if (!inputString) return [];
     
-    for (var i=0; i < inputString.length; i++) {
+    var iStLength = inputString.length;
+    
+    for (var i=0; i < iStLength; i++) {
       
       // end reached?
-      endOfString = (i==inputString.length-1);
+      endOfString = (i===iStLength-1);
       
       // current character
-      c = inputString[i];
+      c = inputString.charAt(i);
     
       // set true after end of delimeted token so that
       // final delimeter is not catched again
@@ -576,7 +578,7 @@ SC.Query = SC.Object.extend({
       
         // some helpers
         t = grammar[currentToken];
-        endOfToken = t.delimeted ? c==currentDelimeter : t.notAllowed.test(c);
+        endOfToken = t.delimeted ? c===currentDelimeter : t.notAllowed.test(c);
       
         // if still in token
         if ( !endOfToken ) currentTokenValue += c;
@@ -851,6 +853,7 @@ SC.Query.mixin( /** @scope SC.Query */ {
     @param {SC.Store} store to materialize record from during sort
     @returns {Array} array instance of store keys matching the SC.Query (sorted)
   */
+  
   containsStoreKeys: function(query, storeKeys, store) {
     // console.log('SC.Query.containsStoreKeys(%@,%@,%@)'.fmt(query, storeKeys, store));
     var ret = [], idx, len, rec, status, K = SC.Record;

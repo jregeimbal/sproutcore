@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -325,21 +325,38 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
       for(key in value) {
         if (!value.hasOwnProperty(key)) continue;
         if (value[key] === null) { // remove empty attrs
-          elem.removeAttribute(key);
+          if (SC.browser.msie === '7.0') {
+            elem[key] = '';
+          } else {
+            elem.removeAttribute(key);
+          }
+          
         } else {
-          elem.setAttribute(key, value[key]);
+          if (SC.browser.msie === '7.0') {
+            elem[key] = value[key];
+          } else {
+            elem.setAttribute(key, value[key]);
+          }
         }
       }
     }
     
     // class="foo bar"
     if (this._classNamesDidChange && (value = this._classNames)) {
-      elem.setAttribute('class', value.join(' '));
+      if (SC.browser.msie === '7.0') {
+        elem.className = value.join(' ');
+      } else {
+        elem.setAttribute('class', value.join(' '));
+      }
     }
     
     // id="foo"
     if (this._idDidChange && (value = this._id)) {
-      elem.setAttribute('id', value);
+      if (SC.browser.msie === '7.0') {
+        elem.id = value;
+      } else {
+        elem.setAttribute('id', value);
+      }
     }
     
     // style="a:b; c:d;"
@@ -353,8 +370,12 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         pair[0] = key.dasherize(); pair[1] = value;
         joined.push(pair.join(': '));
       }
+      if (SC.browser.msie === '7.0') {
+        elem.style.cssText = joined.join('; ');
+      } else {
+        elem.setAttribute('style', joined.join('; '));
+      }
       
-      elem.setAttribute('style', joined.join('; '));
       joined.length = 0; // reset temporary object
     }
     
@@ -711,15 +732,24 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
       if (!this._styles && this._elem) {
         // parse style...
         attr = this._elem.getAttribute('style');
-        
+
         ////// TODO :LOOK OUT I ADDED TOLOWERCASE BECAUSE IE IS ALWAYS RETURNING STYLE KEYS IN CAPS
         ////// THAT MESSES UP CAMELIZING AND WE END UP WITH stuff like c-olor in the styles
         ////// I have to add more unit test 
         ////// JUAN
         
-        if(SC.browser.msie) attr = attr.toLowerCase();
+        if (SC.browser.msie) {
+          // In IE7 this._elem.getAttribute('style') is returning the style object.
+          // this._elem.getAttribute('style').cssText returns the actually css string
+          if (attr.cssText) attr = attr.cssText;
+          
+          attr = attr.toLowerCase();
+        }
         
         if (attr && (attr = attr.toString()).length>0) {
+          if(SC.browser.msie){ 
+            attr = attr.toLowerCase();
+          }
           styles = {};
           
           regex = this._STYLE_REGEX ;

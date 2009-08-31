@@ -1,6 +1,7 @@
 # ==========================================================================
 # SproutCore JavaScript Framework - Buildfile
-# copyright (c) 2009 - Apple, Inc, Sprout Systems, Inc, and contributors
+# copyright (c) 2009 - Apple Inc.
+#           portions copyright Sprout Systems Inc. and contributors
 # ==========================================================================
 
 # This buildfile defines the configurations needed to link together the 
@@ -13,6 +14,15 @@ config :all,
   :test_layout    => 'sproutcore:lib/index.rhtml',
   :test_required  => ['sproutcore/testing', 'sproutcore/empty_theme'],
   :debug_required => ['sproutcore/debug', 'sproutcore/testing']
+
+# in debug mode, combine the JS for SC by default.  This will improve perf
+# while working with apps.  If you are hacking SC itself, you can turn this
+# off in your project buildfile by referencing sproutcore specifically
+mode :debug do
+  config :all, 
+    :combine_javascript => true,
+    :combine_stylesheet => true
+end
 
 # CORE FRAMEWORKS
 config :runtime,    :required => []
@@ -29,8 +39,10 @@ config :mobile,
   :test_layout    => 'sproutcore/mobile:lib/index.rhtml'
 
 # WRAPPER FRAMEWORKS
-config :deprecated, :required => :desktop
+config :designer, :required => [:runtime, :foundation]
 config :sproutcore, :required => :desktop
+config :mini, :required => [:runtime, :datastore]
+
 
 # SPECIAL FRAMEWORKS AND THEMES
 # These do not require any of the built-in SproutCore frameworks

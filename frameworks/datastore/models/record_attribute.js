@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+//            Portions ©2008-2009 Apple Inc. All rights reserved.
 // License:   Licened under MIT license (see license.js)
 // ==========================================================================
 
@@ -185,11 +185,14 @@ SC.RecordAttribute = SC.Object.extend(
     @returns {Object} property value
   */
   call: function(record, key, value) {
-    var attrKey = this.get('key') || key;
+    var attrKey = this.get('key') || key, nvalue;
     
     if (value !== undefined) {
-      value = this.fromType(record, key, value) ; // convert to attribute.
-      record.writeAttribute(attrKey, value);
+
+      // careful: don't overwrite value here.  we want the return value to 
+      // cache.
+      nvalue = this.fromType(record, key, value) ; // convert to attribute.
+      record.writeAttribute(attrKey, nvalue); 
     } else {
       value = record.readAttribute(attrKey);
       if (SC.none(value) && (value = this.get('defaultValue'))) {
