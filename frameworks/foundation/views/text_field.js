@@ -542,15 +542,37 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   },
   
   fieldValueDidChange: function(partialChange) {
+    
     // save the cursor's position
     var element = this.$field()[0];
     var start = element.selectionStart;
     var end = element.selectionEnd;
     
-    sc_super();
-    
     // restore the cursor's position
-    element.setSelectionRange(start, end);
+    if (element.setSelectionRange) {
+      sc_super();
+      element.setSelectionRange(start, end);
+      
+    } else if (element.createTextRange){
+    	var bookmark = document.selection.createRange().getBookmark();
+    	var selection = element.createTextRange();
+    	selection.moveToBookmark(bookmark);
+
+    	var before = element.createTextRange();
+    	before.collapse(true);
+    	before.setEndPoint("EndToStart", selection);
+
+    	var beforeLength = before.text.length;
+    	var selLength = selection.text.length;
+    	
+    	sc_super();
+    	
+    	var range = element.createTextRange();
+    	range.collapse(true);
+    	range.moveStart('character', beforeLength);
+    	range.moveEnd('character', selLength);
+    	range.select();
+    }
   }
   
 }) ;
