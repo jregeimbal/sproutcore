@@ -58,16 +58,11 @@ test("calling destroy on existing record should call destroyRecord() on store", 
   
   SC.RunLoop.begin();
   MyApp.foo.destroy();
-<<<<<<< HEAD:frameworks/datastore/tests/models/record/destroy.js
-  SC.RunLoop.end();
-  
-  same(callInfo, [null, null, MyApp.foo.storeKey], 'destroyRecord() should not be called');
-=======
+
   var storeKey = MyApp.foo.get('storeKey'), store = MyApp.foo.get('store') ;
   var id = store.idFor(storeKey) ;
 
   same(callInfo, [MyApp.foo.constructor, id, storeKey], 'destroyRecord() should not be called');
->>>>>>> 7ba4d71... update datastore unit tests for coreRecordType support:frameworks/datastore/tests/models/record/destroy.js
   equals(MyApp.foo.get('status'), SC.Record.DESTROYED_DIRTY, 'status should be SC.Record.DESTROYED_DIRTY');
 });
 
