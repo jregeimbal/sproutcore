@@ -677,7 +677,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {SC.Record} record instance or null
   */
   find: function(recordType, id, params, isRefresh) {
-    console.log("%@.find(%@, %@, %@)".fmt(this, recordType, id, isRefresh));
+    //console.log("%@.find(%@, %@, %@)".fmt(this, recordType, id, isRefresh));
     // if recordType is passed as string, find object
     if(SC.typeOf(recordType)===SC.T_STRING) {
       recordType = SC.objectForPropertyPath(recordType);
@@ -688,7 +688,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     // need to get the correct recordType for storeKey -- could be polymorphic
     if (recordType === recordType.coreRecordType) {
-      console.log('trying to get a new recordType for storeKey %@'.fmt(storeKey));
+      //console.log('trying to get a new recordType for storeKey %@'.fmt(storeKey));
       recordType = this.recordTypeFor(storeKey) ;
     }
     
