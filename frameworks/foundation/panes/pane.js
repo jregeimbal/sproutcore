@@ -112,13 +112,37 @@ SC.Pane = SC.View.extend({
   
   /** The parent dimensions are always the last known window size. */
   computeParentDimensions: function(frame) {
-    var pframe = this.get('currentWindowSize');
-    return {
-      width: (pframe) ? pframe.width : 1000,
-      height: (pframe) ? pframe.height : 1000
-    } ;
+    var wframe = this.get('currentWindowSize');
+    var wDim = {x: 0, y: 0, width: 1000, height: 1000};
+    if (wframe){
+      wDim.width = wframe.width;
+      wDim.height = wframe.height;
+    }
+    // Call the RootResponder instance...
+    else if (SC.RootResponder.responder) {
+      var wSize = SC.RootResponder.responder.get('currentWindowSize');
+      if (wSize){
+        wDim.width = wSize.width;
+        wDim.height = wSize.height;
+      }
+    }
+    // If all else fails then we need to Calculate it from the window size and DOM
+    else {
+      if (window.innerHeight) {
+        wDim.width = window.innerWidth;
+        wDim.height = window.innerHeight;
+      } else if (document.documentElement && document.documentElement.clientHeight) {
+        wDim.width = document.documentElement.clientWidth;
+        wDim.height = document.documentElement.clientHeight; 
+      } else if (document.body) {
+        wDim.width = document.body.clientWidth;
+        wDim.height = document.body.clientHeight;
+      }
+      this.windowSizeDidChange(null, wDim);
+    }    
+    return wDim;
   },
-  
+    
   /** @private Disable caching due to an known bug in SC. */
   frame: function() {
     return this.computeFrameWithParentFrame(null) ;
@@ -174,7 +198,7 @@ SC.Pane = SC.View.extend({
   },
 
   performKeyEquivalent: function(keystring, evt) {
-    ret = sc_super() ; // try normal view behavior first
+    var ret = sc_super() ; // try normal view behavior first
     if (!ret) {
       var defaultResponder = this.get('defaultResponder') ;
       if (defaultResponder) {
