@@ -129,7 +129,9 @@ SC.SelectFieldView = SC.FieldView.extend(
       var shouldLocalize = this.get('localize'); 
    
       // convert fieldValue to guid, if it is an object.
-      if (!valueKey && fieldValue) fieldValue = SC.guidFor(fieldValue) ;
+      if (!valueKey && fieldValue) {
+        fieldValue = (fieldValue.get && fieldValue.get('primaryKey') && fieldValue.get(fieldValue.get('primaryKey'))) ? fieldValue.get(fieldValue.get('primaryKey')) : SC.guidFor(fieldValue) ;
+      }
       if ((fieldValue === null) || (fieldValue === '')) fieldValue = '***' ;
     
       if (objects) {
@@ -178,8 +180,14 @@ SC.SelectFieldView = SC.FieldView.extend(
           if (!emptyName && index === 0 && fieldValue === '***') {
             this.set('value', value);
           }
-          if (value) value = (SC.guidFor(value)) ? SC.guidFor(value) : value.toString() ;
-   
+          if (value){
+            if(object.get && object.get('primaryKey')){
+              value = SC.guidFor(object.get(object.get('primaryKey')));
+            }
+            else{
+              value = SC.guidFor(value) ? SC.guidFor(value) : value.toString() ;
+            }
+          } 
           // render HTML
           var disable = (this.validateMenuItem && this.validateMenuItem(value, name)) ? '' : 'disabled="disabled" ' ;
           if(firstTime){
@@ -278,8 +286,19 @@ SC.SelectFieldView = SC.FieldView.extend(
         // get value using valueKey if there is one or use object
         // map to _guid or toString.
         if (valueKey) object = (object.get) ? object.get(valueKey) : object[valueKey] ;
-        var ov = (object) ? (SC.guidFor(object) ? SC.guidFor(object) : object.toString()) : null ;
-      
+        var ov;
+        if(object && object.get && object.get('primaryKey') && object.get(object.get('primaryKey'))){
+          ov = SC.guidFor(object.get(object.get('primaryKey')));
+        }
+        else if(object && SC.guidFor(object)){
+          ov = SC.guidFor(object);
+        }
+        else if(object){
+          ov = object.toString();
+        }
+        else{
+          ov = null;
+        }
         // use this object value if it matches.
         if (value == ov) found = object ;
       }
@@ -292,7 +311,18 @@ SC.SelectFieldView = SC.FieldView.extend(
     if (SC.none(newValue)) { 
       newValue = '***' ; 
     } else {
-      newValue = ((newValue) ? (SC.guidFor(newValue) ? SC.guidFor(newValue) : newValue.toString()) : null );
+      if(newValue && newValue.get && newValue.get('primaryKey') && newValue.get(newValue.get('primaryKey'))){
+        newValue = SC.guidFor(newValue.get(newValue.get('primaryKey')));
+      }
+      else if(newValue && SC.guidFor(newValue)){
+        newValue = SC.guidFor(newValue);
+      }
+      else if(newValue){
+        newValue = newValue.toString();
+      }
+      else{
+        newValue = null;
+      }
     }
     this.$input().val(newValue);
     return this ;
