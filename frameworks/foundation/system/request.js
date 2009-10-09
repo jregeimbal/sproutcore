@@ -211,14 +211,15 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
   sendRequest: function(request) {
     if(!request) return;
     
-    request = { 
-      request: request, 
+    var fullRequest = { 
+      request: SC.clone(request), 
       action:  request.get('notifyAction'),
       target:  request.get('notifyTarget'),
       params:  request.get('notifyParams') };
     
+    var queue = this.get('queue');
     this.propertyWillChange("queue");
-    this.get('queue').pushObject(request);
+    queue.pushObject(fullRequest);
     this.propertyDidChange("queue");
     
     this.fireRequestIfNeeded();
@@ -242,8 +243,10 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
   
   fireRequestIfNeeded: function() {
     if (this.canLoadAnotherRequest()) {
+      var queue = this.get('queue');
+      
       this.propertyWillChange('queue') ;
-      var item = this.get('queue').shiftObject() ;
+      var item = queue.popObject() ;
       this.propertyDidChange('queue') ;
       
       if (item) {
@@ -272,6 +275,10 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
     this.propertyWillChange('currentRequests') ;
     this.get('currentRequests').removeObject(request) ;
     this.propertyDidChange('currentRequests') ;
+    
+    // Start the clear the queue if there is any left
+    var queue = this.get('queue'); 
+    if (queue.length > 0) this.fireRequestIfNeeded();
   }
   
 });
