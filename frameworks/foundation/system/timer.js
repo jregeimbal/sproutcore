@@ -542,7 +542,7 @@ SC.Timer.timerFromPool = function(props) {
   automatically when a timer is invalidated if isPooled is YES.
 */
 SC.Timer.returnTimerToPool = function(timer) {
-  if (!this._timerPool) this._timerPool = [];
+  if (this._timerPool) this._timerPool = [];
 
   this._timerPool.push(timer);
   return this ;
