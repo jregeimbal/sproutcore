@@ -648,7 +648,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
         f      = (view) ? view.get('frame') : null,
         width  = (f) ? f.width : 0,  
         height = (f) ? f.height : 0,
-        dim    = this.get('frame') ;
+        dim    = this.get('frame'), vOffset, hOffset ;
     
     // cache out scroll settings...
     //if ((width === this._scroll_contentWidth) && (height === this._scroll_contentHeight)) return ;
@@ -691,14 +691,13 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     // of the scroll and the content dimension are smaller that the previous one
     
     
-    var mxVOffSet = this.get('maximumVerticalScrollOffset'),
-        vOffSet = this.get('verticalScrollOffset'),
-        mxHOffSet = this.get('maximumHorizontalScrollOffset'),
-        hOffSet = this.get('horizontalScrollOffset');
-    var forceHeight = mxVOffSet && this.get('hasVerticalScroller') && mxVOffSet<vOffSet;
-    var forceWidth = mxHOffSet && this.get('hasHorizontalScroller') && mxHOffSet<hOffSet;
-    if(forceHeight || forceWidth){
-      this.forceDimensionsRecalculation(forceWidth, forceHeight, vOffSet, hOffSet);
+    hOffset = this.get('horizontalScrollOffset') ;
+    width = this.get('maximumHorizontalScrollOffset') < hOffset ;
+    vOffset = this.get('verticalScrollOffset') ;
+    height = this.get('maximumVerticalScrollOffset') < vOffset ;
+    
+    if (width || height) {
+      this.forceDimensionsRecalculation(width, height, vOffset, hOffset) ;
     }
   },
   
