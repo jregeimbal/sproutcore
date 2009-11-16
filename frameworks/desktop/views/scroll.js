@@ -631,7 +631,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
         f      = (view) ? view.get('frame') : null,
         width  = (f) ? f.width : 0,  
         height = (f) ? f.height : 0,
-        dim    = this.get('frame') ;
+        dim    = this.get('frame'), vOffset, hOffset ;
     
     // cache out scroll settings...
     if ((width === this._scroll_contentWidth) && (height === this._scroll_contentHeight)) return ;
@@ -655,6 +655,32 @@ SC.ScrollView = SC.View.extend(SC.Border, {
       }
       height -= this.get('verticalScrollerBottom') ;
       view.setIfChanged('maximum', height) ;
+    }
+    
+    // If there is no vertical scroller and auto hiding is on, make
+    // sure we are at the top if not already there
+    if (!this.get('isVerticalScrollerVisible') && (this.get('verticalScrollOffset') !== 0) && 
+       this.get('autohidesVerticalScroller')) {
+      this.set('verticalScrollOffset', 0);
+    }
+    
+    // Same thing for horizontal scrolling.
+    if (!this.get('isHorizontalScrollerVisible') && (this.get('horizontalScrollOffset') !== 0) && 
+       this.get('autohidesHorizontalScroller')) {
+      this.set('horizontalScrollOffset', 0);
+    }
+    
+    // This forces to recalculate the height of the frame when is at the bottom
+    // of the scroll and the content dimension are smaller that the previous one
+    
+    
+    hOffset = this.get('horizontalScrollOffset') ;
+    width = this.get('maximumHorizontalScrollOffset') < hOffset ;
+    vOffset = this.get('verticalScrollOffset') ;
+    height = this.get('maximumVerticalScrollOffset') < vOffset ;
+    
+    if (width || height) {
+      this.forceDimensionsRecalculation(width, height, vOffset, hOffset) ;
     }
   },
   
