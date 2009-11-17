@@ -409,6 +409,22 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     return this;
   },
   
+  /** @private
+    Called by the store whenever it is reset. You should forget any storeKeys 
+    you may have, as storeKeys may be removed from the store entirely.
+  */
+  storeDidReset: function() {
+    // reset our external state...
+    this.set('storeKeys', []) ;
+    this.set('needsFlush', YES) ;
+    
+    // ...and clear our internal caches
+    delete this._scq_changedStoreKeys ;
+    delete this._prevStoreKeys ;
+    
+    return this ;
+  },
+  
   /**
     Applies the query to any pending changed store keys, updating the record
     array contents as necessary.  This method is called automatically anytime

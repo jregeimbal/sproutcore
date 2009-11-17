@@ -598,24 +598,55 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {SC.Store} receiver
   */
   reset: function() {
+    var statuses = this.statuses, records = this.records, storeKey, status,
+        K = SC.Record, READY_NEW = K.READY_NEW, EMPTY = K.EMPTY,
+        DESTROYED_CLEAN = K.DESTROYED_CLEAN, S = SC.Store,
+        recordType, recordId, storeKeysById, recordArrays ;
+    
+    // remove new, uncommited records and destroyed, committed records
+    if (statuses) {
+      for (storeKey in statuses) {
+        if (!statuses.hasOwnProperty(storeKey)) continue ;
+        status = statuses[storeKey] || EMPTY ;
+        if (status & READY_NEW || status & DESTROYED_CLEAN) {
+          recordType = this.recordTypeFor(storeKey) ;
+          recordId = this.idFor(storeKey) ;
+          storeKeysById = recordType.storeKeysById() ;
+          this.removeDataHash(storeKey, DESTROYED_CLEAN) ;
+          this.dataHashDidChange(storeKey, null, YES);
+          delete storeKeysById[recordId];
+          delete S.idsByStoreKey[storeKey] ;
+          delete S.recordTypesByStoreKey[storeKey] ;
+          delete records[storeKey] ;
+        }
+      }
+    }
     
     // create a new empty data store
     this.dataHashes = {} ;
     this.revisions  = {} ;
-    this.statuses   = {} ;
-
+    this.statuses   = {} ; // all remaining records are now EMPTY
+    
     // also reset temporary objects and errors
     this.chainedChanges = this.locks = this.editables = null;
     this.changelog = null ;
     this.recordErrors = null;
     this.queryErrors = null;
-
-    var records = this.records, storeKey;
+    
+    // notify record instances
     if (records) {
-      for(storeKey in records) {
+      for (storeKey in records) {
         if (!records.hasOwnProperty(storeKey)) continue ;
         this._notifyRecordPropertyChange(storeKey, NO);
       }
+    }
+    
+    // and reset record arrays
+    recordArrays = this.get('recordArrays') ;
+    if (recordArrays) {
+      recordArrays.forEach(function(recArray) {
+        if (recArray) recArray.storeDidReset() ;
+      }, this);
     }
     
     this.set('hasChanges', NO);
