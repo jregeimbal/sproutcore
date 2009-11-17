@@ -382,6 +382,9 @@ SC.Array = {
       this._array_oldLength = this.get('length') ;
     }
     
+    // MUST set this now to notify range observers correctly the first time
+    this._array_oldLength = this.get('length') ;
+    
     var C = this.rangeObserverClass ;
     var isDeep = NO; //disable this feature for now
     var ret = C.create(this, indexes, target, method, context, isDeep) ;
@@ -450,9 +453,6 @@ SC.Array = {
 
     // schedule info for range observers
     if (rangeob && rangeob.length>0) {
-
-      // if no oldLength has been cached, just assume 0
-      if (oldlen === undefined) oldlen = 0;    
       this._array_oldLength = newlen = this.get('length');
       
       // normalize input parameters
