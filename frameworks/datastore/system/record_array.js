@@ -473,7 +473,8 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         changed.forEach(function(storeKey) {
           // get record - do not include EMPTY or DESTROYED records
           status = store.peekStatus(storeKey);
-          if (!(status & K.EMPTY) && !((status & K.DESTROYED) || (status === K.BUSY_DESTROYING))) {
+          if (!(status & K.EMPTY) && !(status & K.DESTROYED)
+               && !(status & K.BUSY_DESTROYING)) {
             rec = store.materializeRecord(storeKey);
             included = !!(rec && query.contains(rec));
           } else included = NO ;
