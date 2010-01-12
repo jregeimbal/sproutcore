@@ -441,7 +441,11 @@ SC.Record = SC.Object.extend(
         isRecord = SC.typeOf(this[key].typeClass())==='class';
 
         if (!isRecord) {
+          
           attrValue = this.get(key);
+          this.set(key, attrValue);
+          attrValue = this.readAttribute(key);
+          
           if(attrValue!==undefined || (attrValue===null && includeNull)) {
             dataHash[key] = attrValue;
           }
