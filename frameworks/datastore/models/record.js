@@ -426,17 +426,17 @@ SC.Record = SC.Object.extend(
   normalize: function(includeNull) {
     
     var primaryKey = this.primaryKey, 
-        dataHash   = {}, 
         recordId   = this.get('id'), 
         store      = this.get('store'), 
         storeKey   = this.get('storeKey'), 
         recHash, attrValue, isRecord, defaultVal;
     
+    var dataHash = store.readEditableDataHash(storeKey) || {};
     dataHash[primaryKey] = recordId;
     
     for(var key in this) {
       // make sure property is a record attribute.
-      if(this[key] && this[key]['typeClass']) {
+      if(this[key] && this[key].typeClass) {
         
         isRecord = SC.typeOf(this[key].typeClass())==='class';
 
@@ -470,7 +470,7 @@ SC.Record = SC.Object.extend(
       }
     }
     
-    store.writeDataHash(storeKey, dataHash);
+    //store.writeDataHash(storeKey, dataHash);
     return store.materializeRecord(storeKey);
   },
   
