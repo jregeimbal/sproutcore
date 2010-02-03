@@ -29,7 +29,7 @@ sc_require('panes/panel');
   @author Evin Grano
   @author Tom Dale
 */
-SC.SheetPane = SC.PanelPane.extend({
+SC.SheetPane = SC.PanelPane.extend(SC.Animatable, {
   classNames: 'sc-sheet',
 
   /**
@@ -37,17 +37,9 @@ SC.SheetPane = SC.PanelPane.extend({
 
     @property {Number}
   */
-  transitionDuration: 200,
-
-  // states for view animation
-  NO_VIEW: 'NO_VIEW',
-  ANIMATING: 'ANIMATING',
-  READY: 'READY',
-
-  SLIDE_DOWN: 'SLIDEDOWN',
-  SLIDE_UP: 'SLIDEUP',
-
-  _state: 'NO_VIEW', // no view
+  transitions: {
+    top:0.20
+  },
 
   /**
     Displays the pane.  SheetPane will calculate the height of your pane, draw it offscreen, then
@@ -56,6 +48,7 @@ SC.SheetPane = SC.PanelPane.extend({
     @returns {SC.SheetPane} receiver
   */
   append: function() {
+    this.disableAnimation();
     var layout = this.get('layout');
     if (!layout.height || !layout.top) {
       layout = SC.View.convertLayoutToAnchoredLayout(layout, this.computeParentDimensions());
@@ -64,6 +57,8 @@ SC.SheetPane = SC.PanelPane.extend({
     // Gently rest the pane atop the viewport
     layout.top = -1*layout.height;
     this.adjust(layout);
+    this.updateLayout();
+    this.enableAnimation();
     return sc_super();
   },
 
@@ -76,7 +71,7 @@ SC.SheetPane = SC.PanelPane.extend({
     // We want the functionality of SC.PanelPane.remove(), but we only want it once the animation is complete.
     // Store the reference to the superclass function, and it call it after the transition is complete.
     var that = this, args = arguments;
-    this.invokeLater(function() { args.callee.base.apply(that, args) ;}, this.transitionDuration);
+    this.invokeLater(function() { args.callee.base.apply(that, args) ;}, this.get('transitions').top.duration*1000);
     this.slideUp();
 
     return this;
@@ -94,61 +89,20 @@ SC.SheetPane = SC.PanelPane.extend({
   },
 
   slideDown: function(){
-    // setup other general state
-    this._start   = Date.now();
-    this._end     = this._start + this.get('transitionDuration');
-    this._state   = this.ANIMATING;
-    this._direction = this.SLIDE_DOWN;
-    this.tick();
+    this.adjust('top',0);
+    this.updateLayout();
   },
 
   slideUp: function(){
-    // setup other general state
-    this._start   = Date.now();
-    this._end     = this._start + this.get('transitionDuration');
-    this._state   = this.ANIMATING;
-    this._direction = this.SLIDE_UP;
-    this.tick();
+    var layout = this.get('layout');
+    if (!layout.height || !layout.top) {
+      layout = SC.View.convertLayoutToAnchoredLayout(layout, this.computeParentDimensions());
+    }
+    this.adjust('top',-1*layout.height);
+    this.updateLayout();
   },
 
   // Needed because of the runLoop and that it is animated...must lose focus because will break if selection is change on text fields that don't move.
   blurTo: function(pane) { this.setFirstResponder(''); },
-
-  /** @private - called while the animation runs.  Will move the content view down until it is in position and then set the layout to the content layout
-   */
-  tick: function() {
-    this._timer = null ; // clear out
-
-    var now = Date.now();
-    var target = this;
-    var pct = (now-this._start)/(this._end-this._start);
-    var dir = this._direction, layout = this.get('layout'), newLayout, adjust;
-    if (pct<0) pct = 0;
-
-    // If we are done...
-    if (pct>=1) {
-      if (dir === this.SLIDE_DOWN){
-        target.adjust('top', 0);
-      } else {
-        target.adjust('top', -1*layout.height);
-      }
-      this._state = SC.SheetPane.READY;
-      this.updateLayout();
-      return this;
-    }
-
-    // ok, now let's compute the new layouts for the two views and set them
-    adjust = Math.floor(layout.height * pct);
-
-    // set the layout for the views, depending on the direction
-    if (dir == this.SLIDE_DOWN) {
-      target.adjust('top', 0-(layout.height-adjust));
-    } else if (dir == this.SLIDE_UP) {
-      target.adjust('top', 0-adjust);
-    }
-
-    this._timer = this.invokeLater(this.tick, 20);
-    target.updateLayout();
-    return this;
-  }
+  
 });
