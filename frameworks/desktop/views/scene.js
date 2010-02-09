@@ -58,7 +58,15 @@ SC.SceneView = SC.ContainerView.extend(
   */
   transitionDuration: 200,
   
-  _state: 'NO_VIEW', // no view
+  _transitions:{
+    left:0.2
+  },
+  
+  init: function()
+  {
+    sc_super();
+    this.get('_transitions').left=this.get('transitionDuration')/1000;
+  },
 
   /** @private
   
@@ -67,7 +75,7 @@ SC.SceneView = SC.ContainerView.extend(
     
   */
   replaceContent: function(content) {
-    if (content && this._state===this.READY) this.animateScene(content);
+    if (content) this.animateScene(content);
     else this.replaceScene(content);
     return this ;
   },
@@ -87,18 +95,42 @@ SC.SceneView = SC.ContainerView.extend(
     this._targetView = newContent ;
     this._targetIndex  = idx;
     
-    if (this._timer) this._timer.invalidate();
     this._leftView = this._rightView = this._start = this._end = null;
-    this._timer = null;
-    
     
     this.removeAllChildren();
+    
+    var isAnimatable=false;
 
-    if (oldContent) oldContent.set('layout', layout);
-    if (newContent) newContent.set('layout', layout);
+    if (oldContent) {
+      if (oldContent.get('isAnimatable'))
+      {
+        isAnimatable=true;
+        oldContent.disableAnimation();
+      }
+      oldContent.set('layout', layout);
+      if (isAnimatable)
+      {
+        oldContent.updateStyle();
+        oldContent.enableAnimation();
+      }
+    }
+    
+    isAnimatable=false;
+    if (newContent) {
+      if (newContent.get('isAnimatable'))
+      {
+        isAnimatable=true;
+        newContent.disableAnimation();
+      }
+      newContent.set('layout', layout);
+      if (isAnimatable)
+      {
+        newContent.updateStyle();
+        newContent.enableAnimation();
+      }
+    }
     
     if (newContent) this.appendChild(newContent);
-    this._state = newContent ? this.READY : this.NO_VIEW ;
   },
 
   /** @private
@@ -119,86 +151,101 @@ SC.SceneView = SC.ContainerView.extend(
     this._targetView = newContent ;
     this._targetIndex = inIdx; 
     
-    // save some info needed for animation
-    if (inIdx > outIdx) {
-      this._leftView  = oldContent;
-      this._rightView = newContent;
-      this._target    = -1;
-    } else {
-      this._leftView  = newContent ;
-      this._rightView = oldContent ;
-      this._target    = 1 ;
+    //check if _targetView isAnimatable, mixin SC.Animatable if not
+    if (!this._targetView.get('isAnimatable'))
+    {
+      SC.mixin(this._targetView, SC.Animatable);
     }
 
     // setup views
     this.removeAllChildren();
 
-    if (oldContent) this.appendChild(oldContent)
-    if (newContent) this.appendChild(newContent);
-
-    // setup other general state
-    this._start   = Date.now();
-    this._end     = this._start + this.get('transitionDuration');
-    this._state   = this.ANIMATING;
-    this.tick();
-  },
-
-  /** @private - called while the animation runs.  Compute the new layout for
-    the left and right views based on the portion completed.  When we finish
-    call replaceScene().
-  */
-  tick: function() {  
-    this._timer = null ; // clear out
-    
-    var now    = Date.now(),
-        pct    = (now-this._start)/(this._end-this._start),
-        target = this._target,
-        left   = this._leftView,
-        right  = this._rightView,
-        layout, adjust;
-        
-    if (pct<0) pct = 0;
-    
-    // if we're done or the view is no longer visible, just replace the 
-    // scene.
-    if (!this.get('isVisibleInWindow') || (pct>=1)) {
-      return this.replaceScene(this._targetView);
+    if (oldContent) 
+    { 
+      this.appendChild(oldContent);
+      if (SC.none(oldContent.get('transitions')))
+      {
+        oldContent.set('transitions',this.get('_transitions'));
+      }
+      this._slideOffScreen(oldContent,outIdx,inIdx);
+    }
+    if (newContent) 
+    {
+      this.appendChild(newContent);
+      if (SC.none(newContent.get('transitions')))
+      {
+        newContent.set('transitions',this.get('_transitions'));
+      }
+      this._slideOnScreen(newContent,outIdx,inIdx);
     }
 
-    // ok, now let's compute the new layouts for the two views and set them
-    layout = SC.clone(this.get('frame'));
-    adjust = Math.floor(layout.width * pct);
-    
-    // set the layout for the views, depending on the direction
-    if (target>0) {
-      layout.left = 0-(layout.width-adjust);
-      left.set('layout', layout);
-
-      layout = SC.clone(layout);
-      layout.left = adjust ;
-      right.set('layout', layout);
-      
-    } else {
-      layout.left = 0-adjust ;
-      left.set('layout', layout);
-      
-      layout = SC.clone(layout);
-      layout.left = layout.width-adjust;
-      right.set('layout', layout);
-    }
-
-    this._timer = this.invokeLater(this.tick, 20);
-    return this;
   },
-  
-
-  // states for view animation
-  NO_VIEW: 'NO_VIEW',
-  ANIMATING: 'ANIMATING',
-  READY: 'READY',
 
   /** @private - standard layout assigned to views at rest */
-  STANDARD_LAYOUT: { top: 0, left: 0, bottom: 0, right: 0 }
+  STANDARD_LAYOUT: { top: 0, left: 0, bottom: 0, right: 0 },
   
+  //This method makes the view come on screen from the right
+  _showFromRight: function(target){
+    target.disableAnimation();
+    target.adjust('left', screen.width+1);
+    target.updateLayout();
+    target.enableAnimation();
+    target.adjust('left',0); 
+  },
+  
+  //This method makes the view go off screen to the right
+  _hideToRight: function(target){
+    target.disableAnimation();
+    target.adjust("left", 0);
+    target.updateLayout();
+    target.enableAnimation();
+    target.adjust('left',screen.width+1);
+  },
+  
+  //This method makes the view come on screen from the left
+  _showFromLeft: function(target){
+    target.disableAnimation();
+    target.adjust("left", 0-screen.width-1);
+    target.updateLayout();
+    target.enableAnimation();
+    target.adjust('left',0);
+  },
+  
+  //This method makes the view go off screen to the left
+  _hideToLeft: function(target){
+    target.disableAnimation();
+    target.adjust("left", 0);
+    target.updateLayout();
+    target.enableAnimation();
+    target.adjust('left',0-screen.width-1);
+  },
+  
+  // This method makes a view come on screen and decides whether it should come in from the left or right
+  _slideOnScreen: function(target,previousSlideNumber,currentSlideNumber){
+    if (previousSlideNumber<currentSlideNumber)
+    {
+      this._showFromLeft(target);
+    }
+    else
+    {
+      this._showFromRight(target);
+    }
+  },
+  
+  // This method makes a view go off screen and decides whether it should go to the left or to the right
+  _slideOffScreen: function(target,previousSlideNumber,currentSlideNumber){
+    
+    if (previousSlideNumber<currentSlideNumber){
+      this._hideToLeft(target);
+    }
+    else
+    {
+      this._hideToRight(target);
+    }
+  },
+  
+  _transitions:{
+    left:0.2
+  }
   
 });
