@@ -97,11 +97,12 @@ SC.SceneView = SC.ContainerView.extend(
     
     this._leftView = this._rightView = this._start = this._end = null;
     
-    this.removeAllChildren();
+    
     
     var isAnimatable=false;
 
     if (oldContent) {
+      this._setupTransitionsIfNeeded(oldContent);
       if (oldContent.get('isAnimatable'))
       {
         isAnimatable=true;
@@ -115,21 +116,24 @@ SC.SceneView = SC.ContainerView.extend(
       }
     }
     
-    isAnimatable=false;
-    if (newContent) {
-      if (newContent.get('isAnimatable'))
-      {
-        isAnimatable=true;
-        newContent.disableAnimation();
+    this.invokeLast(function(){
+      isAnimatable=false;
+      if (newContent) {
+        this._setupTransitionsIfNeeded(newContent);
+        if (newContent.get('isAnimatable'))
+        {
+          isAnimatable=true;
+          newContent.disableAnimation();
+        }
+        newContent.set('layout', layout);
+        if (isAnimatable)
+        {
+          newContent.updateStyle();
+          newContent.enableAnimation();
+        }
       }
-      newContent.set('layout', layout);
-      if (isAnimatable)
-      {
-        newContent.updateStyle();
-        newContent.enableAnimation();
-      }
-    }
-    
+    });
+    this.removeAllChildren();
     if (newContent) this.appendChild(newContent);
   },
 
@@ -155,6 +159,7 @@ SC.SceneView = SC.ContainerView.extend(
     if (!this._targetView.get('isAnimatable'))
     {
       SC.mixin(this._targetView, SC.Animatable);
+      this._targetView.initMixin();
     }
 
     // setup views
@@ -163,20 +168,14 @@ SC.SceneView = SC.ContainerView.extend(
     if (oldContent) 
     { 
       this.appendChild(oldContent);
-      if (SC.none(oldContent.get('transitions')))
-      {
-        oldContent.set('transitions',this.get('_transitions'));
-      }
-      this._slideOffScreen(oldContent,outIdx,inIdx);
+      this.invokeLast(function(){this._setupTransitionsIfNeeded(oldContent);});
+      this.invokeLast(function(){this._slideOffScreen(oldContent,outIdx,inIdx);});
     }
     if (newContent) 
     {
       this.appendChild(newContent);
-      if (SC.none(newContent.get('transitions')))
-      {
-        newContent.set('transitions',this.get('_transitions'));
-      }
-      this._slideOnScreen(newContent,outIdx,inIdx);
+      this.invokeLast(function(){this._setupTransitionsIfNeeded(newContent);});
+      this.invokeLast(function(){this._slideOnScreen(newContent,outIdx,inIdx);});
     }
 
   },
@@ -186,42 +185,55 @@ SC.SceneView = SC.ContainerView.extend(
   
   //This method makes the view come on screen from the right
   _showFromRight: function(target){
+    console.log('show'+SC.guidFor(target));
     target.disableAnimation();
     target.adjust('left', screen.width+1);
-    target.updateLayout();
+    target.updateStyle();
     target.enableAnimation();
-    target.adjust('left',0); 
+    target.invokeLast(function(){target.adjust('left',0);}); 
   },
   
   //This method makes the view go off screen to the right
   _hideToRight: function(target){
+    console.log('hide'+SC.guidFor(target));
     target.disableAnimation();
     target.adjust("left", 0);
-    target.updateLayout();
+    target.updateStyle();
     target.enableAnimation();
-    target.adjust('left',screen.width+1);
+    target.invokeLast(function(){target.adjust('left',screen.width+1);});
   },
   
   //This method makes the view come on screen from the left
   _showFromLeft: function(target){
+    console.log('show'+SC.guidFor(target));
     target.disableAnimation();
     target.adjust("left", 0-screen.width-1);
-    target.updateLayout();
+    target.updateStyle();
     target.enableAnimation();
-    target.adjust('left',0);
+    target.invokeLast(function(){target.adjust('left',0);});
+    //target.updateStyle();
   },
   
   //This method makes the view go off screen to the left
   _hideToLeft: function(target){
+    console.log('hide'+SC.guidFor(target));
     target.disableAnimation();
     target.adjust("left", 0);
-    target.updateLayout();
+    target.updateStyle();
     target.enableAnimation();
-    target.adjust('left',0-screen.width-1);
+    target.invokeLast(function(){target.adjust('left',0-screen.width-1);});
   },
   
   // This method makes a view come on screen and decides whether it should come in from the left or right
   _slideOnScreen: function(target,previousSlideNumber,currentSlideNumber){
+    if (SC.none(previousSlideNumber))
+    {
+      previousSlideNumber=0;
+    }
+    if (SC.none(currentSlideNumber))
+    {
+      currentSlideNumber=0;
+    }
     if (previousSlideNumber<currentSlideNumber)
     {
       this._showFromLeft(target);
@@ -234,7 +246,14 @@ SC.SceneView = SC.ContainerView.extend(
   
   // This method makes a view go off screen and decides whether it should go to the left or to the right
   _slideOffScreen: function(target,previousSlideNumber,currentSlideNumber){
-    
+    if (SC.none(previousSlideNumber))
+    {
+      previousSlideNumber=0;
+    }
+    if (SC.none(currentSlideNumber))
+    {
+      currentSlideNumber=0;
+    }
     if (previousSlideNumber<currentSlideNumber){
       this._hideToLeft(target);
     }
@@ -242,10 +261,16 @@ SC.SceneView = SC.ContainerView.extend(
     {
       this._hideToRight(target);
     }
+    this.invokeLater('removeChild',this.get('transitionDuration')+50,target);
+    
   },
   
-  _transitions:{
-    left:0.2
+  _setupTransitionsIfNeeded: function(view)
+  {
+    if (SC.none(view.get('transitions')) || (!SC.none(view.get('transitions')) && SC.none(view.get('transitions').left)))
+    {
+      view.set('transitions',this.get('_transitions'));
+    }
   }
   
 });
