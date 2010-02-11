@@ -116,7 +116,7 @@ SC.SceneView = SC.ContainerView.extend(
       }
     }
     
-    this.invokeLast(function(){
+    this.invokeLater(function(){
       isAnimatable=false;
       if (newContent) {
         this._setupTransitionsIfNeeded(newContent);
@@ -168,14 +168,13 @@ SC.SceneView = SC.ContainerView.extend(
     if (oldContent) 
     { 
       this.appendChild(oldContent);
-      this.invokeLast(function(){this._setupTransitionsIfNeeded(oldContent);});
-      this.invokeLast(function(){this._slideOffScreen(oldContent,outIdx,inIdx);});
+      this.invokeLater(function(){this._setupTransitionsIfNeeded(oldContent);});
+      this.invokeLater(function(){this._slideOffScreen(oldContent,outIdx,inIdx);});
     }
     if (newContent) 
     {
       this.appendChild(newContent);
-      this.invokeLast(function(){this._setupTransitionsIfNeeded(newContent);});
-      this.invokeLast(function(){this._slideOnScreen(newContent,outIdx,inIdx);});
+      this.invokeLater(function(){this._setupTransitionsIfNeeded(newContent);this._slideOnScreen(newContent,outIdx,inIdx);});
     }
 
   },
@@ -185,12 +184,13 @@ SC.SceneView = SC.ContainerView.extend(
   
   //This method makes the view come on screen from the right
   _showFromRight: function(target){
-    console.log('show'+SC.guidFor(target));
+    console.log('show from right'+SC.guidFor(target));
+    console.trace();
     target.disableAnimation();
     target.adjust('left', screen.width+1);
     target.updateStyle();
     target.enableAnimation();
-    target.invokeLast(function(){target.adjust('left',0);}); 
+    target.invokeLater(function(){target.adjust('left',0);}); 
   },
   
   //This method makes the view go off screen to the right
@@ -200,17 +200,18 @@ SC.SceneView = SC.ContainerView.extend(
     target.adjust("left", 0);
     target.updateStyle();
     target.enableAnimation();
-    target.invokeLast(function(){target.adjust('left',screen.width+1);});
+    target.invokeLater(function(){target.adjust('left',screen.width+1);});
   },
   
   //This method makes the view come on screen from the left
   _showFromLeft: function(target){
-    console.log('show'+SC.guidFor(target));
+    console.log('show from left'+SC.guidFor(target));
+    console.trace();
     target.disableAnimation();
     target.adjust("left", 0-screen.width-1);
     target.updateStyle();
     target.enableAnimation();
-    target.invokeLast(function(){target.adjust('left',0);});
+    target.invokeLater(function(){target.adjust('left',0);});
     //target.updateStyle();
   },
   
@@ -221,7 +222,7 @@ SC.SceneView = SC.ContainerView.extend(
     target.adjust("left", 0);
     target.updateStyle();
     target.enableAnimation();
-    target.invokeLast(function(){target.adjust('left',0-screen.width-1);});
+    target.invokeLater(function(){target.adjust('left',0-screen.width-1);});
   },
   
   // This method makes a view come on screen and decides whether it should come in from the left or right
