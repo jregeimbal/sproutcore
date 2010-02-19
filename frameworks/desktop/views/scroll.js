@@ -710,9 +710,14 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     var clip = this.get('containerView') ;
     var clipLayout = { left: 0, top: 0 } ;
     var t, layout, vo, ho, vl, hl;
-    
+
     var ht = ((hasHorizontal) ? hscroll.get('scrollbarThickness') : 0) ;
     var vt = (hasVertical) ?   vscroll.get('scrollbarThickness') : 0 ;
+    //HACK: [MB] Mozilla in windows renders overflow property outside the element!
+    if(SC.browser.isWindows && SC.browser.isMozilla){
+      ht+=1;
+      vt+=1;
+    }
     
     if (hasHorizontal) {
       hl     = this.get('horizontalScrollerLayout');
