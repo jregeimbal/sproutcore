@@ -41,6 +41,10 @@ SC.Observers = {
 
     // try to get the tuple for this.
     if (typeof propertyPath === "string") {
+      if (!pathRoot && propertyPath.indexOf('.') < 0) {
+        console.error('You have a single propertyPath without a pathRoot: Property Path: %@'.fmt(propertyPath));
+        return;
+      }
       tuple = SC.tupleForPropertyPath(propertyPath, pathRoot) ;
     } else {
       tuple = propertyPath; 
@@ -48,8 +52,8 @@ SC.Observers = {
 
     // if a tuple was found, add the observer immediately...
     if (tuple) {
-      tuple[0].addObserver(tuple[1],target, method) ;
-      
+      if (tuple[0].addObserver) { tuple[0].addObserver(tuple[1],target, method); }
+      else { console.error('pathRoot doesn\'t inherit from SC.Object: Path Root: %@, Property Path: %@'.fmt(tuple[0], tuple[1])); }
     // otherwise, save this in the queue.
     } else {
       this.queue.push([propertyPath, target, method, pathRoot]) ;
