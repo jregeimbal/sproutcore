@@ -354,7 +354,6 @@ SC.Drag = SC.Object.extend(
     var last = this._lastTarget ;
     var target = this._findDropTarget(evt) ; // deepest drop target
     var op = SC.DRAG_NONE ;
-    var lastAllowedDragOperations = this.allowedDragOperations;
     
     while (target && (target !== last) && (op === SC.DRAG_NONE)) {
       // make sure the drag source will permit a drop operation on the named 
@@ -371,15 +370,9 @@ SC.Drag = SC.Object.extend(
       this.allowedDragOperations = op ;
       
       // if DRAG_NONE, then look for the next parent that is a drop zone
-      if (op === SC.DRAG_NONE) {
-        target = this._findNextDropTarget(target) ;
-        
-        // If this loop won't iterate again be sure to set allowedDragOperations back to
-        // the last known dropTarget's ops
-        if (target === last) this.allowedDragOperations = lastAllowedDragOperations;
-      }
+      if (op === SC.DRAG_NONE) target = this._findNextDropTarget(target) ;
     }
-
+    
     // STEP 2: Refocus the drop target if needed
     if (target !== last) {
       if (last && last.dragExited) last.dragExited(this, evt) ;
