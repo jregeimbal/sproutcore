@@ -733,8 +733,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     }
     return this ;
   },
-  
-  
+    
   /**
     In Firefox, as of 3.6 -- including 3.0 and 3.5 -- for input fields only
     (that is, not textarea elements), if the cursor is at the end of the
@@ -756,7 +755,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     }
   },
   
-  
+
   _textField_selectionDidChange: function() {
     this.notifyPropertyChange('selection');
   },
@@ -897,6 +896,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   },
 
   mouseUp: function(evt) {
+    var fieldValue = this.get('fieldValue'); // use 'fieldValue' since we want actual text
+
     this._txtFieldMouseDown=NO;
     // The caret/selection could have moved.  In some browsers, though, the
     // element's values won't be updated until after this event is finished
@@ -908,6 +909,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       return YES;
     } 
     return sc_super();
+
   },
   
   /**
