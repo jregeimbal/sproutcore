@@ -237,7 +237,7 @@ SC.Animatable = {
     // get our frame and parent's frame
     this.notifyPropertyChange("layout");
     var f = this.get("frame");
-    var p = this.getPath("layoutView.frame");
+    var p = this.get('isPane') ? this.computeParentDimensions() : this.getPath("layoutView.frame");
 
     // set back to target
     this.layout = original_layout;
