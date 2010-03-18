@@ -68,11 +68,13 @@ function clickOn(view, index, shiftKey, ctrlKey, expected, delay) {
       
   ok(layer, 'precond - itemView[%@] should have layer'.fmt(index));
   
+  SC.RunLoop.begin();
   ev = SC.Event.simulateEvent(layer, 'mousedown', opts);
   SC.Event.trigger(layer, 'mousedown', [ev]);
 
   ev = SC.Event.simulateEvent(layer, 'mouseup', opts);
   SC.Event.trigger(layer, 'mouseup', [ev]);
+  SC.RunLoop.end();
   
   if (expected !== undefined) {
     var f = function() {
@@ -133,10 +135,14 @@ test("clicking on an item should select it", function() {
   clickOn(view, 3, NO, NO, selectionFromIndex(3));
 });
 
-test("clicking on a selected item should clear selection after 300ms and reselect it", function() {
+
+test("clicking on a selected item should clear selection after 301ms and reselect it", function() {
+  SC.RunLoop.begin();
   view.select(SC.IndexSet.create(1,5));
+  SC.RunLoop.end();
+
   SC.RootResponder.responder._lastMouseUpAt = null ; // HACK: don't want a doubleClick from previous tests
-  clickOn(view, 3, NO, NO, selectionFromIndex(3), 500);
+  clickOn(view, 3, NO, NO, selectionFromIndex(3), 501);
 });
 
 test("clicking on unselected item should clear selection and select it", function() {
