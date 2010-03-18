@@ -9,15 +9,18 @@
 module("SC.Validator.Date");
 
 test("Converts into date if a value is given",function(){
-  
-    var num = 1234947136000; // represents time in secs
-    var c = SC.Validator.Date.fieldValueForObject(1234947136000,'','');
-    equals(YES,c === "Feb 18, 2009 12:52:16 AM","Number converted to date format");
+  var num = 1234947136000; // represents time in secs
+  var date = new Date(num);
+  var validator = SC.Validator.Date.create();
+  var c = validator.fieldValueForObject(1234947136000, '', '');
+  equals(c, date.format(validator.get('format')), "Number converted to date format");
 });
 
 test("Converts into number when date string is given", function(){
-    var da = "Feb 18, 2009 12:52:16 AM"; // date string
-    var d = SC.Validator.Date.objectForFieldValue("Feb 18, 2009 12:52:16 AM",'','');
-    equals(YES,d === 1234947136000,"Date String compared with value in seconds");
-    equals(YES,SC.typeOf(d) == "number","Number is obtained"); 	
+  var da = "Feb 18, 2009 12:52:16 AM"; // date string
+  var date = Date.parseDate(da);
+  var validator = SC.Validator.Date.create();
+  var d = validator.objectForFieldValue(da, '', '');
+  equals(date.getTime(), d, "Date String compared with value in seconds");
+  ok(SC.typeOf(d) === "number", "Number is obtained"); 	
 });
