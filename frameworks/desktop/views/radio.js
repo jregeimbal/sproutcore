@@ -229,7 +229,7 @@ SC.RadioView = SC.FieldView.extend(
       }
       
       // first remove listener on existing radio buttons
-      this._field_setFieldValue(this.get('value'));
+      this.applyValueToField(this.get('value'));
     }
     else {
       // update the selection state on all of the DOM elements.  The options are
@@ -262,32 +262,31 @@ SC.RadioView = SC.FieldView.extend(
        assigned to the the input field parent
   */
   _getSelectionState: function(item, value, isArray, shouldReturnObject) {
-      var sel, classNames, key;
-      
-      // determine if the current item is selected
-      if (item) {
-        sel = (isArray) ? (value.indexOf(item[1])>=0) : (value===item[1]);
-      } else {
-        sel = NO;
+    var sel, classNames, key;
+    
+    // determine if the current item is selected
+    if (item) {
+      sel = (isArray) ? (value.indexOf(item[1])>=0) : (value===item[1]);
+    } else {
+      sel = NO;
+    }
+    
+    // now set class names
+    classNames = {
+      sel: (sel && !isArray), mixed: (sel && isArray), disabled: (!item[2]) 
+    };
+    
+    if(shouldReturnObject) {
+      return classNames;
+    } else {
+      // convert object values to string
+      var classNameArray = [];
+      for(key in classNames) {
+        if(!classNames.hasOwnProperty(key)) continue;
+        if(classNames[key]) classNameArray.push(key);
       }
-      
-      // now set class names
-      classNames = {
-        sel: (sel && !isArray), mixed: (sel && isArray), disabled: (!item[2]) 
-      };
-      
-      if(shouldReturnObject) {
-        return classNames;
-      } else {
-        // convert object values to string
-        var classNameArray = [];
-        for(key in classNames) {
-          if(!classNames.hasOwnProperty(key)) continue;
-          if(classNames[key]) classNameArray.push(key);
-        }
-        return classNameArray.join(" ");
-      }
-      
+      return classNameArray.join(" ");
+    }
   },
 
   getFieldValue: function() {
@@ -332,19 +331,18 @@ SC.RadioView = SC.FieldView.extend(
 
   
   didCreateLayer: function() {
-     this.setFieldValue(this.get('fieldValue'));
-     var inputElems=this.$input();
-     for( var i=0, inputLen = inputElems.length; i<inputLen; i++){
-       SC.Event.add(inputElems[i], 'click', this, this._field_fieldValueDidChange) ;
-     }
-   },
+    this._field_valueDidChange(); // force initialization of text in $input.
+    var inputElems=this.$input();
+    for( var i=0, inputLen = inputElems.length; i<inputLen; i++){
+      SC.Event.add(inputElems[i], 'click', this, this._field_fieldValueDidChange) ;
+    }
+  },
 
   willDestroyLayer: function() {
-       var inputElems=this.$input();
-        for( var i=0, inputLen = inputElems.length; i<inputLen; i++){
-            SC.Event.remove(this.$input()[i], 'click', this, this._field_fieldValueDidChange); 
-        }
-   
+    var inputElems=this.$input();
+    for( var i=0, inputLen = inputElems.length; i<inputLen; i++){
+      SC.Event.remove(this.$input()[i], 'click', this, this._field_fieldValueDidChange); 
+    }
   },
   
   /**
