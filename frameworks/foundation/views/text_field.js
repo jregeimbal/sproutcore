@@ -162,7 +162,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       this.setIfChanged('editingValue', value);
       this._originalValue = null; // clean up
 
-      this.applyValueToField(value); // write raw text into the field, via transform
+      this.applyValueToField(value, NO); // write raw text into the field, via transform
       this.endPropertyChanges();
 
       this.set('isEditing', NO);
@@ -592,14 +592,14 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     
     // make sure raw text gets in sync with whatever transforms and
     // validation we have applied
-    this.applyValueToField(value);
+    this.applyValueToField(value, YES);
     this.endPropertyChanges();
   },
   
   _textField_valueDidChange: function() {
     var value = this.get('value');
     this.setIfChanged('editingValue', value);
-    this.applyValueToField(value); // sync text in text field
+    this.applyValueToField(value, NO); // sync text in text field
   }.observes('value'),
 
   _textField_fieldDidFocus: function(evt) {
@@ -766,7 +766,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
         
         if ((SC.typeOf(value) !== SC.T_ERROR) || this.get('allowsErrorAsValue')) {
           this.setIfChanged('value', value);
-          this.applyValueToField(value); // sync text in the text field
+          this.applyValueToField(value, NO); // sync text in the text field
         }
       }
 
