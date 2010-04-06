@@ -108,7 +108,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
   */
   getValidatedValueFromFieldValue: function(isPartial) {
     var fieldValue = this.getFieldValue(); // get raw text
-    var value = this.objectForFieldValue(fieldValue); // optionally transform to value object
+    var value = this.objectForFieldValue(fieldValue, isPartial); // optionally transform to value object
     return this.performValidate(value, isPartial); // validate the transformed value
   },
   
@@ -116,9 +116,9 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     Helper function to transform a value to its textual representation
     and write it to the text field.
   */
-  applyValueToField: function(value) {
+  applyValueToField: function(value, isPartial) {
     value = (SC.typeOf(value) === SC.T_ERROR) ? value.get('errorValue') : value;
-    value = this.fieldValueForObject(value); // get text representation of 'value'
+    value = this.fieldValueForObject(value, isPartial); // get text representation of 'value'
     this.setFieldValue(value); // set field text
   },  
 
@@ -149,7 +149,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
 
     // if we've transformed the value at all, give the text field a chance
     // to sync the textual representation of it
-    this.applyValueToField(value);
+    this.applyValueToField(value, isPartial);
   },
 
   // ..........................................................
@@ -160,7 +160,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     invoked when the value property changes.  Sets the field value...
   */
   _field_valueDidChange: function() {
-    this.applyValueToField(this.get('value'));
+    this.applyValueToField(this.get('value'), NO);
   }.observes('value'),
 
   /** @private
@@ -177,7 +177,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
   */
   didAppendToDocument: function() {
     if (this.get('isTextArea')) {
-      this.applyValueToField(this.get('value'));
+      this.applyValueToField(this.get('value'), NO);
       SC.Event.add(this.$input(), 'change', this, this._field_fieldValueDidChange) ;
     }
   },

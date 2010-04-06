@@ -63,9 +63,10 @@ SC.Validator = SC.Object.extend(
   
     @param {Object} object The object to transform
     @param {SC.View} field The view the value is required for.
+    @param {Boolean} isPartial True if this call has been made during an ongoing edit session.
     @returns {Object} a value (usually a string) suitable for display
   */
-  fieldValueForObject: function(object, field) { return object; },
+  fieldValueForObject: function(object, field, isPartial) { return object; },
   
   /**
     Returns the object value for the passed string.
@@ -83,9 +84,10 @@ SC.Validator = SC.Object.extend(
     
     @param {String} fieldValue the field value.  (Usually a String).
     @param {SC.View} view The view this value was pulled from.
+    @param {Boolean} isPartial True if this call has been made during an ongoing edit session.
     @returns {Object} an object suitable for consumption by the app or an SC.Error instance.
   */
-  objectForFieldValue: function(fieldValue, field) { return fieldValue; },
+  objectForFieldValue: function(fieldValue, field, isPartial) { return fieldValue; },
 
   // ..........................................
   // VALIDATION API
@@ -260,9 +262,9 @@ SC.Validator.mixin(/** @scope SC.Validator */ {
     Convenience class method to call the fieldValueForObject() instance
     method you define in your subclass.
   */
-  fieldValueForObject: function(object, field) {
+  fieldValueForObject: function(object, field, isPartial) {
     if (this.prototype && this.prototype.fieldValueForObject) {
-      return this.prototype.fieldValueForObject(object, field) ;
+      return this.prototype.fieldValueForObject(object, field, isPartial) ;
     }
     else return null ;
   },
@@ -271,9 +273,9 @@ SC.Validator.mixin(/** @scope SC.Validator */ {
     Convenience class method to call the objectForFieldValue() instance
     method you define in your subclass.
   */
-  objectForFieldValue: function(value, field) {
+  objectForFieldValue: function(value, field, isPartial) {
     if (this.prototype && this.prototype.objectForFieldValue) {
-      return this.prototype.objectForFieldValue(value, field) ;
+      return this.prototype.objectForFieldValue(value, field, isPartial) ;
     }
     else return null ;
   }

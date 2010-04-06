@@ -107,11 +107,11 @@ SC.Validatable = {
     This method will call the validators objectForFieldValue if it exists.
     
     @param {Object} fieldValue the raw value from the field.
-    @param {Boolean} partialChange
+    @param {Boolean} isPartial True if this call has been made during an ongoing edit session.
     @returns {Object}
   */
-  objectForFieldValue: function(fieldValue) {
-    return this._validator ? this._validator.objectForFieldValue(fieldValue, this) : fieldValue ;
+  objectForFieldValue: function(fieldValue, isPartial) {
+    return this._validator ? this._validator.objectForFieldValue(fieldValue, this, isPartial) : fieldValue ;
   },
   
   /**
@@ -119,11 +119,12 @@ SC.Validatable = {
     
     This method will call the validator's fieldValueForObject if it exists.
     
-    @param object {Object} the objec to convert
+    @param object {Object} the object to convert
+    @param {Boolean} isPartial True if this call has been made during an ongoing edit session.
     @returns {Object}
   */
-  fieldValueForObject: function(object) {
-    return this._validator ? this._validator.fieldValueForObject(object, this) : object ;
+  fieldValueForObject: function(object, isPartial) {
+    return this._validator ? this._validator.fieldValueForObject(object, this, isPartial) : object ;
   },
   
   _validatable_displayObserver: function() {
