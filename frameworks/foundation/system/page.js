@@ -87,14 +87,6 @@ SC.Page = SC.Object.extend(
       view.loc(locs[key]);
     }
     return this ;
-  },
-  
-  /*
-    @private
-  */
-  init: function(){
-    sc_super();
-    if(SC.Designer) SC.Designer.registerPage(this); 
   }
   //needsDesigner: YES,
   
