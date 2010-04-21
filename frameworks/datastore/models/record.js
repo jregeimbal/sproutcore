@@ -498,7 +498,17 @@ SC.Record = SC.Object.extend(
           isRecord = SC.typeOf(typeClass.call(valueForKey))===SC.T_CLASS;
           isChild  = valueForKey.isChildRecordTransform;
           if (!isRecord && !isChild) {
-            attrValue = this.get(key);
+            // could be another type of transformer, which we may not want to
+            // transform on normalization
+            var xform = valueForKey.get('transform');
+
+            if (xform && xform.transformOnNormalization === NO) {
+              // simply read the data from the hash 
+              attrValue = recHash[key];
+            } else {
+              // safe to trigger transform by calling get()
+              attrValue = this.get(key);
+            }
 
             if(attrValue!==undefined || (attrValue===null && includeNull)) {
               dataHash[keyForDataHash] = attrValue;
