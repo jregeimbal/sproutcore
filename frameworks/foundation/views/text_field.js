@@ -821,6 +821,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
         this.invokeLater(this.focusIE7,1);
       }else{
         this.$input()[0].focus();
+        this.fieldDidFocus();
       }
       return YES;
     } else {
@@ -849,6 +850,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   
   focusIE7: function (){
     this.$input()[0].focus();
+    this.fieldDidFocus();
   },
 
   selectStart: function(evt) {
