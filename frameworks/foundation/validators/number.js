@@ -76,6 +76,8 @@ SC.Validator.Number = SC.Validator.extend(
     Allow only numbers, dashes, period, and commas
   */
   validateKeyDown: function(form, field, charStr) {
+    if(!charStr) charStr = "";
+    
     if(this.get('places')===0){
       return (charStr.match(/^[\-+]?[0-9,\0]*/)[0]===charStr) || charStr.length === 0;
     }else {
