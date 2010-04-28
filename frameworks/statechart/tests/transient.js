@@ -4,6 +4,9 @@
 /*globals SC */
 
 /**
+  The unit test is used to confirm that correctness of transitioning between
+  states that are transient. 
+
   @author Michael Cohen
 */
 var basic;

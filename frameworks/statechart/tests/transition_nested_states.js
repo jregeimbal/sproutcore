@@ -4,6 +4,12 @@
 /*globals SC */
 
 /**
+  This unit test explicitly checks that transitioning between nested states
+  that is performed by their common parent state. It checks that when
+  transitioning from one nested state to the other, the parent state
+  is never existed, specifically when the parent state responds to a 
+  event sent to it.
+
   @author Michael Cohen
 */
 var basic;
@@ -14,7 +20,7 @@ var sequence;
 // CONTENT CHANGING
 // 
 
-module("SC.Statechart Mixin: Transient States", {
+module("SC.Statechart Mixin: Transition Between Nested States", {
   setup: function() { 
     sequence = [];
     
