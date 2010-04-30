@@ -46,7 +46,8 @@ SC.State = SC.Object.extend({
     the parallel statechart this state is a member of.  Defaults to 'default'
     @property {String}
   */
-  parallelStatechart: SC.DEFAULT_STATE,
+  parallelStatechart: SC.DEFAULT_TREE,
+
   /**
     The parent state.  Null if none
     
