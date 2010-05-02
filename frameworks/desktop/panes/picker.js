@@ -170,6 +170,20 @@ SC.PickerPane = SC.PalettePane.extend({
   extraRightOffset: 0,
 
   /**
+    Action to fire when user clicks out of the pane to close it.
+    If specified, the pane will not close, but this action will be fired
+    giving you a chance to close the pane yourself or not.  This is helpful
+    if you are using statecharts to control which panes are showing.
+    If not specified, the pane behaves like normal and closes on its own.
+  */
+  removeAction: null,
+
+  /**
+    Optional target for 'removeAction'.
+  */
+  removeTarget: null,
+
+  /**
     Displays a new picker pane according to the passed parameters.
     Every parameter except for the anchorViewOrElement is optional.
   
@@ -624,11 +638,30 @@ SC.PickerPane = SC.PalettePane.extend({
     return ret ;
   },
   
-  /** @private - click away picker. */
+  /**
+    @private - click away picker.
+
+    If 'removeAction' is specified, this intercepts the "clicking out" action
+    trying to close the pane and optionally fires an action instead, allowing
+    a statechart or other app code to control when the pane actually closes.
+  */
   modalPaneDidClick: function(evt) {
-    var f = this.get("frame");
-    if(!this.clickInside(f, evt)) this.remove();
-    return YES ; 
+    var f = this.get('frame');
+    var target, action;
+
+    if(!this.clickInside(f, evt)) { // if we clicked outside this pane
+      target = this.get('removeTarget') || null;
+      action = this.get('removeAction');
+
+      if (action) { // if action is defined, fire it instead of removing this pane
+        this.get('rootResponder').sendAction(action, target, this, this);
+      }
+      else { // otherwise just remove this pane as default behavior
+        this.remove();
+      }
+    }
+
+    return YES;
   },
 
   mouseDown: function(evt) {
