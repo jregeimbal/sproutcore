@@ -200,6 +200,7 @@ SC.InlineTextFieldView = SC.TextFieldView.extend(SC.DelegateSupport,
   commitEditing: function() {
     // try to validate field.  If it fails, return false.  
     var value = this.getValidatedValueFromFieldValue(NO);
+    value = ((SC.typeOf(value) !== SC.T_ERROR) || this.get('allowsErrorAsValue')) ? value : this._originalValue;
     if (SC.typeOf(value) === SC.T_ERROR) return NO;
     return this._endEditing(value) ;
   },

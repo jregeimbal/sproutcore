@@ -705,7 +705,9 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   // the hint text if needed.
   /** @private */
   didLoseKeyResponderTo: function(keyView) {
-    this.$input()[0].blur() ;
+    SC.RunLoop.begin();
+    this.fieldDidBlur();
+    SC.RunLoop.end();
   },
 
   parentViewDidResize: function() {
