@@ -20,7 +20,7 @@ SC.Statechart = {
   
   log: NO,
   
-  initMixin: function(){
+  initMixin: function() {
     //setup data
     this._all_states = {};
     this._all_states[SC.DEFAULT_TREE] = {};
@@ -28,52 +28,60 @@ SC.Statechart = {
     this._current_state[SC.DEFAULT_TREE] = null;
     this._goStateLocked = NO;
     this._pendingStateTransitions = [];
+    
     //alias sendAction
     this.sendAction = this.sendEvent;
-    if(this.get('startOnInit')) this.startupStatechart();
+    
+    if (this.get('startOnInit')) this.startupStatechart();
   },
   
   startOnInit: YES,
   
   
-  startupStatechart: function(){
+  startupStatechart: function() {
+
+    if (this._started) return;
+    
+    var key, tree, state, trees, startStates, startState, currTree;
+    
     //add all unregistered states
-    if(!this._started){
-      var key, tree, state, trees, startStates, startState, currTree;
-      for(key in this){
-        if(this.hasOwnProperty(key) && SC.kindOf(this[key], SC.State) && this[key].get && !this[key].get('beenAddedToStatechart')){
-          state = this[key];
-          this._addState(key, state);
-        }
+    for (key in this) {
+      if (this.hasOwnProperty(key) && SC.kindOf(this[key], SC.State) && this[key].get && !this[key].get('beenAddedToStatechart')) {
+        state = this[key];
+        this._addState(key, state);
       }
-      trees = this._all_states;
-      //init the statechart
-      for(key in trees){  
-        if(trees.hasOwnProperty(key)){
-          tree = trees[key];
-          //for all the states in this tree
-          for(state in tree){
-            if(tree.hasOwnProperty(state)){
-              tree[state].initState();
-            }
+    }
+    
+    trees = this._all_states;
+    
+    //init the statechart
+    for (key in trees) {  
+      if (trees.hasOwnProperty(key)) {
+        tree = trees[key];
+        //for all the states in this tree
+        for (state in tree) {
+          if (tree.hasOwnProperty(state)) {
+            tree[state].initState();
           }
         }
       }
-      //enter the startstates
-      startStates = this.get('startStates');
-      if(!startStates) throw 'Please add startStates to your statechart!';
-      
-      for(key in trees){  
-        if(trees.hasOwnProperty(key)){
-          startState = startStates[key];
-          currTree = trees[key];
-          if(!startState) console.error('The parallel statechart %@ must have a start state!'.fmt(key));
-          if(!currTree) throw 'The parallel statechart %@ does not exist!'.fmt(key);
-          if(!currTree[startState]) throw 'The parallel statechart %@ doesn\'t have a start state [%@]!'.fmt(key, startState);
-          this.goState(startState, key);
-        }
+    }
+    
+    //enter the startstates
+    startStates = this.get('startStates');
+    if (!startStates) throw 'Please add startStates to your statechart!';
+    
+    for (key in trees) {  
+      if (trees.hasOwnProperty(key)) {
+        startState = startStates[key];
+        currTree = trees[key];
+        if (!startState) console.error('The parallel statechart %@ must have a start state!'.fmt(key));
+        if (!currTree) throw 'The parallel statechart %@ does not exist!'.fmt(key);
+        if (!currTree[startState]) throw 'The parallel statechart %@ doesn\'t have a start state [%@]!'.fmt(key, startState);
+        this.goState(startState, key);
       }
     }
+      
     this._started = YES;
   },
   
@@ -89,24 +97,24 @@ SC.Statechart = {
     @param {String} Optional: the state name
     @returns {SC.State} the state object
   */
-  registerState: function(stateDefinition, stateManager, stateName){
+  registerState: function(stateDefinition, stateManager, stateName) {
     
     var state, tree;
     //create the state object
     state = SC.State.create(stateDefinition);
     
     //passed in optional arguments
-    if(stateManager && stateName){
-      if(stateManager.isStatechart){
+    if (stateManager && stateName) {
+      if (stateManager.isStatechart) {
 
         stateManager._addState(stateName, state);
         state.initState();
       }
-      else{
+      else {
         throw 'Cannot add state: %@ because state manager does not mixin SC.Statechart'.fmt(state.get('name'));
       }
     }
-    else{
+    else {
       state.set('beenAddedToStatechart', NO);
     }
     //push state onto list of states
