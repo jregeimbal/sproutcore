@@ -806,6 +806,10 @@ SC.ListItemView = SC.View.extend(
    el.css('opacity', 0.0) ;
   },
   
+  inlineEditorShouldBeginEditing: function(inlineEditor) {
+    return YES;
+  },
+  
   /** @private
    Could check with a validator someday...
   */
