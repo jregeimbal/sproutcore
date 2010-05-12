@@ -69,6 +69,11 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     //TODO: we need to have the SC version in a SC variable.
     //For now I'm harcoding the variable.
     this.header('X-SproutCore-Version', '1.4');
+    if (SC.browser.msie) {
+      // HACK: [MT] - Needed to invalidate ajax caching in IE
+      this.header('If-Modified-Since', 'Thu, 1 Jan 1970 00:00:00 GMT');
+      this.header('Cache-Control', 'no-cache');
+    }
   },
   
   /**
