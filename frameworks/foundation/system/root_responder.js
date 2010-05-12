@@ -1711,6 +1711,11 @@ SC.RootResponder = SC.Object.extend({
 
     // record click count.
     evt.clickCount = this._clickCount ;
+      
+      // HACK: [MT] - This is needed to get double click to work for lists
+      if (SC.browser.msie  && SC.none(view) && this._clickCount === 2) {
+        view = targetView;
+      }
 
     // attempt the mouseup call only if there's a target.
     // don't want a mouseup going to anyone unless they handled the mousedown...
