@@ -527,4 +527,41 @@ test("editing a field should not change the cursor position", function() {
   ok(selection.get('start') == 2 && selection.get('end') == 3, 'cursor position should be unchanged');
 });
 
+test("focus then lose key responder", function() {
+  var view = pane.view('empty');
+  var input = view.$('input');
+  
+  // attempt to focus...
+  SC.Event.trigger(input, 'focus');
+  
+  // verify editing state changed...
+  ok(view.get('isEditing'), 'view.isEditing should be YES');
+  ok(view.$().hasClass('focus'), 'view layer should have focus class');
+
+  // simulate typing a letter
+  SC.RunLoop.begin();
+  SC.Event.trigger(input, 'keydown');
+  SC.Event.trigger(input, 'keyup');
+  input.val('f');
+  SC.RunLoop.end();
+
+  // wait a little bit to let text field propograte changes
+  stop();
+  
+  setTimeout(function() {
+    start();
+    
+    // simulate losing key responder...
+    view.didLoseKeyResponderTo();
+  
+    equals(view.get('value'), 'f', 'view should have new value');
+    ok(view.$().hasClass('not-empty'), 'should have not-empty class');
+  
+    // verify editing state changed...
+    ok(!view.get('isEditing'), 'view.isEditing should be NO');
+    ok(!view.$().hasClass('focus'), 'view layer should NOT have focus class');
+  }, 100);  
+  
+});
+
 })();
