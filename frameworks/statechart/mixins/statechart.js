@@ -28,6 +28,7 @@ SC.Statechart = {
     this._current_state[SC.DEFAULT_TREE] = null;
     this._goStateLocked = NO;
     this._pendingStateTransitions = [];
+    this._pendingActions = [];
     
     //alias sendAction
     this.sendAction = this.sendEvent;
@@ -266,23 +267,35 @@ SC.Statechart = {
         currentStates = this._current_state,
         responder;
     
-    this._locked = YES;
+    if (this._sendEventLocked) {
+      // Want to prevent any actions from being processed by the states until 
+      // they have had a chance to handle handle the most immediate action
+      this._pendingActions.push({
+        action: action,
+        sender: sender,
+        context: context
+      });
+      return;
+    }
+
+    this._sendEventLocked = YES;
+        
     if (trace) {
       console.log("%@: begin action '%@' (%@, %@)".fmt(this, action, sender, context));
     }
     
-    for(var tree in currentStates){
-      if(currentStates.hasOwnProperty(tree)){
+    for (var tree in currentStates) {
+      if (currentStates.hasOwnProperty(tree)) {
         handled = NO;
         
         responder = currentStates[tree];
        
-        while(!handled && responder){
-          if(responder.tryToPerform){
+        while (!handled && responder) {
+          if (responder.tryToPerform) {
             handled = responder.tryToPerform(action, sender, context);
           }
           
-          if(!handled) responder = responder.get('parentState') ? this._all_states[tree][responder.get('parentState')] : null;
+          if (!handled) responder = responder.get('parentState') ? this._all_states[tree][responder.get('parentState')] : null;
         }
         
         if (trace) {
@@ -292,12 +305,24 @@ SC.Statechart = {
       }
     }
     
-    this._locked = NO ;
+    // Now that all the states have had a chance to process the 
+    // first action, we can go ahead and flush any pending actions.
+    this._sendEventLocked = NO;
+    this._flushPendingActions();
     
     return responder ;
   },
   
-  
+  /** @private
+
+     Called by sendEvent to flush a pending actions at the front of the pending
+     queue
+   */
+  _flushPendingActions: function() {
+    var pending = this._pendingActions.shift();
+    if (!pending) return;
+    this.sendEvent(pending.action, pending.sender, pending.context);
+  },
   
   _addState: function(name, state){
     state.set('stateManager', this);
