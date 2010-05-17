@@ -699,7 +699,7 @@ SC.Record = SC.Object.extend(
     @param {Hash} hash The hash of attributes to apply to the child record.
    */
   registerChildRecord: function(recordType, hash) {
-    var pm = recordType.primaryKey || 'childRecordKey';
+    var pm = recordType.prototype.primaryKey || 'childRecordKey';
     var childKey = hash[pm];
     var childRecord = null;
     var crManager = this.get('childRecords');
@@ -725,7 +725,7 @@ SC.Record = SC.Object.extend(
       // Generate the key used by the parent's child record manager.
       var key = SC.Record._generateChildKey();
       hash = hash || {}; // init if needed
-      var pm = childRecordType.primaryKey || 'childRecordKey';
+      var pm = childRecordType.prototype.primaryKey || 'childRecordKey';
       var childKey = hash[pm];
       hash[pm] = key;
 
