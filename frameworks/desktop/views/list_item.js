@@ -156,6 +156,17 @@ SC.ListItemView = SC.View.extend(
     is edited.
   */
   validator: null,
+  
+  /**
+    The exampleInlineTextFieldView property is by default a 
+    SC.InlineTextFieldView but it can be set to a customized inline text field
+    view.
+  
+    @property
+    @type {SC.View}
+    @default {SC.InlineTextFieldView}
+  */
+  exampleInlineTextFieldView: SC.InlineTextFieldView,
 
   contentPropertyDidChange: function() {
     //if (this.get('isEditing')) this.discardEditing() ;
@@ -769,7 +780,8 @@ SC.ListItemView = SC.View.extend(
       value: v,
       multiline: NO,
       isCollection: YES,
-      validator: validator
+      validator: validator,
+      exampleInlineTextFieldView: this.get('exampleInlineTextFieldView')
     }) ;
 
     // restore old line height for original item if the old line height 
