@@ -17,15 +17,24 @@ sc_require('validators/validator') ;
 SC.Validator.Email = SC.Validator.extend(
 /** @scope SC.Validator.Email.prototype */ {
   
-  validate: function(form, field) { 
-    return (field.get('fieldValue') || '').match(/.+@.+\...+/) ; 
+  regex: /.+@.+\...+/,
+  
+  /*
+    runs the validation
+  */
+  validateCommit: function(value) {
+    return this._validateFunction(value);
   },
   
-  validateError: function(form, field) {
-    var label = field.get('errorLabel') || 'Field' ;
-    return SC.$error("Invalid.Email(%@)".loc(label), label) ;
-  }  
-    
+  /* the actual validation happens here */
+  _validateFunction: function(value) {
+    var matcher = this.get('regex');
+    var ret = value;
+    if(!matcher.test(value)) {
+      ret = SC.Error.create({errorValue: value, message: "Invalid Email"});
+    }
+    return ret;
+  }
 }) ;
 
 /**
