@@ -709,17 +709,14 @@ SC.Record = SC.Object.extend(
     @param {Hash} hash The hash of attributes to apply to the child record.
    */
   registerChildRecord: function(recordType, hash) {
-    var pm = recordType.prototype.primaryKey || 'childRecordKey';
-    var childKey = hash[pm];
-    var childRecord = null;
-    var crManager = this.get('childRecords');
-    if (childKey && crManager) {
-      childRecord = crManager[childKey];
-    }
+    var cr;
+    var crk = hash[SC.ChildRecord.prototype.primaryKey];
+    var crCache = this.get('childRecords');
 
-    if (SC.none(childRecord)) childRecord = this.createChildRecord(recordType, hash);
+    if (crk && crCache) cr = crCache[crk];
+    if (SC.none(cr)) cr = this.createChildRecord(recordType, hash);
 
-    return childRecord;
+    return cr;
   },
   
   /**
