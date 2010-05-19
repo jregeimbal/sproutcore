@@ -194,7 +194,7 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     pm = recordType.prototype.primaryKey || 'childRecordKey';
     id = hash[pm];
     storeKey = store.storeKeyExists(recordType, id);
-    if (storeKey){
+    if (storeKey && store.peekStatus(storeKey) !== SC.Record.EMPTY){
       ret = store.materializeRecord(storeKey);
     } 
     else {
