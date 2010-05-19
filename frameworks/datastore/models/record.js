@@ -712,9 +712,12 @@ SC.Record = SC.Object.extend(
     var cr;
     var crk = hash[SC.ChildRecord.prototype.primaryKey];
     var crCache = this.get('childRecords');
+    var store = this.get('store');
 
     if (crk && crCache) cr = crCache[crk];
-    if (SC.none(cr)) cr = this.createChildRecord(recordType, hash);
+    if (SC.none(cr) || store.peekStatus(cr.storeKey) === SC.Record.EMPTY) {
+      cr = this.createChildRecord(recordType, hash);
+    }
 
     return cr;
   },
@@ -723,39 +726,44 @@ SC.Record = SC.Object.extend(
     Creates a new child record instance.
 
     @param {SC.ChildRecord} recordType The type of the child record to create.
-    @param {Hash} hash The hash of attributes to apply to the child record.
-    (may be null)
+    @param {Hash} hash The hash of attributes to apply to the child record (optional).
    */
   createChildRecord: function(childRecordType, hash) {
+    var defaultPKey = SC.ChildRecord.prototype.primaryKey;
+    var store = this.get('store');
     var cr = null;
+    
+    if (SC.none(store)) throw 'Error creating child record: No store on parent.';
+    
     SC.run(function() {
-      // Generate the key used by the parent's child record manager.
-      var key = SC.Record._generateChildKey();
-      hash = hash || {}; // init if needed
-      var pm = childRecordType.prototype.primaryKey || 'childRecordKey';
-      var childKey = hash[pm];
-      hash[pm] = key;
 
-      var store = this.get('store');
-      if (SC.none(store)) throw 'Error: during the creation of a child record: NO STORE ON PARENT!';
+      if (SC.typeOf(hash) !== SC.T_HASH) hash = {};
 
-      cr = store.createRecord(childRecordType, hash);
-      cr._parentRecord = this;
+      // Generate the child record key (used as cache index and default PK).
+      var crk = SC.Record._generateChildKey();
+      hash[defaultPKey] = crk;
 
-      // ID processing if necessary
-      if(this.generateIdForChild) this.generateIdForChild(cr);
-
-      // Add the child record to the hash.
-      var crManager = this.get('childRecords');
-      if (SC.none(crManager)) {
-        //console.log('Creating Child Record Manager for (%@)'.fmt(SC.guidFor(this)));
-        crManager = SC.Object.create();
-        this.set('childRecords', crManager);
+      // Generate PK if necessary.
+      var pKey = childRecordType.prototype.primaryKey;
+      if (pKey !== defaultPKey && this.generatePrimaryKeyForChild && SC.none(hash[pKey])) {
+        hash[pKey] = this.generatePrimaryKeyForChild(hash);
       }
 
-      crManager[key] = cr;
-    }, this);
+      // Create the child record instance.
+      cr = store.createRecord(childRecordType, hash);
+      cr._parentRecord = this;
+    
+      // Add the child record to the cache.
+      var crCache = this.get('childRecords');
 
+      if (SC.none(crCache)) {
+        crCache = SC.Object.create();
+        this.set('childRecords', crCache);
+      }
+    
+      crCache[crk] = cr;
+    }, this);
+    
     return cr;
   },
   
@@ -763,7 +771,7 @@ SC.Record = SC.Object.extend(
    * Override this function if you want to have a special way of creating 
    * ids for your child records
    */
-  generateIdForChild: function(childRecord){}
+  generatePrimaryKeyForChild: function(childRecord){}
      
 }) ;
 
