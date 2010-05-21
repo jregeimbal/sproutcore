@@ -336,11 +336,19 @@ SC.InlineTextFieldView = SC.TextFieldView.extend(SC.DelegateSupport,
   
   /** @private */
   keyDown: function(evt) {
-    var ret = this.interpretKeyEvents(evt) ;
-    this.fieldValueDidChange(true);
-    return !ret ? NO : ret ;
+
+    // validate keyDown...
+    if (this.performValidateKeyDown(evt)) {
+      var ret = this.interpretKeyEvents(evt) ;
+      this._isKeyDown = YES ;
+      evt.allowDefault();
+      return !ret ? NO : ret ;
+    } else {
+      evt.stop();
+      return YES;
+    }
   },
-  
+    
   /** @private */
   insertText: null,
   
