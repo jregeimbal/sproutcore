@@ -1,7 +1,9 @@
 // ==========================================================================
 // SC.Statechart
 // ==========================================================================
+
 require('system/state');
+
 /**
   @namespace
   
@@ -10,16 +12,29 @@ require('system/state');
   @author: Mike Ball
   @author: Michael Cohen
   @author: Evin Grano
+  @author: Jonathan Lewis
   @version: 0.1
   @since: 0.1
 */
 
 SC.Statechart = {
-    
+
   isStatechart: true,
-  
-  log: NO,
-  
+
+  /**
+    Log level bit definitions.  Combine these in any way desired
+    using bitwise operations and apply to 'logLevel'.
+  */
+  LOG_NONE: 0,
+  LOG_STATE_CHANGES: 1,
+  LOG_SENT_EVENTS: 2,
+  LOG_HANDLED_EVENTS: 4,
+  LOG_UNHANDLED_EVENTS: 8,
+  LOG_ALL_EVENTS: 14,
+  LOG_ALL: 15,
+
+  logLevel: 0,
+
   initMixin: function() {
     //setup data
     this._all_states = {};
@@ -36,7 +51,6 @@ SC.Statechart = {
   },
   
   startOnInit: YES,
-  
   
   startupStatechart: function() {
 
@@ -149,8 +163,8 @@ SC.Statechart = {
         enterMatchIndex,
         exitMatchIndex,
         requestedState, pivotState, pState, cState, 
-        i, hasLogging = this.get('log'), loggingStr;
-             
+        i, logLevel = this.get('logLevel'), loggingStr;
+
     if (!tree) throw '#goState: State requesting go does not have a valid parallel tree';
     
     requestedState = this._all_states[tree][requestedStateName];
@@ -197,11 +211,18 @@ SC.Statechart = {
     // but don't exit the common parent itself since you are technically still in it.
     loggingStr = "";
     for (i = 0; i < exitMatchIndex; i += 1) {
-      if (hasLogging) loggingStr += 'Exiting State: [%@] in [%@]\n'.fmt(exitStates[i], tree);
+      // Logging
+      if (logLevel & SC.Statechart.LOG_STATE_CHANGES) {
+        loggingStr += 'Exiting State: [%@] in [%@]\n'.fmt(exitStates[i], tree);
+      }
+      
       exitStates[i].exitState();
     }
     
-    if (hasLogging) console.info(loggingStr);
+    // Logging
+    if (logLevel & SC.Statechart.LOG_STATE_CHANGES) {
+      console.info(loggingStr);
+    }
     
     // Finally, from the the common parent state, but not including the parent state, enter the 
     // sub states down to the requested state. If the requested state has an initial sub state
@@ -210,7 +231,11 @@ SC.Statechart = {
     for (i = enterMatchIndex-1; i >= 0; i -= 1) {
       //TODO call initState?
       cState = enterStates[i];
-      if (hasLogging) loggingStr += 'Entering State: [%@] in [%@]\n'.fmt(cState, tree);
+
+      if (logLevel & SC.Statechart.LOG_STATE_CHANGES) {
+        loggingStr += 'Entering State: [%@] in [%@]\n'.fmt(cState, tree);
+      }
+
       pState = enterStates[i+1];
       if (pState && SC.typeOf(pState) === SC.T_OBJECT) pState.set('history', cState.name);
       cState.enterState();
@@ -220,7 +245,11 @@ SC.Statechart = {
         cState.enterInitialSubState(this._all_states[tree || SC.DEFAULT_TREE]);
       }
     }
-    if (hasLogging) console.info(loggingStr);
+    
+    // Logging
+    if (logLevel & SC.Statechart.LOG_STATE_CHANGES) {
+      console.info(loggingStr);
+    }
     
     // Set the current state for this state transition
     this._current_state[tree] = requestedState;
@@ -246,10 +275,9 @@ SC.Statechart = {
     tree = tree || SC.DEFAULT_TREE;
     return this._current_state[tree];
   },
-  
+
   //Walk like a duck
   isResponderContext: YES,
-  
   
   /**
     Sends the event to all the parallel state's current state
@@ -261,13 +289,15 @@ SC.Statechart = {
     @returns {SC.Responder} the responder that handled it or null
   */
   sendEvent: function(action, sender, context) {
-    var trace = this.get('log'),
+    var logLevel = this.get('logLevel'),
         handled = NO,
         currentStates = this._current_state,
         responder;
-    
+
     this._locked = YES;
-    if (trace) {
+
+    // Logging
+    if (logLevel & SC.Statechart.LOG_SENT_EVENTS) {
       console.log("%@: begin action '%@' (%@, %@)".fmt(this, action, sender, context));
     }
     
@@ -284,20 +314,21 @@ SC.Statechart = {
           
           if(!handled) responder = responder.get('parentState') ? this._all_states[tree][responder.get('parentState')] : null;
         }
-        
-        if (trace) {
-          if (!handled) console.log("%@:  action '%@' NOT HANDLED in tree %@".fmt(this,action, tree));
-          else console.log("%@: action '%@' handled by %@ in tree %@".fmt(this, action, responder.get('name'), tree));
+
+        // Logging
+        if (!handled && (logLevel & SC.Statechart.LOG_UNHANDLED_EVENTS)) {
+          console.log("%@:  action '%@' NOT HANDLED in tree %@".fmt(this,action, tree));
+        }
+        else if (handled && (logLevel & SC.Statechart.LOG_HANDLED_EVENTS)) {
+          console.log("%@: action '%@' handled by %@ in tree %@".fmt(this, action, responder.get('name'), tree));
         }
       }
     }
-    
+
     this._locked = NO ;
     
     return responder ;
   },
-  
-  
   
   _addState: function(name, state){
     state.set('stateManager', this);
