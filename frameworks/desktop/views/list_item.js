@@ -533,6 +533,7 @@ SC.ListItemView = SC.View.extend(
       return YES ; // listItem should handle this event
 
     } else if (this._isInsideDisclosure(evt)) {
+    
       this._addDisclosureActiveState();
       this._isMouseDownOnDisclosure = YES;
       this._isMouseInsideDisclosure = YES ;
@@ -578,7 +579,6 @@ SC.ListItemView = SC.View.extend(
         idx   = this.get('contentIndex');
         set   = (!SC.none(idx)) ? SC.IndexSet.create(idx) : null;
         del = this.get('displayDelegate');
-        
         if (state === SC.BRANCH_OPEN) {
           if (set && del && del.collapse) del.collapse(set);
           else this.set('disclosureState', SC.BRANCH_CLOSED);
@@ -589,6 +589,9 @@ SC.ListItemView = SC.View.extend(
           else this.set('disclosureState', SC.BRANCH_OPEN);
           this.displayDidChange();
         }
+        //HACK: [MB] component library wasn't refreshing when opening disclosure
+        //the first time... this ensures it always does
+        this.owner.reload(0,idx+1);
       }
      
       this._removeDisclosureActiveState();
