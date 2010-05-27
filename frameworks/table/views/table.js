@@ -5,7 +5,6 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('views/list');
 sc_require('views/table_row');
 sc_require('views/table_head');
 sc_require('mixins/table_delegate');
@@ -126,22 +125,28 @@ SC.TableView = SC.ListView.extend(SC.TableDelegate, {
   
   mouseDraggedInTableHeaderView: function(evt, header) {
     SC.RunLoop.begin();
+
     var isInDragMode = this.get('isInDragMode');
-    if (!isInDragMode) return NO;
+    var ret = NO;
+
+    if (isInDragMode) {
+      if (!this._dragging) {
+        SC.Drag.start({
+          event:  this._mouseDownEvent,
+          source: header,
+          dragView: this._scthv_dragViewForHeader(),
+          ghost: YES
+          //anchorView: this.get('parentView')
+        });
+        this._dragging = true;
+      }
     
-    if (!this._dragging) {
-      SC.Drag.start({
-        event:  this._mouseDownEvent,
-        source: header,
-        dragView: this._scthv_dragViewForHeader(),
-        ghost: YES
-        //anchorView: this.get('parentView')
-      });
-      this._dragging = true;
+      ret = sc_super();
     }
-    
-    return sc_super();
+
     SC.RunLoop.end();
+
+    return ret;
   },
   
   
@@ -267,7 +272,7 @@ SC.TableView = SC.ListView.extend(SC.TableDelegate, {
     if (this.get('hasUniformRowHeights')) {
       return top + (this.get('rowHeight') * contentIndex);
     } else {
-      for (idx = 0; idx < contentIndex; i++) {
+      for (idx = 0; idx < contentIndex; idx++) {
         top += this.rowHeightForContentIndex(idx);
       }
       return top;
@@ -397,12 +402,12 @@ SC.TableView = SC.ListView.extend(SC.TableDelegate, {
     var content = this.get('content'),
         del = this.delegateFor('isTableDelegate', this.delegate, content);
     
-    if (this.get('columns').length == 0) return;
+    if (this.get('columns').length === 0) return;
     width = del.tableShouldResizeWidthTo(this, width);
     
     var columns = this.get('columns'), totalColumnWidth = 0, idx;
     
-    for (var idx = 0; idx < columns.length; idx++) {
+    for (idx = 0; idx < columns.length; idx++) {
       totalColumnWidth += columns.objectAt(idx).get('width');
     }
     
