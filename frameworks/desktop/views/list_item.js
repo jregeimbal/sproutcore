@@ -33,6 +33,10 @@ SC.ListItemView = SC.View.extend(
   
   classNames: ['sc-list-item-view'],
   
+	// useFactory: YES,
+	
+	// displayProperties: ['content'],
+
   // ..........................................................
   // KEY PROPERTIES
   // 
@@ -151,23 +155,17 @@ SC.ListItemView = SC.View.extend(
   */
   disclosureState: SC.LEAF_NODE,
 
-  /**
-    The validator to use for the inline text field created when the list item
-    is edited.
-  */
-  validator: null,
+	displayValue: function() {
+		var content = this.get('content'),
+        del     = this.displayDelegate,
+				key, value
+				
+		key = this.getDelegateProperty('contentValueKey', del) ;
+    value = (key && content) ? (content.get ? content.get(key) : content[key]) : content ;
+    if (value && SC.typeOf(value) !== SC.T_STRING) value = value.toString();
+		return value
+	}.property('content').cacheable(),
   
-  /**
-    The exampleInlineTextFieldView property is by default a 
-    SC.InlineTextFieldView but it can be set to a customized inline text field
-    view.
-  
-    @property
-    @type {SC.View}
-    @default {SC.InlineTextFieldView}
-  */
-  exampleInlineTextFieldView: SC.InlineTextFieldView,
-
   contentPropertyDidChange: function() {
     //if (this.get('isEditing')) this.discardEditing() ;
     if (this.get('contentIsEditable') !== this.contentIsEditable()) {
@@ -196,6 +194,7 @@ SC.ListItemView = SC.View.extend(
     @returns {void}
   */
   render: function(context, firstTime) {
+    //console.log('listitemview rendered'+this.get('contentIndex')+this.get('classNames').join('+'));
     var content = this.get('content'),
         del     = this.displayDelegate,
         level   = this.get('outlineLevel'),
@@ -203,7 +202,7 @@ SC.ListItemView = SC.View.extend(
         key, value, working, classArray = [];
     
     // add alternating row classes
-    classArray.push((this.get('contentIndex')%2 === 0) ? 'even' : 'odd');
+    classArray.push((this.get('contentIndex') % 2 === 0) ? 'even' : 'odd');
     context.setClass('disabled', !this.get('isEnabled'));
 
     // outline level wrapper
@@ -219,7 +218,7 @@ SC.ListItemView = SC.View.extend(
     
     
     // handle checkbox
-    key = this.getDelegateProperty('contentCheckboxKey', content, del) ;
+    key = this.getDelegateProperty('contentCheckboxKey', del) ;
     if (key) {
       value = content ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderCheckbox(working, value);
@@ -227,7 +226,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle icon
-    if (this.getDelegateProperty('hasContentIcon', content, del)) {
+    if (this.getDelegateProperty('hasContentIcon', del)) {
       key = this.getDelegateProperty('contentIconKey', del) ;
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
       
@@ -236,9 +235,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle label -- always invoke
-    key = this.getDelegateProperty('contentValueKey', content, del) ;
-    value = (key && content) ? (content.get ? content.get(key) : content[key]) : content ;
-    if (value && SC.typeOf(value) !== SC.T_STRING) value = value.toString();
+		value = this.get('displayValue')
     if (this.get('escapeHTML')) value = SC.RenderContext.escapeHTML(value);
     this.renderLabel(working, value);
 
@@ -252,7 +249,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle unread count
-    key = this.getDelegateProperty('contentUnreadCountKey', content, del) ;
+    key = this.getDelegateProperty('contentUnreadCountKey', del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (!SC.none(value) && (value !== 0)) {
       this.renderCount(working, value) ;
@@ -264,7 +261,7 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle action 
-    key = this.getDelegateProperty('listItemActionProperty', content, del) ;
+    key = this.getDelegateProperty('listItemActionProperty', del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
     if (value) {
       this.renderAction(working, value);
@@ -272,8 +269,8 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle branch
-    if (this.getDelegateProperty('hasContentBranch', content, del)) {
-      key = this.getDelegateProperty('contentIsBranchKey', content, del);
+    if (this.getDelegateProperty('hasContentBranch', del)) {
+      key = this.getDelegateProperty('contentIsBranchKey', del);
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : NO ;
       this.renderBranch(working, value);
       classArray.push('has-branch');
@@ -369,7 +366,8 @@ SC.ListItemView = SC.View.extend(
     }
     
     // generate the img element...
-    classArray.push(className,'icon');
+    classArray.push(className);
+    classArray.push('icon');
     context.begin('img')
             .addClass(classArray)
             .attr('src', url)
@@ -419,7 +417,8 @@ SC.ListItemView = SC.View.extend(
     }
     
     // generate the img element...
-    classArray.push('right-icon',className);
+    classArray.push('right-icon');
+    classArray.push(className);
     context.begin('img')
       .addClass(classArray)
       .attr('src', url)
@@ -462,7 +461,8 @@ SC.ListItemView = SC.View.extend(
   */
   renderBranch: function(context, hasBranch) {
     var classArray=[];
-    classArray.push('branch',hasBranch ? 'branch-visible' : 'branch-hidden');
+    classArray.push('branch');
+    classArray.push(hasBranch ? 'branch-visible' : 'branch-hidden');
     context.begin('span')
           .addClass(classArray)
           .push('&nbsp;')
@@ -521,7 +521,6 @@ SC.ListItemView = SC.View.extend(
   button.
   */
   mouseDown: function(evt) {
-    
     // if content is not editable, then always let collection view handle the
     // event.
     if (!this.get('contentIsEditable')) return NO ; 
@@ -696,15 +695,16 @@ SC.ListItemView = SC.View.extend(
   */
   contentHitTest: function(evt) {
    // if not content value is returned, not much to do.
-   var del = this.displayDelegate ;
-   var labelKey = this.getDelegateProperty('contentValueKey', del) ;
-   if (!labelKey) return NO ;
+   // var del = this.displayDelegate ;
+   // var labelKey = this.getDelegateProperty('contentValueKey', del) ;
+   // if (!labelKey) return NO ;
    
    // get the element to check for.
    var el = this.$label()[0] ;
    if (!el) return NO ; // no label to check for.
-   
+
    var cur = evt.target, layer = this.get('layer') ;
+
    while(cur && (cur !== layer) && (cur !== window)) {
      if (cur === el) return YES ;
      cur = cur.parentNode ;
@@ -720,13 +720,12 @@ SC.ListItemView = SC.View.extend(
   },
   
   _beginEditing: function(scrollIfNeeded) {
-    var content   = this.get('content'),
-        del       = this.get('displayDelegate'),
-        labelKey  = this.getDelegateProperty('contentValueKey', del),
-        parent    = this.get('parentView'),
-        pf        = parent ? parent.get('frame') : null,
-        el        = this.$label(),
-        validator = this.get('validator'),
+    var content  = this.get('content'),
+        del      = this.get('displayDelegate'),
+        labelKey = this.getDelegateProperty('contentValueKey', del),
+        parent   = this.get('parentView'),
+        pf       = parent ? parent.get('frame') : null,
+        el       = this.$label(),
         f, v, offset, oldLineHeight, fontSize, top, lineHeight, 
         lineHeightShift, targetLineHeight, ret ;
 
@@ -782,9 +781,7 @@ SC.ListItemView = SC.View.extend(
       delegate: this, 
       value: v,
       multiline: NO,
-      isCollection: YES,
-      validator: validator,
-      exampleInlineTextFieldView: this.get('exampleInlineTextFieldView')
+      isCollection: YES
     }) ;
 
     // restore old line height for original item if the old line height 
@@ -805,6 +802,14 @@ SC.ListItemView = SC.View.extend(
    return SC.InlineTextFieldView.discardEditing();
   },
   
+  
+  /** @private
+    Allow editing.
+  */
+  inlineEditorShouldBeginEditing: function(inlineEditor) {
+    return YES ;
+  },
+  
   /** @private
    Set editing to true so edits will no longer be allowed.
   */
@@ -819,10 +824,6 @@ SC.ListItemView = SC.View.extend(
    var el = this.$label() ;
    this._oldOpacity = el.css('opacity');
    el.css('opacity', 0.0) ;
-  },
-  
-  inlineEditorShouldBeginEditing: function(inlineEditor) {
-    return YES;
   },
   
   /** @private
