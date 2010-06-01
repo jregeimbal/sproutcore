@@ -35,6 +35,9 @@ SC.Page = SC.Object.extend(
   */
   owner: null,
   
+  // HACK: [MT] - Necessary to be able to find class names for objects in IE
+  __className: 'SC.Page',
+  
   get: function(key) {
     var value = this[key] ;
     if (value && value.isClass) {
