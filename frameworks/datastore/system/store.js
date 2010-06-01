@@ -1974,6 +1974,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // EMPTY, ERROR, READY_CLEAN, READY_NEW, READY_DIRTY, DESTROYED_CLEAN,
     // DESTROYED_DIRTY
     if (!(status & K.BUSY)) {
+      SC.Logger.debug('%@.dataSourceDidComplete(storeKey: %@, dataHash: %@, newId: %@) Error: should only be called when status is busy (status is %@).'.fmt(this, storeKey, dataHash, newId, status));
       throw K.BAD_STATE_ERROR; // should never be called in this state
     }
     
