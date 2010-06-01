@@ -344,8 +344,11 @@ SC.Record = SC.Object.extend(
         attrs;
     
     attrs = store.readEditableDataHash(storeKey);
-    if (!attrs) throw SC.Record.BAD_STATE_ERROR;
-
+    if (!attrs) {
+      SC.Logger.debug('%@.writeAttribute(key: %@, value: %@, ignoreDidChange: %@) Error: No editable data hash.'.fmt(this, key, value, ignoreDidChange));
+      throw SC.Record.BAD_STATE_ERROR;
+    }
+    
     // if value is the same, do not flag record as dirty
     if (value !== attrs[key]) {
       if(!ignoreDidChange) this.beginEditing();
