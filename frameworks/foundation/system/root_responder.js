@@ -1596,7 +1596,11 @@ SC.RootResponder = SC.Object.extend({
         }
       }
     } catch (e) {
-      throw e;
+      //This screws up dragging on IE, which is why we don't want it unless we're on some other browser
+      if (!SC.browser.msie)
+      {
+        throw e;
+      }
     }
     SC.RunLoop.end();
   },

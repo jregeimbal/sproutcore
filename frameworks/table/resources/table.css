@@ -9,7 +9,6 @@
 }
 
 	.sc-table-header .sc-table-cell {
-		height: 38px !important;
 		overflow: visible !important;
 /*		bottom: -1px !important;*/
 		background-image: static_url('tableheader_divider2.png');
@@ -18,32 +17,39 @@
 		z-index: 3 !important;
 		color: #555;
 	}
+	
+	.sc-table-header .sc-table-cell.selected .sc-sort-state-asc {
+	  background-image:static_url('sort_up.gif');
+	  z-index:999;
+	  position:absolute;
+	}
+	
+	.sc-table-header .sc-table-cell.selected .sc-sort-state-desc {
+	  background-image:static_url('sort_down.gif');
+	  z-index:999;
+	  position:absolute;
+	}
 
 
 	.sc-table-header .sc-table-cell:hover, .sc-table-header .sc-table-cell.selected, .sc-table-header .sc-table-cell.dragging {
 		background-image: static_url('tableheader4.png') !important;
 		background-position: bottom left !important;
 		background-repeat: repeat-x !important;
-
-		z-index: 3000 !important;
 	}
 
 		.sc-table-header .sc-table-cell.selected {
-			z-index: 9999 !important;
 		}
 	
 		.sc-table-header .sc-table-cell label {
 			font-family: Helvetica;
-			background: transparent !important;
-			position: absolute !important;
-			text-align: left !important;
-			font-size: 12px !important;
-			left: 0px right: 0px !important;
-			top: 6px !important;
-			padding: 0px 8px !important;
-			padding-right: 20px !important;
-			line-height: 32px !important;
-			font-weight: bold !important;
+			background: transparent;
+			position: absolute;
+			text-align: left;
+			font-size: 12px;
+			left: 0px right: 0px;
+			padding: 0px 8px;
+			padding-right: 20px;
+			font-weight: bold;
 		}
 	
 			.sc-table-header .sc-table-cell:hover label, .sc-table-header .sc-table-cell.dragging label {
@@ -70,7 +76,7 @@
 				border-top: 1px solid #3783c6 !important;
 				border-top: 1px solid #418ed4 !important;
 				color: rgba(255, 255, 255, .95);
-		 		z-index: 9999 !important;
+		 		
 			}
 			
 			
@@ -89,17 +95,14 @@
 				top: 0px !important;
 			}
 			
-			.sc-table-header .sc-table-cell.dragging div.sc-thumb-view {
-				top: 3px !important;
-			}
 	
 .sc-table-header .sc-table-cell div.sc-thumb-view {
 	position: absolute !important;
-	top: 12px !important;
+	top: 6px !important;
 	left: none !important;
 	right: 1px !important;
 	width: 10px !important;
-	bottom: 7px !important;
+	bottom: 4px !important;
 	background-color: transparent !important !important;
 	z-index: 15000 !important;
 }
@@ -171,7 +174,6 @@ div.sc-dataview-row {
 		padding: 0px 8px;
 		left: 0px;
 		right: 0px;
-		top: 0px;
 		bottom: 0px;
 		overflow: hidden;
 		white-space: nowrap;
