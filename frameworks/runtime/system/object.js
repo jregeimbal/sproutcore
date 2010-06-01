@@ -873,6 +873,8 @@ SC._object_className = function(obj) {
   if (SC.isReady === NO) return ''; // class names are not available until ready
   if (!obj._object_className) findClassNames() ;
   if (obj._object_className) return obj._object_className ;
+  // HACK: [MT] - A hack so that IE can find the proper class names for objects...
+  if (obj.prototype.__className) return obj.prototype.__className;
 
   // if no direct classname was found, walk up class chain looking for a 
   // match.
