@@ -1571,7 +1571,7 @@ SC.RootResponder = SC.Object.extend({
         }
       }
     } catch (e) {
-      throw e;
+      //throw e;
     }
     SC.RunLoop.end();
   },
