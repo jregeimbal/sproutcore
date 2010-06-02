@@ -4,6 +4,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+sc_require('models/child_record');
 sc_require('models/record');
 sc_require('models/record_attribute');
 
@@ -28,6 +29,7 @@ SC.ChildAttribute = SC.RecordAttribute.extend(
   /** @scope SC.ChildAttribute.prototype */ {
     
   isChildRecordTransform: YES,
+  type: SC.ChildRecord,
       
   // ..........................................................
   // LOW-LEVEL METHODS
