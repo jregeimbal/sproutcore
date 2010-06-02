@@ -14,21 +14,19 @@ var initModels = function(){
     /** Child Record Namespace */
     childRecordNamespace: NestedRecord,
     primaryKey: 'id',
-    id: SC.Record.attr(String),
     name: SC.Record.attr(String),
     members: SC.Record.toMany('SC.Record', { nested: true })
   });
   
   NestedRecord.Person = SC.ChildRecord.extend({
+    childRecordNamespace: NestedRecord,
     primaryKey: 'id',
-    id: SC.Record.attr(String),
     name: SC.Record.attr(String),
     relationships: SC.Record.toMany('SC.Record', { nested: true })
   });
   
   NestedRecord.Relationship = SC.ChildRecord.extend({
     primaryKey: 'id',
-    id: SC.Record.attr(String),
     name: SC.Record.attr(String),
     connectedId: SC.Record.attr(String)
   });
@@ -194,12 +192,13 @@ test("Test Commit to server and new member addition",function() {
 });
 
 test("Test Commit to server and new member addition",function() {
-  var family, first, second, members, firstHash, secondHash;
+  var family, familyHash, first, second, members, firstHash, secondHash;
   
   // First
   family = store.materializeRecord(storeKeys[0]);
   members = family.get('members');
   first = members.objectAt(0);
+  firstHash = first.get('attributes');
   store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
   store.dataSourceDidComplete(storeKeys[0], {
     type: 'Family',
@@ -216,9 +215,14 @@ test("Test Commit to server and new member addition",function() {
   
   // Second
   family = store.materializeRecord(storeKeys[0]);
+  familyHash = store.readDataHash(storeKeys[0]);
   members = family.get('members');
   second = members.objectAt(0);
+  secondHash = second.get('attributes');
   same(first, second, "the SC.ChildRecord should the be the same before and after the save");
+  same(firstHash, secondHash, "the SC.ChildRecordHashes should the be the same before and after the save");
+  same(first.get('id'), second.get('id'), "the SC.ChildRecord id should the be the same before and after the save");
+  same(secondHash.id, familyHash.members[0].id, "the Family Record and the member id hash should match");
 });
 
 
