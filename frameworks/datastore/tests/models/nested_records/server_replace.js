@@ -222,7 +222,7 @@ test("Test Commit to server and new member addition",function() {
   same(first, second, "the SC.ChildRecord should the be the same before and after the save");
   same(firstHash, secondHash, "the SC.ChildRecordHashes should the be the same before and after the save");
   same(first.get('id'), second.get('id'), "the SC.ChildRecord id should the be the same before and after the save");
-  same(secondHash.id, familyHash.members[0].id, "the Family Record and the member id hash should match");
+  same(secondHash, familyHash.members[0], "the Family Record and the member id hash should match");
 });
 
 
