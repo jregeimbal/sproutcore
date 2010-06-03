@@ -1649,10 +1649,10 @@ SC.RootResponder = SC.Object.extend({
     if(!SC.browser.msie) window.focus();
     
     // First, save the click count. The click count resets if the mouse down
-    // event occurs more than 200 ms later than the mouse up event or more
+    // event occurs more than 251 ms later than the mouse up event or more
     // than 8 pixels away from the mouse down event.
     this._clickCount += 1 ;
-    if (!this._lastMouseUpAt || ((Date.now()-this._lastMouseUpAt) > 200)) {
+    if (!this._lastMouseUpAt || ((Date.now()-this._lastMouseUpAt) > 251)) {
       this._clickCount = 1 ;
     } else {
       var deltaX = this._lastMouseDownX - evt.clientX,
