@@ -117,11 +117,7 @@ test("Test Commit to server and data return",function() {
     name: 'Smith',
     id: 1,
     members: [
-      {
-        type: 'Person',
-        name: 'Willie',
-        id: 1
-      }
+      { type: 'Person', name: 'Willie', id: 1}
     ]
   });
   equals(store.peekStatus(storeKeys[0]), SC.Record.READY_CLEAN, 'first record has a READY_CLEAN State after new data change');
@@ -138,11 +134,7 @@ test("Test Commit to server and new member addition",function() {
     name: 'Smith',
     id: 1,
     members: [
-      {
-        type: 'Person',
-        name: 'Willie',
-        id: 1
-      }
+      { type: 'Person', name: 'Willie', id: 1}
     ]
   });
   
@@ -193,33 +185,27 @@ test("Test Commit to server and new member addition",function() {
 
 test("Test Commit to server and new member addition",function() {
   var family, familyHash, firstMembers, secondMembers,
-      first, second, firstHash, secondHash;
+      first, second, firstHash, returnHash, secondHash;
   
   // First
   family = store.materializeRecord(storeKeys[0]);
-  firstMembers = family.get('members');
-  first = firstMembers.objectAt(0);
-  firstHash = first.get('attributes');
-  store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
-  store.dataSourceDidComplete(storeKeys[0], {
+  returnHash = {
     type: 'Family',
     name: 'Smith',
     id: 1,
-    members: [
-      {
-        type: 'Person',
-        name: 'Willie',
-        id: 1
-      }
-    ]
-  });
+    members: [{type: 'Person', name: 'Willie', id: 1, childRecordKey: 'cr2'}]
+  };
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
+  store.dataSourceDidComplete(storeKeys[0], returnHash);
+  firstMembers = family.get('members');
+  first = firstMembers.objectAt(0);
+  firstHash = first.get('attributes');
+  same(firstHash, returnHash.members[0], "the SC.ChildRecord should the be the same before and after the save");
   
   // Second
   family = store.materializeRecord(storeKeys[0]);
   familyHash = store.readDataHash(storeKeys[0]);
   secondMembers = family.get('members');
-  //debugger;
-  secondMembers._childrenContentDidChange();
   second = secondMembers.objectAt(0);
   secondHash = second.get('attributes');
   

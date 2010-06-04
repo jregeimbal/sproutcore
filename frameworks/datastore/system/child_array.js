@@ -148,9 +148,9 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
         pname    = this.get('propertyName'),
         cr, recordType;  
     children.replace(idx, amt, recs);
-    for(var i = idx; i <= idx+amt; i+=1){
-      this.objectAt(i);
-    }
+    // for(var i = idx; i <= idx+amt; i+=1){
+    //   this.objectAt(i);
+    // }
     // notify that the record did change...
     record.recordDidChange(pname);
     
@@ -177,7 +177,7 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     var store = this.get('store'),
         parentRecord = this.get('record'), 
         recordType = this.get('defaultRecordType'),
-        id, ret, storeKey, pm;
+        id, ret, storeKey, pm, pk;
         
     // Find the record type
     if (!parentRecord) return undefined;
@@ -191,10 +191,12 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
       throw 'ChildrenArray: Error during transform: Invalid record type.';
     }
     
-    pm = recordType.prototype.primaryKey || 'childRecordKey';
-    id = hash[pm];
+    pk = recordType.prototype.primaryKey;
+    id = hash.childRecordKey || hash[pk];
     storeKey = store.storeKeyExists(recordType, id);
-    if (storeKey && store.peekStatus(storeKey) !== SC.Record.EMPTY){
+    if (storeKey){
+      store.writeDataHash(storeKey, hash);
+      SC.Store.replaceIdFor(storeKey, hash[pk]);
       ret = store.materializeRecord(storeKey);
     } 
     else {
