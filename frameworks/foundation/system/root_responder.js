@@ -1704,6 +1704,31 @@ SC.RootResponder = SC.Object.extend({
       this._drag.tryToPerform('mouseUp', evt) ;
       this._drag = null ;
     }
+      
+    // START HACK: [MT] - In IE7, when double clicking on an unselected item in a 
+    // list, the browser skips the second mousedown event and the dblclick
+    // event so I'm counting the mouseups instead.... If the second mouseup event 
+    // occurs less than 300 ms after the first mouse up event AND less than 8 
+    // pixels away from it AND this._clickCount is 1, then set this._clickCount to 2
+    // which will trigger the doubleClick action
+    this._mouseUpCount += 1 ;
+    if (!this._lastMouseUpAt || ((Date.now()-this._lastMouseUpAt) > 300)) {
+      this._mouseUpCount = 1 ;
+    } else {
+      var deltaX = this._lastMouseUpX - evt.clientX,
+          deltaY = this._lastMouseUpY - evt.clientY,
+          distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY) ;
+
+      if (distance > 8.0) this._mouseUpCount = 1 ;
+    }
+    
+    this._lastMouseUpX = evt.clientX ;
+    this._lastMouseUpY = evt.clientY ;
+    
+    if (SC.browser.msie === '7.0' && this._mouseUpCount === 2 && this._clickCount === 1) {
+      this._clickCount = 2;
+    }      
+    // END HACK
 
     var handler = null, view = this._mouseDownView,
         targetView = this.targetViewForEvent(evt);
