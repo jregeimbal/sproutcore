@@ -121,7 +121,7 @@ test("Can Push onto child array",function() {
     ok(f.get('name'), "should have a name property");
   });
   
-  contents.pushObject({type: 'File', name: 'File 4', id: 12});
+  contents.pushObject({type: 'File', name: 'File 4'});
   
   equals(contents.get('length'), 3, "should have three items");
   contents.forEach(function(f){
