@@ -713,7 +713,7 @@ SC.Record = SC.Object.extend(
    */
   registerChildRecord: function(recordType, hash) {
     var cr;
-    var crk = hash[SC.ChildRecord.prototype.primaryKey];
+    var crk = hash.childRecordKey;
     var crCache = this.get('childRecords');
     var store = this.get('store');
 
@@ -727,12 +727,16 @@ SC.Record = SC.Object.extend(
   
   /**
     Creates a new child record instance.
-
-    @param {SC.ChildRecord} recordType The type of the child record to create.
-    @param {Hash} hash The hash of attributes to apply to the child record (optional).
+   * If you want to create a primary key for your record that is specific to 
+   * your child record instantiate a function like this:
+   *
+   *  generatePrimaryKeyForChild: function(childRecord){ return "customKey"+Math.rand(); }
+   *
+   * @param {SC.ChildRecord} recordType The type of the child record to create.
+   * @param {Hash} hash The hash of attributes to apply to the child record (optional).
    */
   createChildRecord: function(childRecordType, hash) {
-    var defaultPKey = SC.ChildRecord.prototype.primaryKey;
+    var defaultPKey = 'childRecordKey', crk, pk;
     var store = this.get('store');
     var cr = null;
     
@@ -741,19 +745,20 @@ SC.Record = SC.Object.extend(
     SC.run(function() {
 
       if (SC.typeOf(hash) !== SC.T_HASH) hash = {};
-
-      // Generate the child record key (used as cache index and default PK).
-      var crk = SC.Record._generateChildKey();
-      hash[defaultPKey] = crk;
-
+    
       // Generate PK if necessary.
       var pKey = childRecordType.prototype.primaryKey;
+      pk = crk = SC.Record._generateChildKey();
+      hash.childRecordKey = pk;
       if (pKey !== defaultPKey && this.generatePrimaryKeyForChild && SC.none(hash[pKey])) {
-        hash[pKey] = this.generatePrimaryKeyForChild(hash);
+        hash.childRecordKey = pk = hash[pKey] = this.generatePrimaryKeyForChild(hash) || crk;
       }
-
+      else if(hash[pKey]){
+        hash.childRecordKey = pk = hash[pKey];
+      }
+    
       // Create the child record instance.
-      cr = store.createRecord(childRecordType, hash);
+      var cr = store.createRecord(childRecordType, hash, pk);
       cr._parentRecord = this;
     
       // Add the child record to the cache.
@@ -764,18 +769,11 @@ SC.Record = SC.Object.extend(
         this.set('childRecords', crCache);
       }
     
-      crCache[crk] = cr;
+      crCache[pk] = cr;
     }, this);
     
     return cr;
-  },
-  
-  /**
-   * Override this function if you want to have a special way of creating 
-   * ids for your child records
-   */
-  generatePrimaryKeyForChild: function(childRecord){}
-     
+  }  
 }) ;
 
 // Class Methods
@@ -1213,6 +1211,6 @@ SC.Record.mixin( /** @scope SC.Record */ {
   _generateChildKey: function() {
     var newIdx = SC.Record._nextChildKey + 1;
     SC.Record._nextChildKey = newIdx;
-    return newIdx; 
+    return 'cr'+newIdx; 
   }
 }) ;
