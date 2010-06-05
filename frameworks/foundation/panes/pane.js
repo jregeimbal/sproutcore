@@ -509,7 +509,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     var dom = this.get('layer') ;
     if (dom.parentNode) dom.parentNode.removeChild(dom) ;
     dom = null ;
-    
+
     // resign keyPane status, if we had it
     this.resignKeyPane();
     
@@ -521,6 +521,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     
     // clean up some of my own properties
     this.set('isPaneAttached', NO) ;
+    this.set('isVisible', NO);
     return this ;
   },
   
@@ -641,6 +642,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     this.set('currentWindowSize', responder.computeWindowSize()) ;
     
     // update my own location
+    this.set('isVisible', YES);
     this.set('isPaneAttached', YES) ;
     this.parentViewDidChange() ;
     
