@@ -607,7 +607,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     
     elem.insertBefore(layer, null); // add to DOM
     elem = layer = null ;
-
+    this.set('isVisible', YES);
     return this.paneDidAttach(); // do the rest of the setup
   },
 
@@ -704,7 +704,6 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     this.set('currentWindowSize', responder.computeWindowSize()) ;
     
     // update my own location
-    this.set('isVisible', YES);
     this.set('isPaneAttached', YES) ;
     this.parentViewDidChange() ;
     
