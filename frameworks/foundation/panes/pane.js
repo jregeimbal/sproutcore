@@ -491,7 +491,6 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     @returns {SC.Pane} receiver
   */
   append: function() {
-    this.set('isVisible', YES);
     return this.appendTo(document.body) ;
   },
   
@@ -507,6 +506,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     
     // remove layer...
     this.set('isVisibleInWindow', NO);
+
     var dom = this.get('layer') ;
     if (dom.parentNode) dom.parentNode.removeChild(dom) ;
     dom = null ;
@@ -546,7 +546,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     
     elem.insertBefore(layer, null); // add to DOM
     elem = layer = null ;
-
+    this.set('isVisible', YES);
     return this.paneDidAttach(); // do the rest of the setup
   },
 
