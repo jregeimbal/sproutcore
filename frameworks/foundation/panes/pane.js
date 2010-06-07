@@ -490,7 +490,8 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     @param {SC.RootResponder} rootResponder
     @returns {SC.Pane} receiver
   */
-  append: function() {   
+  append: function() {
+    this.set('isVisible', YES);
     return this.appendTo(document.body) ;
   },
   
@@ -642,7 +643,6 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     this.set('currentWindowSize', responder.computeWindowSize()) ;
     
     // update my own location
-    this.set('isVisible', YES);
     this.set('isPaneAttached', YES) ;
     this.parentViewDidChange() ;
     
