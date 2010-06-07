@@ -634,6 +634,11 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
         if (parent) {
           this._view_layer = value = this.findLayerInParentLayer(parent);
         }
+        //catch the rare case that the layer was not set
+        //and the parentView is null (usually when removing view)
+        else{
+          value = SC.$('#%@'.fmt(this.get('layerId'))).get(0);
+        }
         parent = null ; // avoid memory leak
       }
     }
