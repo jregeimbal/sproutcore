@@ -309,9 +309,15 @@ SC.RecordAttribute.registerTransform = function(klass, transform) {
 
 /** @private - generic converter for Boolean records */
 SC.RecordAttribute.registerTransform(Boolean, {
-  /** @private - convert an arbitrary object value to a boolean */
+  /** @private - convert an arbitrary object value to a boolean 
+   * Converts the given "true" | "false" string to a JavaScript boolean primitive.
+   */
   to: function(obj) {
-    return SC.none(obj) ? null : !!obj;
+    if (SC.typeOf(obj) === SC.T_STRING) {
+      return !'false0'.match(obj.toLowerCase());
+    } else {
+      return SC.none(obj) ? null : !!obj;
+    }
   }
 });
 
