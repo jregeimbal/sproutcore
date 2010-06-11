@@ -591,6 +591,14 @@ SC.MenuPane = SC.PickerPane.extend(
     this._notifyDidAppendToDocument();
 
     this.becomeMenuPane();
+    
+    // HACK: [MT] - Weird weird hack for menu panes in IE7... For some reason
+    // when a MenuPane is opened in IE7, everything but the MenuPane goes
+    // complete white, and for some reason this fixes it
+    if (SC.browser.msie === '7.0') {
+      var tmpClass = '%@%@'.fmt(this.get('layerId'), '-tmp-class');
+      SC.$('body').addClass(tmpClass).removeClass(tmpClass);
+    }
 
     return this ;
   },
