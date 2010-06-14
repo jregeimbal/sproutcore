@@ -9,7 +9,6 @@ SC.TableView = SC.View.extend({
 	numColumns: null,
 	content: null,
 	dataSource: null,
-	
 	rowHeight:22,
 	
 	selection:null,
@@ -26,7 +25,7 @@ SC.TableView = SC.View.extend({
 	canEditContent: YES,
 	
 	sortDescriptor: null,
-	sortDescriptorBinding: '*dataSource.orderBy',
+	sortDescriptorBinding: '.dataSource.orderBy',
 	
 	init: function() {
 		if (this.get('isFoldered'))
@@ -43,7 +42,7 @@ SC.TableView = SC.View.extend({
           columnWidths: [],
           rowHeight: this.get('rowHeight'),
           tableBinding: '.parentView.parentView.parentView',
-          contentBinding: '*table.dataSource',
+          contentBinding: '.table.dataSource.arrangedObjects',
           selectionBinding: '*table.selection',
           target: this.get('target'),
           action: this.get('action'),
@@ -96,7 +95,7 @@ SC.TableView = SC.View.extend({
 
     			sortDescriptorBinding: '*table.sortDescriptor',
      			columnsBinding: '*table.columns',
-    			dataSourceBinding: '*table.dataSource',
+    			dataSourceBinding: '*table.dataSource.arrangedObjects',
 
     			exampleViewBinding: '*table.exampleView',
 
