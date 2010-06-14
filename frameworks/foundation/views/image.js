@@ -41,6 +41,9 @@ SC.BLANK_IMAGE_URL = SC.browser.msie && SC.browser.msie<8 ? sc_static('blank.gif
 SC.ImageView = SC.View.extend(SC.Control, 
 /** @scope SC.ImageView.prototype */ {
   
+  // HACK: [MT] - Necessary to be able to find class names for objects in IE
+  __className: 'SC.ImageView',
+  
   /** Image views contain an img tag. */
   classNames: 'sc-image-view',
   tagName: 'img',
