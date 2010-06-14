@@ -92,7 +92,7 @@ SC.TableView = SC.View.extend({
           columnWidths: [],
           rowHeight: this.get('rowHeight'),
           tableBinding: '.parentView.parentView.parentView',
-          contentBinding: '*table.dataSource',
+          contentBinding: '*table.dataSource.arrangedObjects',
           selectionBinding: '*table.selection',
           target: this.get('target'),
           action: this.get('action'),
