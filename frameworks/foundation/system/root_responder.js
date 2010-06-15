@@ -1627,7 +1627,7 @@ SC.RootResponder = SC.Object.extend({
   */
   beforedeactivate: function(evt) {
     var toElement = evt.toElement;
-    if (toElement && toElement.tagName && toElement.tagName!=="IFRAME") {
+    if (toElement && toElement.tagName && toElement.tagName!=="IFRAME" && toElement.tagName!=="SELECT" && !(toElement.type && toElement.type==='file' && toElement.tagName==='INPUT')) {
       var view = SC.$(toElement).view()[0];
       //The following line is neccesary to allow/block text selection for IE,
       // in combination with the selectstart event.
