@@ -1540,6 +1540,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     memory manager.
   */
   destroy: function() {
+    console.log('destroyed '+this.toString()+'   '+this.classNames);
     if (this.get('isDestroyed')) return this; // nothing to do
     
     // remove from parent if found
@@ -2951,6 +2952,7 @@ SC.View.mixin(/** @scope SC.View */ {
     Designer module loaded, this will also create a peer designer if needed.
   */
   create: function() {
+    console.log('view created '+this.toString()+ ' '+ Math.random(100000));
     var C=this, ret = new C(arguments); 
     if (SC.ViewDesigner) {
       SC.ViewDesigner.didCreateView(ret, SC.$A(arguments));

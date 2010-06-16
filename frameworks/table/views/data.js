@@ -134,6 +134,7 @@ SC.DataView = SC.ListView.extend({
   },
   
   _redrawLayer: function(layer, value) {
+    //console.log('redraw layer '+layer+'   '+value);
     if (layer && layer.childNodes && layer.childNodes.length>0)
     {
 		  layer.childNodes[0].childNodes[0].innerHTML = (value || "");
@@ -203,19 +204,18 @@ SC.DataView = SC.ListView.extend({
   			if(view[i].get) {
   				view2 = view[i].get('layer');
   				view[i].set('layer', null);
-					// view[1].destroy()
+					view[i].destroy();
 					
-					if(!viewCache[i]){
+					/*if(!viewCache[i]){
 						viewCache[i] = [];
 					}
 					
 					viewCache[i].push(view[i]);
-  				view[i] = view2;
-
+  				view[i] = view2;*/
   			}	
   		}
 		
-  		hiddenRows.push(view);
+  		//hiddenRows.push(view);
 	  }
 		delete itemViews[row];
   },

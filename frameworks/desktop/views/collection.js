@@ -56,6 +56,8 @@ SC.CollectionView = SC.View.extend(
   classNames: ['sc-collection-view'],
   
   ACTION_DELAY: 200,
+  
+  useViewPooling:NO,
 
 	rowView: SC.View.extend(SC.Control, {
 		classNames: ['sc-dataview-row'],
@@ -643,6 +645,7 @@ SC.CollectionView = SC.View.extend(
   */
   contentRangeDidChange: function(content, object, key, indexes) {
     //debugger;
+    this.notifyPropertyChange('_contentGroupIndexes');
     if (!object && (key === '[]')) {
       this.reload(indexes); // note: if indexes == null, reloads all
       // this.reload(null)
@@ -812,7 +815,7 @@ SC.CollectionView = SC.View.extend(
 			// if(rows != null)
 				// console.log(rows.toArray())
 	    var invalid = this._invalidIndexes ;
-	   /* if (rows && invalid !== YES) {
+	   if (rows && invalid !== YES) {
 	      if (invalid) 
 	      {
 	        invalid.add(rows);
@@ -822,8 +825,8 @@ SC.CollectionView = SC.View.extend(
         }
 	    } else {
 	      this._invalidIndexes = YES ; // force a total reload
-	    }*/
-	    this._invalidIndexes = YES ; // force a total reload
+	    }
+	    //this._invalidIndexes = YES ; // force a total reload
 		// }
 		// 
 		// if(columns !== undefined) {
@@ -896,10 +899,8 @@ SC.CollectionView = SC.View.extend(
       }
     }
 
-
     // if an index set, just update indexes
     if (SC.typeOf(invalid) == "array") {
-
       if (bench) {
         bench=("%@#reloadIfNeeded (Partial)" + Math.random(100000)).fmt(this);
         SC.Benchmark.start(bench);
@@ -916,7 +917,6 @@ SC.CollectionView = SC.View.extend(
              this.addItemViewForRowAndColumn(idx, SC.none(column) ? NO : colIdx, rebuild);
           }, this);
         } else {
-					// console.log("remove", idx)
           this.removeItemViewForRowAndColumn(idx, 0);
         }
       }, this);
@@ -1407,7 +1407,7 @@ SC.CollectionView = SC.View.extend(
   */
   itemViewForContentIndex: function(idx, rebuild) {
     var ret;
-
+    console.warn('itemViewForContentIndex is deprecated and will be removed in a future version. Use viewForRowAndColumn instead.');
     // Use the cached view for this index, if we have it.  We'll do this up-
     // front to avoid 
     var itemViews = this._sc_itemViews;
@@ -3039,7 +3039,6 @@ console.log("canEdit", itemView.contentHitTest(ev));
     Returns three params: [drop index, drop operation, allowed drag ops]
   */
   _computeDropOperationState: function(drag, evt, dragOp) {
-    
     // get the insertion index for this location.  This can be computed
     // by a subclass using whatever method.  This method is not expected to
     // do any data valdidation, just to map the location to an insertion 
@@ -3151,7 +3150,6 @@ console.log("canEdit", itemView.contentHitTest(ev));
     content on its own.
   */
   dragUpdated: function(drag, evt) {
-    
     var op     = drag.get('allowedDragOperations'),
         state  = this._computeDropOperationState(drag, evt, op),
         idx    = state[0], dropOp = state[1], dragOp = state[2];
@@ -3382,6 +3380,11 @@ console.log("canEdit", itemView.contentHitTest(ev));
   
   init: function() {
      sc_super();
+     if (this.get('useViewPooling')){
+       var target = this.get('exampleView') || SC.ListItemView;
+       console.warn('%@1 is now a pooled class'.fmt(target));
+       SC.makePooled(target);
+     }
      if (this.get('canReorderContent')) this._cv_canReorderContentDidChange();
      this._sccv_lastNowShowing = this.get('nowShowing').clone();
      if (this.content) this._cv_contentDidChange();

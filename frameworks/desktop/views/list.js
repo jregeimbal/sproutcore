@@ -62,6 +62,8 @@ SC.ListView = SC.CollectionView.extend(
 
   acceptsFirstResponder: YES,
   
+  useViewPooling:YES,
+  
   /**
   * If set to YES, the default theme will show alternating rows
   * for the views this ListView created through exampleView property.
