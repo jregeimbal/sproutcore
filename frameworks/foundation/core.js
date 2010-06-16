@@ -145,6 +145,28 @@ SC.mixin(Function.prototype, /** @scope Function.prototype */ {
       f = function() { return func.apply(that, args.slice(1)); } ;
     }
     return SC.Timer.schedule({ target: target, action: f, interval: interval });
-  }    
+  }
 
+});
+
+SC.mixin({
+  makePooled: function(objectType, firstInstance) {
+    if (!objectType.isPooled)
+    {
+      // get concatenated properties
+      var concat_defaults = {};
+
+      var c = objectType.prototype.concatenatedProperties;
+      for (var i = 0; i < c.length; i++) {
+        concat_defaults[c[i]] = objectType.prototype[c[i]];
+      }
+      objectType._pool_default_concat_values = concat_defaults;
+
+      // do mixing in
+      objectType._no_pool_create = objectType.create;
+      SC.mixin(objectType, SC.PoolableClass);
+      objectType.prototype._no_pool_destroy = objectType.prototype.destroy;
+      SC.mixin(objectType.prototype, SC.PoolableMixin);
+    }
+  }
 });
