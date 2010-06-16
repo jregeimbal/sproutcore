@@ -545,7 +545,12 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         storeKeys = storeKeys.copy();
       }
       
-      storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
+      // HACK: [MT] - Dont' sort records in IE. This causes a lot of
+      // js timeouts especially when dealing with large data sets
+      if (!SC.browser.msie) {
+        storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
+      }
+      
       if (SC.compare(oldStoreKeys, storeKeys) !== 0){
         this.set('storeKeys', SC.clone(storeKeys)); // replace content
       }
