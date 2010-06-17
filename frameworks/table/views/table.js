@@ -1,3 +1,9 @@
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2009 Apple, Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
 sc_require('views/table_header');
 sc_require('views/table_cell');
 
@@ -83,7 +89,7 @@ SC.TableView = SC.View.extend({
 
     			classNames: ['sc-table-data-view'],
 
-     			tableBinding: '.parentView.parentView.parentView',
+     			tableBinding: '*parentView.parentView.parentView',
 
      			rowHeightBinding: '*table.rowHeight',
 

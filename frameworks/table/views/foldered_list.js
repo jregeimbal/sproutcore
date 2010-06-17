@@ -130,6 +130,86 @@ SC.FolderedListView = SC.ListView.extend(SC.FolderedListViewDelegate,
     if (allowActionOnFolder || (!allowActionOnFolder && disclosureState === SC.LEAF_NODE)) {
       sc_super();
     }
+  },
+    
+  ghostForColumn: function(column) {
+		var nowShowing = this.get('nowShowing'),
+			el = document.createElement('div');
+			
+		nowShowing.forEach(function(idx) {
+		  var view = this.viewForCell(idx, column);
+		  if (view)
+		  {
+		    if (view.get)
+		    {
+		      var layer=view.get('layer');
+  			  el.appendChild(layer.cloneNode(YES));
+			  }
+			  else
+			  {
+			    if (view.cloneNode)
+			    {
+			      el.appendChild(view.cloneNode(YES));
+			    }
+			  }
+		  }
+		}, this);
+		
+		el.className = "column-" + column + " ghost";
+		
+		return el;
+	},
+	
+	viewForCell: function(row, column) {
+		var rowView = this.viewForRow(row),
+			itemViews = this._sc_itemViews;
+			
+		if(!rowView){
+			return NO;
+		}
+		
+		var view = itemViews[row][column];
+			
+		if(!view){
+			return NO;  
+		}
+
+		return view;
+	},
+	
+	viewForRow: function(row) {
+		var view = this._sc_itemViews[row];
+		if(!view) {
+			var rowView = this.row();
+			
+			if(!rowView)
+			{
+				return NO;
+			}
+			
+			if(SC.typeOf(rowView) == "array") {
+				view = rowView[-1];
+				this._sc_itemViews[row] = rowView;
+			} else 
+			{
+				view = rowView;
+			}
+
+			SC.$(view).css(this.layoutForRow(row));
+		}
+
+		if (SC.none(view))
+		{
+		  return NO;
+	  }
+
+		view.className = "sc-dataview-row" + (row % 2 === 0 ? " even" : "") + (this.isSelected(row) ? " sel" : "");
+		return view;
+	},
+	
+	isSelected: function(item) {
+    var sel = this.get('selection');
+    return sel ? sel.contains(this.get('content'), item) : NO;
   }
 });
 
