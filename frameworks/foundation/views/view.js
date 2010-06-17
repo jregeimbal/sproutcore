@@ -2952,7 +2952,6 @@ SC.View.mixin(/** @scope SC.View */ {
     Designer module loaded, this will also create a peer designer if needed.
   */
   create: function() {
-    console.log('view created '+this.toString()+ ' '+ Math.random(100000));
     var C=this, ret = new C(arguments); 
     if (SC.ViewDesigner) {
       SC.ViewDesigner.didCreateView(ret, SC.$A(arguments));
