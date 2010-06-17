@@ -634,11 +634,6 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
         if (parent) {
           this._view_layer = value = this.findLayerInParentLayer(parent);
         }
-        //catch the rare case that the layer was not set
-        //and the parentView is null (usually when removing view)
-        else{
-          value = SC.$('#%@'.fmt(this.get('layerId'))).get(0);
-        }
         parent = null ; // avoid memory leak
       }
     }
@@ -965,6 +960,10 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
   */
   destroyLayer: function() {
     var layer = this.get('layer') ;
+    //catch the rare case that the layer was not set
+    //and the parentView is null (usually when removing view)
+    if(!layer) layer = SC.$('#%@'.fmt(this.get('layerId'))).get(0);
+    
     if (layer) {
       // Now notify the view and its child views.  It will also set the
       // layer property to null.
