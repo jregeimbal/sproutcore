@@ -690,7 +690,7 @@ SC.ListItemView = SC.View.extend(
     // if not content value is returned, not much to do.
     var del = this.displayDelegate ;
     var labelKey = this.getDelegateProperty('contentValueKey', del) ;
-    if (!labelKey) return NO ;
+    if (!labelKey && !this.get('displayValue')) return NO ;
 
     // get the element to check for.
     var el = this.$label()[0] ;
