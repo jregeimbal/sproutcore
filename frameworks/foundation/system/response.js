@@ -501,6 +501,16 @@ SC.XHRResponse = SC.Response.extend({
         try {
           status = rawRequest.status || 0;
         } catch (e) {}
+        
+        // HACK: [MT] - IE sometimes mangles the response code for an HTTP
+        // request. It's receiving a 204 from the server but it's
+        // setting the status to be 1223 resulting in the request to be marked
+        // as failed. The YUI library and jquery normalize 1223 to be 204.
+        // 
+        // http://developer.yahoo.com/yui/docs/connection.js.html
+        // http://dev.jquery.com/ticket/1450
+        // 
+        if (SC.browser.msie && status === 1223) status = 204;
 
         // if there was an error - setup error and save it
         if ((status < 200) || (status >= 300)) {
