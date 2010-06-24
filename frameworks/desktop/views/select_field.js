@@ -311,7 +311,7 @@ SC.SelectFieldView = SC.FieldView.extend(
       if(newValue && newValue.get && newValue.get('primaryKey') && newValue.get(newValue.get('primaryKey'))){
         newValue = SC.guidFor(newValue.get(newValue.get('primaryKey')));
       }
-      else if(newValue && SC.guidFor(newValue)){
+      else if(newValue && SC.guidFor(newValue) && newValue !== '***'){
         newValue = SC.guidFor(newValue);
       }
       else if(newValue){
