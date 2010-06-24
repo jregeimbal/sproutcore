@@ -160,56 +160,13 @@ SC.FolderedListView = SC.ListView.extend(SC.FolderedListViewDelegate,
 		return el;
 	},
 	
-	viewForCell: function(row, column) {
-		var rowView = this.viewForRow(row),
-			itemViews = this._sc_itemViews;
-			
-		if(!rowView){
-			return NO;
-		}
-		
-		var view = itemViews[row][column];
-			
-		if(!view){
-			return NO;  
-		}
-
-		return view;
-	},
-	
-	viewForRow: function(row) {
-		var view = this._sc_itemViews[row];
-		if(!view) {
-			var rowView = this.row();
-			
-			if(!rowView)
-			{
-				return NO;
-			}
-			
-			if(SC.typeOf(rowView) == "array") {
-				view = rowView[-1];
-				this._sc_itemViews[row] = rowView;
-			} else 
-			{
-				view = rowView;
-			}
-
-			SC.$(view).css(this.layoutForRow(row));
-		}
-
-		if (SC.none(view))
-		{
-		  return NO;
+	viewForCell: function(idx,column){
+	  var row = this.itemViewForContentIndex(idx);
+	  if (row && row.childViews && row.childViews.length>column)
+	  {
+	    return row.childViews[column];
 	  }
-
-		view.className = "sc-dataview-row" + (row % 2 === 0 ? " even" : "") + (this.isSelected(row) ? " sel" : "");
-		return view;
-	},
+	}
 	
-	isSelected: function(item) {
-    var sel = this.get('selection');
-    return sel ? sel.contains(this.get('content'), item) : NO;
-  }
 });
 
