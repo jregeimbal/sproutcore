@@ -806,7 +806,8 @@ SC.Event.prototype = {
   getCharString: function() {
       if(SC.browser.msie){
         if(this.keyCode == 8 || this.keyCode == 9 || (this.keyCode>=37 && this.keyCode<=40)){
-          return String.fromCharCode(0);
+          // String.fromCharCode(0) returns an empty string, the funciton should return null instead.
+          return null;
         }else{
           return (this.keyCode>0) ? String.fromCharCode(this.keyCode) : null;  
         }
