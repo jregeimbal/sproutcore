@@ -53,26 +53,6 @@ SC.PalettePane = SC.PanelPane.extend({
     this._mouseOffsetY = f ? (f.y - evt.pageY) : 0;
     return YES;
   },
-  
-  /**
-    @Overide 
-    
-    Palette Panes need to overide send event so that they can become
-    the keyPane if needed.
-    
-    This is useful when you have more than one palette pane open and you 
-    want to have the ability to switch bewteen them and fill in values, etc...
-  */
-  
-  sendEvent: function(act, evt, target) {
-    var pane, keyPane = SC.RootResponder.responder.keyPane;
-    SC.RunLoop.begin();
-    if (target) pane = target.get('pane'); // Get the pane for the target
-    else pane = this.get('menuPane') || this.get('keyPane') || this.get('mainPane') ; // or get one of the possible panes
-    if (pane && pane !== keyPane && pane.get('acceptsKeyPane') && pane.get('isPaneAttached')) pane.becomeKeyPane(); // make it the keyPane if possible
-    SC.RunLoop.end();
-    return sc_super();
-  },
 
   mouseDragged: function(evt) {
     if(!this.isAnchored) {
