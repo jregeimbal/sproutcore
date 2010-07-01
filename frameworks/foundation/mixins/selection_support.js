@@ -233,6 +233,7 @@ SC.SelectionSupport = {
         sel     = this.get('selection'),
         ret     = sel,
         indexes, len, max;
+        
 
     // first, make sure selection goes beyond current items...
     if (ret && content && ret.get('sources').indexOf(content)>=0) {
@@ -259,6 +260,20 @@ SC.SelectionSupport = {
       if ((len===0) && !this.get('allowsEmptySelection') && max>0) {
         this.notifyPropertyChange('selection');
       }
+    }
+    
+    // If an array controller's content has been changed to an empty set
+    // and it still has it's previous selection then we need to empty the
+    // selection set
+    if (ret && content && ret === sel) {
+      var selLen = sel.get('length'),
+          contentLen = content.get('length');
+      
+      if (contentLen <= 0 && selLen > 0) {
+        ret = SC.SelectionSet.EMPTY;
+        this.set('selection',ret);
+      }
+      
     }
 
     return this ;
