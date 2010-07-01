@@ -224,24 +224,40 @@ SC.SelectionSupport = {
     
     @returns {Object}
   */
-  updateSelectionAfterContentChange: function() {
-    var arrangedObjects = this.get('arrangedObjects');
-    var selectionSet = this.get('selection');
-    var allowsEmptySelection = this.get('allowsEmptySelection');
-    var indexSet; // Selection index set for arranged objects
+  updateSelectionAfterContentChange: function() {    
+    var content = this.get('arrangedObjects'),
+        sel     = this.get('selection'),
+        ret     = sel,
+        allowsEmptySelection = this.get('allowsEmptySelection'),
+        indexes, len, sLen, max;
 
     // If we don't have any selection, there's nothing to update
-    if (!selectionSet) return this;
+    if (!sel) return this;
+    sLen = sel.get('length');
     // Remove any selection set objects that are no longer in the content
-    indexSet = selectionSet.indexSetForSource(arrangedObjects);
-    if ((indexSet && (indexSet.get('length') !== selectionSet.get('length'))) || (!indexSet && (selectionSet.get('length') > 0))) { // then the selection content has changed
-      selectionSet = selectionSet.copy().constrain(arrangedObjects).freeze();
-      this.set('selection', selectionSet);
+    indexes = sel.indexSetForSource(content);
+    if ((indexes && (indexes.get('length') !== sLen)) || (!indexes && (sLen > 0))) { // then the selection content has changed
+      sel = sel.copy().constrain(content).freeze();
+      sLen = sel.get('length');
+      this.set('selection', sel);
     }
     
     // Reselect an object if required (if content length > 0)
-    if ((selectionSet.get('length') === 0) && arrangedObjects && (arrangedObjects.get('length') > 0) && !allowsEmptySelection) {
+    if ((sLen === 0) && content && (content.get('length') > 0) && !allowsEmptySelection) {
       this.selectObject(this.get('firstSelectableObject'), NO);
+    }
+    
+    // If an array controller's content has been changed to an empty set
+    // and it still has it's previous selection then we need to empty the
+    // selection set
+    if (ret && content && ret === sel) {
+      var contentLen = content.get('length');
+      
+      if (contentLen <= 0 && sLen > 0) {
+        ret = SC.SelectionSet.EMPTY;
+        this.set('selection',ret);
+      }
+      
     }
 
     return this;

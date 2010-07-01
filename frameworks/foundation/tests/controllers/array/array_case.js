@@ -203,6 +203,45 @@ test("verify rangeObserver fires when content is deleted", function() {
   equals(cnt, 1, 'range observer should have fired once');
 });
 
+test("verify updateSelectionAfterContentChange fires and clears selection upon content becoming an empty array", function(){
+  
+  var fired = false, selectedObj;
+  
+  function generateContent(item) {
+    return TestObject.create({title: item});
+  }
+  content = "1 2 3 4 5".w().map(generateContent);
+  
+  controller = SC.ArrayController.create({
+    
+    content: content,
+    
+    updateSelectionAfterContentChange: function() {
+      fired = true;
+      return sc_super();
+    }
+    
+  });
+  
+  same(controller.get('selection'), SC.SelectionSet.EMPTY, "Initial SelectionSet should === SC.SelectionSet.EMPTY");
+  same(controller.getPath('selection.length'), 0, 'Initial Selection length should be 0');
+  same(controller.getPath('arrangedObjects.length'), 5, 'The content length should be 5');
+  
+  SC.run(function(){ 
+    selectedObj = controller.objectAt(0);
+    controller.selectObject(selectedObj);
+  });
+  same(controller.getPath('selection.length'), 1, 'Selection length should  now be 1');
+  same(controller.getPath('selection.firstObject'), selectedObj, 'The Selection Set\'s firstObject should be the content\'s first object');
+  
+  SC.run(function(){
+    controller.set('content', []);
+  });
+  same(controller.getPath('arrangedObjects.length'), 0, 'After setting content to an empty array, content length should be 0');
+  same(controller.get('selection'), SC.SelectionSet.EMPTY, "After setting content to an empty array, the SelectionSet should === SC.SelectionSet.EMPTY");
+  same(controller.getPath('selection.length'), 0, 'After setting content to an empty array, Selection length should be 0');
+});
+
 
 // ..........................................................
 // VERIFY SC.ARRAY COMPLIANCE
