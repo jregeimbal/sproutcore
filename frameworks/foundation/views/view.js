@@ -1540,7 +1540,6 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     memory manager.
   */
   destroy: function() {
-    console.log('destroyed '+this.toString()+'   '+this.classNames);
     if (this.get('isDestroyed')) return this; // nothing to do
     
     // remove from parent if found

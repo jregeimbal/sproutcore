@@ -1197,7 +1197,6 @@ SC.CollectionView = SC.View.extend(
           }
           ret.set('content', item);
           ret.endPropertyChanges();
-          console.log('view pooling reused view'+ret);
         }
       }
 
