@@ -56,6 +56,9 @@ SC.PalettePane = SC.PanelPane.extend({
 
   mouseDragged: function(evt) {
     if(!this.isAnchored) {
+      // make sure we have an original width and height
+      if (!this.layout.width || !this.layout.height) this.layout = SC.View.convertLayoutToAnchoredLayout(this.layout, this.computeParentDimensions());
+      
       this.set('layout', { width: this.layout.width, height: this.layout.height, left: this._mouseOffsetX + evt.pageX, top: this._mouseOffsetY + evt.pageY });
       this.updateLayout();
     }
