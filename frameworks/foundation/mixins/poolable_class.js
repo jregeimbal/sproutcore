@@ -8,7 +8,6 @@ SC.PoolableClass = {
   
   create: function() {
     // first, check pool
-    console.log('poolable create called '+this.toString());
     var object;
     if (this._objectPool.length > 0) {
       object = this._objectPool.pop();

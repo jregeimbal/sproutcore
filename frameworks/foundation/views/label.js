@@ -296,7 +296,6 @@ SC.LabelView = SC.View.extend(SC.Control,
         hint = this.get('hintValue'),
         classes, stylesHash, text,
         iconChanged = false, textChanged = false;
-    
     if (icon) {
       var url = (icon.indexOf('/')>=0) ? icon : SC.BLANK_IMAGE_URL,
           className = (url === icon) ? '' : icon ;

@@ -4,7 +4,6 @@ Poolable objects are only destroyed if they cannot be added to the pool.
 */
   destroy: function() {
     // remove from parent if found
-    console.log('poolable destroy called '+this.toString());
     if (!this.disableRemoveOnDestroy) this.removeFromParent() ;
     this.destroyLayer();
   
