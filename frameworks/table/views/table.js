@@ -80,7 +80,7 @@ SC.TableView = SC.View.extend({
   replaceColumn: function(column, idx){
     SC.RunLoop.begin();
     var columns=this.get('columns'),
-        newColumns = columns.copy();
+        newColumns = columns.copy(); //FEEDBACK: why copy this array here?
         
     if (idx>=columns.length){
       return;
@@ -109,12 +109,12 @@ SC.TableView = SC.View.extend({
     
     childView = this.createChildView(SC.ScrollView.design({
       
-      isVisibleBinding: '.parentView.useHeaders',
+      isVisibleBinding: '.parentView.useHeaders', //FEEDBACK:  we should use SC.binding('.useHeader', that); where that = this
       
-      headerHeightBinding: '.parentView.headerHeight',
+      headerHeightBinding: '.parentView.headerHeight', //FEEDBACK:  we should use SC.binding('.useHeader', that); where that = this
       headerHeightDidChange: function(){
         if (this.get('headerHeight')){
-          this.get('layout').height=this.get('headerHeight');
+          this.get('layout').height=this.get('headerHeight'); //FEEDBACK: optomize this with and conditional check
         }
       }.observes('headerHeight'),
 
@@ -130,22 +130,22 @@ SC.TableView = SC.View.extend({
       canScrollHorizontal: function() {
         return YES;
       }.property().cacheable(),
-      horizontalScrollOffsetBinding: '.table.horizontalScrollOffset',
+      horizontalScrollOffsetBinding: '.table.horizontalScrollOffset', //FEEDBACK:  we should use SC.binding
       
       borderStyle: SC.BORDER_NONE,
       contentView: SC.TableHeaderView.extend({
         layout:{top:0,left:0,right:0,bottom:0},
         table: this,
-        columnsBinding: SC.Binding.from('.columns',this).oneWay(),
-        sortDescriptorBinding: '.table.sortDescriptor'
+        columnsBinding: SC.Binding.from('.columns',this).oneWay(), //FEEDBACK: shouldn't this be a that?
+        sortDescriptorBinding: '.table.sortDescriptor' //FEEDBACK:  we should use SC.binding
        })
     }));
     
     childViews.push(childView);
     
-    this._tableHeaderView=childView;
+    this._tableHeaderView=childView;  //FEEDBACK: do this assignment on 110
     
-    if (this.get('isFoldered'))
+    if (this.get('isFoldered')) //FEEDBACK: rather than an isFoldered how about just do this if an exampleFolderedListView is passed?
     {
       
       childView = this.createChildView(this.get('exampleScrollView').design({
@@ -159,10 +159,10 @@ SC.TableView = SC.View.extend({
           columnWidths: [],
           rowHeight: this.get('rowHeight'),
           table: this,
-          contentBinding: '.table.content.arrangedObjects',
-          selectionBinding: '.table.selection',
-          targetBinding: '.table.target',
-          actionBinding: '.table.action',
+          contentBinding: '.table.content.arrangedObjects', //FEEDBACK:  we should use SC.binding
+          selectionBinding: '.table.selection', //FEEDBACK:  we should use SC.binding
+          targetBinding: '.table.target', //FEEDBACK:  we should use SC.binding
+          actionBinding: '.table.action', //FEEDBACK:  we should use SC.binding
           contentValueKey: 'name',
           hasContentIcon: this.get('hasContentIcon'),
           contentIconKey: 'icon',
@@ -202,19 +202,19 @@ SC.TableView = SC.View.extend({
 
           rowHeight: this.get('rowHeight'),
 
-          isEditableBinding: '.table.isEditable',
-          canEditContentBinding: '.table.canEditContent',
+          isEditableBinding: '.table.isEditable', //FEEDBACK:  we should use SC.binding
+          canEditContentBinding: '.table.canEditContent', //FEEDBACK:  we should use SC.binding
 
-          targetBinding: '.table.target',
-          actionBinding: '.table.action',
+          targetBinding: '.table.target',//FEEDBACK:  we should use SC.binding
+          actionBinding: '.table.action',//FEEDBACK:  we should use SC.binding
           
-          canReorderContentBinding: '.table.canReorderContent',
+          canReorderContentBinding: '.table.canReorderContent',//FEEDBACK:  we should use SC.binding
 
-          selectionBinding: '.table.selection',
+          selectionBinding: '.table.selection',//FEEDBACK:  we should use SC.binding
 
-          sortDescriptorBinding: '.table.sortDescriptor',
+          sortDescriptorBinding: '.table.sortDescriptor',//FEEDBACK:  we should use SC.binding
           columnsBinding: SC.Binding.from('.columns',this).oneWay(),
-          contentBinding: '.table.content',
+          contentBinding: '.table.content',//FEEDBACK:  we should use SC.binding
 
           exampleView: this.get('exampleView'),
           useViewPooling: this.get('useViewPooling')
@@ -222,13 +222,13 @@ SC.TableView = SC.View.extend({
 
 
         autohidesVerticalScroller: NO,
-        horizontalScrollOffsetBinding: '.parentView.horizontalScrollOffset'
+        horizontalScrollOffsetBinding: '.parentView.horizontalScrollOffset'//FEEDBACK:  we should use SC.binding
       }));
     }
     
     childViews.push(childView);
     
-    this._dataView=childView;
+    this._dataView=childView;//FEEDBACK: same as before
     
     this.set('childViews',childViews);
     
@@ -242,8 +242,10 @@ SC.TableView = SC.View.extend({
     }
   },
 
+  //FEEDBACK: All private methods need to be named with _sctv_
+
   /** @private */
-  contentDidChange: function() {
+  contentDidChange: function() { //FEEDBACK: handle this like _cv_contentDidChange in collection 
     this._dataView.get('contentView').reload(null);
   }.observes('*content.[]'),
   

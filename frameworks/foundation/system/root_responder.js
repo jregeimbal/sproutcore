@@ -1596,6 +1596,7 @@ SC.RootResponder = SC.Object.extend({
         }
       }
     } catch (e) {
+      //FEEDBACK: dude, you can't comment this out...
       //throw e;
     }
     SC.RunLoop.end();

@@ -1,3 +1,5 @@
+//FEEDBACK: why does this exist?  can we just blow it away?
+
 // require('mixins/simple_layout')
 // require('views/thumb')
 // 
