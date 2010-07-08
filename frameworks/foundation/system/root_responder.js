@@ -1647,7 +1647,7 @@ SC.RootResponder = SC.Object.extend({
     }
     
     if(!SC.browser.msie) window.focus();
-    
+      else if(evt.target && evt.target.focus && !evt.target.disabled) evt.target.focus();
     // First, save the click count. The click count resets if the mouse down
     // event occurs more than 300 ms later than the mouse up event or more
     // than 8 pixels away from the mouse down event.
