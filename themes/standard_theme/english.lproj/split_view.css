@@ -1,5 +1,9 @@
 /* @group SC.SplitView */
 
+.sc-theme .sc-split-divider-view {
+  background: #ddd;
+}
+
 .sc-theme .sc-horizontal .sc-split-divider-view {
 	background: static_url('images/sc-theme-ysprite.png') repeat-y 0px top;
 }

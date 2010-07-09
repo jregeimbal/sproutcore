@@ -1,0 +1,50 @@
+/* Core
+---------------------------------------------- */
+
+.sc-theme .sc-alert {
+  background: #fff;
+}
+
+.sc-theme .sc-pane.sc-panel.sc-alert > div > .sc-view {
+  overflow: visible;
+}
+
+.sc-theme .sc-alert .info {
+  min-height: 48px;
+  position: relative;
+  padding: 20px 12px 58px 74px;
+}
+
+.sc-theme .sc-alert .info.plain {
+  padding-left: 16px;
+}
+
+.sc-theme .sc-alert .info img.icon {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+}
+
+.sc-theme .sc-alert .info .header {
+  margin: 0 0 6px;
+  color: #000;
+  font-size: 16px;
+  background: none;
+}
+
+.sc-theme .sc-alert .info p.description {
+  margin: 6px 20px 6px 0;
+}
+
+.sc-theme .sc-alert .info p.caption {
+  margin: 6px 20px 6px 0;
+  font-size: 11px;
+}
+
+.sc-theme .sc-alert .info .separator {
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  bottom: 50px;
+  background: #eaeaea;
+}

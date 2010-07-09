@@ -1,27 +1,28 @@
-/* SC.CheckboxView - sc-theme */
+/* Core
+---------------------------------------------- */
 
 .sc-theme .sc-checkbox-view {
 	line-height: 18px;
+	background: none;
 	vertical-align: middle;
 }
 
 .sc-theme .sc-checkbox-view .label {
-	position: absolute ;
-	left: 20px;
+	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
+	left: 20px;
 	line-height: 18px;
 }
- 
+
 .sc-theme .sc-checkbox-view.icon img.icon {
-	position: relative;
+  width: 16px;
+  height: 16px;
+  position: relative;
+  top: -2px;
+  margin: 0 4px 0 2px;
 	vertical-align: middle;
-	top: -2px;
-	margin-left: 2px;
-	margin-right: 4px;
-	height: 16px;
-	width: 16px;
 }
 
 .sc-theme .sc-checkbox-view.disabled {
@@ -29,50 +30,47 @@
 	color: rgba(0,0,0,0.5);
 }
 
-/* @group Checkbox Image */
 
+/* Images
+---------------------------------------------- */
 
-.sc-theme .sc-checkbox-view span.button {
+.sc-theme .sc-checkbox-view .button {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 1px;
+  line-height: 16px;
 	background: static_url('images/sc-theme-repeat-x.png') no-repeat -16px -468px;
-	width: 16px;
-	height: 16px;
-	position: absolute ;
-	line-height: 16px;
-	left: 1px; 
-	top: 0px;
 }
 
-.sc-theme .sc-checkbox-view.sel span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -32px -495px;
+.sc-theme .sc-checkbox-view.active .button {
+  background-position: -16px -441px;
 }
 
-.sc-theme .sc-checkbox-view.mixed span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat 0px -468px;
+.sc-theme .sc-checkbox-view.disabled .button {
+  background-position: -27px -411px;
 }
 
-.sc-theme .sc-checkbox-view.disabled span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -27px -411px;
-} 
-
-.sc-theme .sc-checkbox-view.sel.disabled span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat 0px -495px;
+.sc-theme .sc-checkbox-view.sel .button {
+  background-position: -32px -495px;
 }
 
-.sc-theme .sc-checkbox-view.mixed.disabled span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -32px -441px;
+.sc-theme .sc-checkbox-view.sel.active .button {
+  background-position: -16px -495px;
 }
 
-.sc-checkbox-view.active span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -16px -441px;
-} 
-
-.sc-theme .sc-checkbox-view.sel.active span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -16px -495px;
+.sc-theme .sc-checkbox-view.sel.disabled .button {
+  background-position: 0 -495px;
 }
 
-.sc-theme .sc-checkbox-view.mixed.active span.button {
-	background: static_url('images/sc-theme-repeat-x.png') no-repeat -16px -388px;
+.sc-theme .sc-checkbox-view.mixed .button {
+  background-position: 0 -468px;
 }
 
-/* @end */
+.sc-theme .sc-checkbox-view.mixed.active .button {
+  background-position: -16px -388px;
+}
 
+.sc-theme .sc-checkbox-view.mixed.disabled .button {
+  background-position: -32px -441px;
+}

@@ -1,0 +1,22 @@
+/* Core
+---------------------------------------------- */
+
+.sc-theme .sc-separator-view.sc-layout-horizontal span {
+  height: 1px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  border-top: 1px solid #ccc;
+  background-color: #fefefe;
+}
+
+.sc-theme .sc-separator-view.sc-layout-vertical span {
+  width: 1px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 1px solid #ccc;
+  background-color: #fefefe;
+}

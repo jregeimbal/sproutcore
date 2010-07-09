@@ -1,0 +1,9 @@
+/* Core
+---------------------------------------------- */
+
+.sc-theme .sc-view.sc-ghost-view {
+  opacity: .5;
+  -ms-filter: "alpha(opacity=50)";
+  filter: alpha(opacity=50);
+  z-index: 10000;
+}

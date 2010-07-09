@@ -1,33 +1,94 @@
-/** SC.Panel Support */
+/* Core
+---------------------------------------------- */
 
-.sc-theme .sc-pane.sc-panel > .top-right-edge {
-  background: static_url('images/panels/sprite-x.png') no-repeat -40px -120px;
+.sc-theme .sc-pane.sc-panel {
+  z-index: 100;
+  overflow: visible;
+}
+
+.sc-theme .sc-pane.sc-modal.for-sc-panel {
+  background: #000;
+  opacity: .3;
+  -ms-filter: "alpha(opacity=30)";
+  filter: alpha(opacity=30);
+}
+
+.sc-theme .sc-pane.sc-panel > .sc-view {
+  border: 0;
+  background: #eaeaea;
+}
+
+.sc-theme .sc-pane.sc-panel > .top-left-edge,
+.sc-theme .sc-pane.sc-panel > .top-right-edge,
+.sc-theme .sc-pane.sc-panel > .bottom-left-edge,
+.sc-theme .sc-pane.sc-panel > .bottom-right-edge {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  z-index: -1;
+  background: static_url('images/panels/sprite-x.png') no-repeat;
 }
 
 .sc-theme .sc-pane.sc-panel > .top-left-edge {
-  background: static_url('images/panels/sprite-x.png') no-repeat 0px -120px;
+  top: -20px;
+  left: -20px;
+  background-position: 0 -120px;
+}
+
+.sc-theme .sc-pane.sc-panel > .top-right-edge {
+  top: -20px;
+  right: -20px;
+  background-position: -40px -120px;
 }
 
 .sc-theme .sc-pane.sc-panel > .bottom-left-edge {
-  background: static_url('images/panels/sprite-x.png') no-repeat 0px -160px;
+  bottom: -20px;
+  left: -20px;
+  background-position: 0 -160px;
 }
 
 .sc-theme .sc-pane.sc-panel > .bottom-right-edge {
-  background: static_url('images/panels/sprite-x.png') no-repeat -40px -160px;
+  bottom: -20px;
+  right: -20px;
+  background-position: -40px -160px;
 }
 
 .sc-theme .sc-pane.sc-panel > .top-edge {
-  background: static_url('images/panels/sprite-x.png') repeat-x 0px -230px;
+  height: 20px;
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  left: 20px;
+  z-index: -1;
+  background: static_url('images/panels/sprite-x.png') repeat-x 0 -230px;
 }
 
 .sc-theme .sc-pane.sc-panel > .bottom-edge {
-  background: static_url('images/panels/sprite-x.png') repeat-x 0px -210px;
+  height: 20px;
+  position: absolute;
+  bottom: -20px;
+  right: 20px;
+  left: 20px;
+  z-index: -1;
+  background: static_url('images/panels/sprite-x.png') repeat-x 0 -210px;
 }
 
 .sc-theme .sc-pane.sc-panel > .left-edge {
-  background: static_url('images/panels/sprite-y.png') repeat-y 0px 0px;
+  width: 20px;
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: -20px;
+  z-index: -1;
+  background: static_url('images/panels/sprite-y.png') repeat-y;
 }
 
 .sc-theme .sc-pane.sc-panel > .right-edge {
-  background: static_url('images/panels/sprite-y.png') repeat-y -20px 0px;
+  width: 20px;
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  right: -20px;
+  z-index: -1;
+  background: static_url('images/panels/sprite-y.png') repeat-y -20px 0;
 }

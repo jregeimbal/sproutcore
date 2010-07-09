@@ -32,11 +32,11 @@
 
 /* @group SC.ListView */
 
-.sc-theme .sc-list-view {
+.sc-theme .sc-collection-view.sc-list-view {
 	background-color: white ;
 }
 
-.sc-theme .sc-list-view .sc-collection-item {
+.sc-theme .sc-collection-view.sc-list-view .sc-collection-item {
 	display: block ;
 	line-height: 22px;
 }

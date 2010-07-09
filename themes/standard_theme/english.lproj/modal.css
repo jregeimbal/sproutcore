@@ -1,0 +1,10 @@
+/* Modal
+---------------------------------------------- */
+
+.sc-theme .sc-pane.sc-modal {
+  z-index: 100;
+}
+
+.sc-theme.msie .sc-pane.sc-modal {
+  background-image: url('.');
+}

@@ -1,36 +1,83 @@
 .sc-theme .sc-well-view .top-right-edge {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  top: 0px;
+  right: 0px;
   background: static_url('images/sc-theme-repeat-x.png') no-repeat right -1646px;
 }
 
 .sc-theme .sc-well-view .top-left-edge {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  top: 0px;
+  left: 0px;
   background: static_url('images/sc-theme-repeat-x.png') no-repeat left -1646px;
 }
 
 .sc-theme .sc-well-view .bottom-left-edge {
-  background: static_url('images/sc-theme-repeat-x.png') no-repeat left -1657px;  
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  bottom: 0px;
+  left: 0px;
+  background: static_url('images/sc-theme-repeat-x.png') no-repeat left -1657px;
 }
 
 .sc-theme .sc-well-view .bottom-right-edge {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  bottom: 0px;
+  right: 0px;
   background: static_url('images/sc-theme-repeat-x.png') no-repeat right -1657px;
 }
 
 .sc-theme .sc-well-view .top-edge {
+  position: absolute;
+  height: 5px;
+  top: 0px;
+  right: 7px;
+  left: 7px;
   background: static_url('images/sc-theme-repeat-x.png') repeat-x right -1668px;  
 }
 
 .sc-theme .sc-well-view .bottom-edge {
+  position: absolute;
+  height: 5px;
+  bottom: 0px;
+  right: 7px;
+  left: 7px;
   background: static_url('images/sc-theme-repeat-x.png') repeat-x right -1680px;
 }
 
 .sc-theme .sc-well-view .left-edge {
+  position: absolute;
+  width: 7px;
+  top: 7px;
+  bottom: 7px;
+  left: 0px;
   background: static_url('images/sc-theme-ysprite.png') repeat-y -16px top;  
 }
 
 .sc-theme .sc-well-view .right-edge {
+  position: absolute;
+  width: 7px;
+  top: 7px;
+  bottom: 7px;
+  right: 0px;
   background: static_url('images/sc-theme-ysprite.png') repeat-y -28px top;
 }
 
 .sc-theme .sc-well-view .content-background {
-  background: #57647f;  
-  opacity:0.4;
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  right: 7px;
+  left: 7px;
+  background: #57647f;
+  opacity: .4;
+  -ms-filter: "alpha(opacity=40)";
+  filter: alpha(opacity=40);
 }
