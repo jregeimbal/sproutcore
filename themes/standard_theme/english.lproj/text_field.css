@@ -1,5 +1,148 @@
-/* @override http://localhost:4020/static/sproutcore/en/desktop/_cache/sc.theme/1228026565/text_field.css */
+/* Core
+---------------------------------------------- */
 
-/* SC.TextFieldView - sc-theme */
+.sc-theme .sc-view .sc-text-field-view {
+  overflow: visible;
+  border: 0;
+  background: #fff;
+}
+
+/* Outline styles */
+
+.sc-theme.safari .sc-view .sc-text-field-view.focus {
+  outline: 7px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+.sc-theme.mozilla .sc-view .sc-text-field-view.focus {
+  outline: 3px solid -moz-mac-focusring;
+  outline-offset: -5px;
+}
+
+.sc-theme.msie .sc-view .sc-text-field-view.focus {
+  outline: 1px dotted;
+}
+
+.sc-theme .sc-text-field-view .border {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* Make divs look like native controls */
+
+.sc-theme.safari .sc-text-field-view .border {
+  -webkit-appearance: textfield;
+}
+
+.sc-theme.mozilla .sc-view .sc-text-field-view .border {
+  -moz-appearance: textfield;
+}
+
+.sc-theme.msie .sc-view .sc-text-field-view .border {
+  border: 1px inset;
+}
+
+.sc-theme .sc-view .sc-text-field-view .padding {
+  position: absolute;
+  top: 0;
+  right: 3px;
+  bottom: 0;
+  left: 3px;
+}
+
+.sc-theme .sc-view .sc-text-field-view.text-area .padding {
+  right: 0;
+}
+
+.sc-theme .sc-view .sc-text-field-view .sc-text-field-accessory-view {
+	z-index: 2;
+}
+
+.sc-theme .sc-text-field-view input {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  line-height: 100%;
+  vertical-align: middle;
+  background: none;
+}
+
+.sc-theme .sc-text-field-view input,
+.sc-theme .sc-text-field-view textarea {
+  border: 0;
+  outline: 0;
+  -webkit-appearance: none;
+}
+
+.sc-theme.msie .sc-text-field-view input {
+  padding-bottom: 1px;
+}
+
+.sc-theme .sc-text-field-view textarea {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  overflow: auto;
+  vertical-align: middle;
+  background: none;
+  resize: none;
+}
+
+.sc-theme.mozilla .sc-text-field-view textarea,
+.sc-theme.msie .sc-text-field-view textarea {
+	height: 100%;
+}
+
+.sc-theme .sc-text-field-view .sc-hint {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  bottom: 3px;
+  left: 1px;
+	z-index: 1;
+	padding: 0;
+	color: #aaa;
+	font-size: 12px;
+}
+
+.sc-theme .sc-text-field-view.text-area .sc-hint {
+	top: 2px;
+	right: 3px;
+	bottom: 2px;
+	left: 3px;
+}
+
+.sc-theme .sc-text-field-view.focus .sc-hint,
+.sc-theme .sc-text-field-view.not-empty .sc-hint {
+  display: none;
+}
+
+.sc-theme .sc-text-field-view.sc-hint .field {
+  color: #b3b3b3 !important;
+}
 
 
+/* Inline Editor
+---------------------------------------------- */
+
+.sc-theme .sc-view .sc-text-field-view.inline-editor .border {
+  border: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.sc-theme.mozilla .sc-view .sc-text-field-view.inline-editor.focus {
+  outline-offset: 0;
+}

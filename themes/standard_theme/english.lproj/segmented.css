@@ -1,5 +1,6 @@
 .sc-theme .sc-segmented-view {
   display: block;
+  text-align: center;
 }
 
 .sc-theme .sc-segmented-view .sc-segment {
@@ -39,6 +40,7 @@
 	line-height: 24px;
 	text-shadow: #fff 0px 1px 0px;
 	margin-left: -1px;
+	border-right: 1px #555 solid;
 }
 
 .sc-theme .sc-segmented-view .sc-button-inner {
