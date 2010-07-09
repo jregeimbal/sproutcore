@@ -21,12 +21,14 @@
 }
 
 .sc-theme .sc-radio-view.sc-layout-vertical .sc-radio-button {
+  display: block;
 	padding-left: 18px;
 	position: relative ;
 	margin-bottom: 3px;
 }
 
-.sc-theme .sc-radio-view.sc-layout-horizontal  .sc-radio-button {
+.sc-theme .sc-radio-view.sc-layout-horizontal .sc-radio-button {
+  display: inline-block;
   padding-right: 8px;
 }
 
