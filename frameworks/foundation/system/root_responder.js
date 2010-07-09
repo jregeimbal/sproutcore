@@ -1594,7 +1594,14 @@ SC.RootResponder = SC.Object.extend({
           charCode           = evt.charCode;
       if ((charCode !== undefined && charCode === 0) && !isFirefoxArrowKeys) return YES;
       if (isFirefoxArrowKeys) evt.which = keyCode;
-      return this.sendEvent('keyDown', evt) ? evt.hasCustomEventHandling:YES;
+      
+      // Without this, 'enter' will be handled by keyDown twice causing unexpected behaviour
+      if (keyCode !== 13 || !SC.browser.msie) {
+        return this.sendEvent('keyDown', evt) ? evt.hasCustomEventHandling:YES;
+      } else {
+        return YES;
+      }
+      
     }
   },
 
