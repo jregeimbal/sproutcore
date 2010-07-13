@@ -53,7 +53,7 @@ SC.Observers = {
     // if a tuple was found, add the observer immediately...
     if (tuple) {
       if (tuple[0].addObserver) { tuple[0].addObserver(tuple[1],target, method); }
-      else { console.error('pathRoot doesn\'t does inherit from SC.Object: Path Root: %@, Property Path: %@'.fmt(tuple[0]. tuple[1])); }
+      else { console.error('pathRoot doesn\'t does inherit from SC.Object: Path Root: %@, Property Path: %@'.fmt(tuple[0], tuple[1])); }
     // otherwise, save this in the queue.
     } else {
       this.queue.push([propertyPath, target, method, pathRoot]) ;
