@@ -212,6 +212,7 @@ SC.ListItemView = SC.View.extend(
     // handle disclosure triangle
     value = this.get('disclosureState');
     if (value !== SC.LEAF_NODE) {
+      context.setClass('header', YES);
       this.renderDisclosure(working, value);
       classArray.push('has-disclosure');
     }
