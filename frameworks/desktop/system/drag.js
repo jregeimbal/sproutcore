@@ -633,6 +633,11 @@ SC.Drag = SC.Object.extend(
   _findDropTarget: function(evt) {
     var loc = { x: evt.pageX, y: evt.pageY } ;
     
+    if(this.iframeTargetOffset){
+      loc.x = loc.x - this.iframeTargetOffset.x;
+      loc.y = loc.y - this.iframeTargetOffset.y;
+    }
+    
     var target, frame ;
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
