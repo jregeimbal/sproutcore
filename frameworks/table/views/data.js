@@ -64,7 +64,7 @@ SC.DataView = SC.ListView.extend({
   viewForCell: function(row, column) {
     var itemViews = this._sc_itemViews;
     
-    var view = itemViews[row][column];
+    var view = itemViews[row].childViews[column];
       
     if(!view){
       return NO;  
