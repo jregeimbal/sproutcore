@@ -105,6 +105,16 @@ SC.ListItemView = SC.View.extend(
   contentValueKey: null,
   
   /**
+    If YES, 'displayValue' will be localized.
+    
+    @property {Boolean}
+  */
+  localize: NO,
+  
+  /** @private */
+  localizeBindingDefault: SC.Binding.bool(),
+  
+  /**
     IF true, the label value will be escaped to avoid HTML injection attacks.
     You should only disable this option if you are sure you will only 
     display content that is already escaped and you need the added 
@@ -168,9 +178,19 @@ SC.ListItemView = SC.View.extend(
 				
 		key = this.getDelegateProperty('contentValueKey', del) ;
     value = (key && content) ? (content.get ? content.get(key) : content[key]) : content ;
-    if (value && SC.typeOf(value) !== SC.T_STRING) value = value.toString();
+
+    // convert to string and/or localize as necessary
+    if (value) {
+      if (SC.typeOf(value) !== SC.T_STRING) {
+        value = this.get('localize') ? value.toString().loc() : value.toString();
+      }
+      else if (this.get('localize')) {
+        value = value.loc();
+      }
+    }
+
 		return value;
-	}.property('content').cacheable(),
+	}.property('content', 'localize').cacheable(),
   
   contentPropertyDidChange: function() {
     //if (this.get('isEditing')) this.discardEditing() ;
