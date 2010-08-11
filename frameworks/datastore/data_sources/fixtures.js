@@ -180,15 +180,12 @@ SC.FixturesDataSource = SC.DataSource.extend(
 
   _createRecords: function(store, storeKeys) {
     storeKeys.forEach(function(storeKey) {
-      var id         = store.idFor(storeKey),
-          recordType = store.recordTypeFor(storeKey),
-          dataHash   = store.readDataHash(storeKey), 
-          fixtures   = this.fixturesFor(recordType);
+      var id = store.idFor(storeKey);
+      var hash = store.readDataHash(storeKey);
 
       if (!id) id = this.generateIdFor(recordType, dataHash, store, storeKey);
-      this._invalidateCachesFor(recordType, storeKey, id);
-      fixtures[id] = dataHash;
 
+      this.setFixtureForStoreKey(store, storeKey, hash, id);
       store.dataSourceDidComplete(storeKey, null, id);
     }, this);
   },
@@ -295,10 +292,12 @@ SC.FixturesDataSource = SC.DataSource.extend(
     @param {Hash} dataHash 
     @returns {SC.FixturesDataSource} receiver
   */
-  setFixtureForStoreKey: function(store, storeKey, dataHash) {
-    var id         = store.idFor(storeKey),
-        recordType = store.recordTypeFor(storeKey),
+  setFixtureForStoreKey: function(store, storeKey, dataHash, id) {
+    id = store.idFor(storeKey) || id;
+
+    var recordType = store.recordTypeFor(storeKey),
         fixtures   = this.fixturesFor(recordType);
+
     this._invalidateCachesFor(recordType, storeKey, id);
     fixtures[id] = dataHash;
     return this ;
@@ -326,9 +325,11 @@ SC.FixturesDataSource = SC.DataSource.extend(
     this._fixtures[SC.guidFor(recordType)] = fixtures = {} ; 
     for(idx=0;idx<len;idx++) {      
       dataHash = dataHashes[idx];
-      id = dataHash[primaryKey];
-      if (!id) id = this.generateIdFor(recordType, dataHash); 
-      fixtures[id] = dataHash;
+      if (dataHash) {
+        id = dataHash[primaryKey];
+        if (!id) id = this.generateIdFor(recordType, dataHash); 
+        fixtures[id] = dataHash;
+      }
     }  
     return fixtures;
   },
