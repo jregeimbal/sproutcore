@@ -174,7 +174,8 @@ SC.TableView = SC.View.extend({
           folderedListViewDelegate: this.get('delegate'),
           isDropTarget: YES,
           allowActionOnFolder: this.get('allowActionOnFolder'),
-          needsContextMenuBinding: SC.Binding.from('.needsContextMenu',this)
+          needsContextMenuBinding: SC.Binding.from('.needsContextMenu',this),
+          allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this)
         })
       }));
     }
@@ -201,6 +202,7 @@ SC.TableView = SC.View.extend({
 
           isEditableBinding: SC.Binding.from('.isEditable',this),
           canEditContentBinding: SC.Binding.from('.canEditContent',this),
+          allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this),
 
           targetBinding: SC.Binding.from('.target',this),
           actionBinding: SC.Binding.from('.action',this),
