@@ -737,14 +737,18 @@ SC.ListItemView = SC.View.extend(
     var content   = this.get('content'),
         del       = this.get('displayDelegate'),
         // following change need if you are trying to edit in SC.TableView and using ListItem as you base class...
-        labelKey  = this.getDelegateProperty('contentValueKey', del) || this.get('contentValueKey') || this.column ? this.column.get('key') : null, 
         parent    = this.get('parentView'),
         pf        = parent ? parent.get('frame') : null,
         el        = this.$label(),
         validator = this.get('validator'),
         f, v, offset, oldLineHeight, fontSize, top, lineHeight, escapeHTML,
         lineHeightShift, targetLineHeight, ret ;
-
+    
+    var labelKey  = this.getDelegateProperty('contentValueKey', del);
+    if(!labelKey) labelKey = this.get('contentValueKey');
+    if(!labelKey && this.column) labelKey = this.column.get('key');
+    if(!labelKey && !this.column) labelKey = null;
+    
     // if possible, find a nearby scroll view and scroll into view.
     // HACK: if we scrolled, then wait for a loop and get the item view again
     // and begin editing.  Right now collection view will regenerate the item
