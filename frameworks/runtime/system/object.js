@@ -770,6 +770,7 @@ function findClassNames() {
   SC._object_foundObjectClassNames = true ;
 
   var seen = [] ;
+  var detectedSC = false;
   var searchObject = function(root, object, levels) {
     levels-- ;
 
@@ -780,7 +781,12 @@ function findClassNames() {
     for(var key in object) {
       if (key == '__scope__') continue ;
       if (key == 'superclass') continue ;
+      if (key == '__SC__') key = 'SC' ;
       if (!key.match(/^[A-Z0-9]/)) continue ;
+      if (key == 'SC') {
+        if (detectedSC) continue;
+        detectedSC = true;
+      }
 
       var path = (root) ? [root,key].join('.') : key ;
       var value = object[key] ;
@@ -806,29 +812,8 @@ function findClassNames() {
     }
   } ;
 
+  window['__SC__'] = SC;
   searchObject(null, window, 2) ;
-
-  // Internet Explorer doesn't loop over global variables...
-  /*if ( SC.browser.isIE ) {
-    searchObject('SC', SC, 2) ; // get names for the SC classes
-
-    // get names for the model classes, including nested namespaces (untested)
-    for ( var i = 0; i < SC.Server.servers.length; i++ ) {
-      var server = SC.Server.servers[i];
-      if (server.prefix) {
-        for (var prefixLoc = 0; prefixLoc < server.prefix.length; prefixLoc++) {
-          var prefixParts = server.prefix[prefixLoc].split('.');
-          var namespace = window;
-          var namespaceName;
-          for (var prefixPartsLoc = 0; prefixPartsLoc < prefixParts.length; prefixPartsLoc++) {
-            namespace = namespace[prefixParts[prefixPartsLoc]] ;
-            namespaceName = prefixParts[prefixPartsLoc];
-          }
-          searchObject(namespaceName, namespace, 2) ;
-        }
-      }
-    }
-  }*/
 }
 
 /**  
@@ -866,8 +851,6 @@ SC._object_className = function(obj) {
   if (!SC.isReady) return ''; // class names are not available until ready
   if (!obj._object_className) findClassNames() ;
   if (obj._object_className) return obj._object_className ;
-  // HACK: [MT] - A hack so that IE can find the proper class names for objects...
-  if (obj.prototype.__className) return obj.prototype.__className;
 
   // if no direct classname was found, walk up class chain looking for a 
   // match.
