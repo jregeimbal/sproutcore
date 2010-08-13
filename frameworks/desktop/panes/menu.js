@@ -112,6 +112,15 @@ SC.MenuPane = SC.PickerPane.extend(
     @default null
   */
   itemHeight: null,
+  
+  /**
+    The spacing bewteen menu items, in pixels.
+
+    @type Number
+    @default null
+  */
+  itemSpacing: 2,
+  
 
   /**
     The height of separator menu items.
@@ -134,7 +143,7 @@ SC.MenuPane = SC.PickerPane.extend(
     @type Number
     @isReadOnly
   */
-  menuHeight: 0,
+  menuHeight: null,
 
   /**
     The amount of padding to add to the height of the pane.
@@ -640,7 +649,7 @@ SC.MenuPane = SC.PickerPane.extend(
         exampleView = this.get('exampleView'), item, view,
         height, heightKey, separatorKey, defaultHeight, separatorHeight,
         menuHeight, menuHeightPadding, keyEquivalentKey, keyEquivalent,
-        keyArray, idx,
+        keyArray, idx, itemSpacing,
         len;
 
     if (!items) return views; // return an empty array
@@ -650,6 +659,7 @@ SC.MenuPane = SC.PickerPane.extend(
     defaultHeight = this.get('itemHeight');
     keyEquivalentKey = this.get('itemKeyEquivalentKey');
     separatorHeight = this.get('itemSeparatorHeight');
+    itemSpacing = this.get('itemSpacing') || 0;
 
     menuHeightPadding = Math.floor(this.get('menuHeightPadding')/2);
     menuHeight = menuHeightPadding;
@@ -664,7 +674,7 @@ SC.MenuPane = SC.PickerPane.extend(
         height = item.get(separatorKey) ? separatorHeight : defaultHeight;
       }
       view = this._menuView.createChildView(exampleView, {
-        layout: { height: height, top: menuHeight },
+        layout: { height: height, top: menuHeight + itemSpacing * idx},
         contentDisplayProperties: keyArray,
         content: item,
         parentMenu: this
@@ -678,7 +688,7 @@ SC.MenuPane = SC.PickerPane.extend(
       }
     }
 
-    this.set('menuHeight', menuHeight+menuHeightPadding);
+    this.set('menuHeight', menuHeight+menuHeightPadding + itemSpacing * len);
     return views;
   }.property('displayItems').cacheable(),
 
