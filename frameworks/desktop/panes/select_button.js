@@ -74,6 +74,19 @@ SC.SelectButtonView = SC.ButtonView.extend(
   */
   valueKey: null,
 
+  /*
+    If this is YES, then the render() method will auto-select a value for
+    'value' when it is called for the first time.
+    
+    *** Note *** 
+    It's generally not a good pattern to set properties on models during a render() call,
+    which is why I'm adding this property to let us stop this from happening.
+    It's best for renders to be non-harmful to the data; to simply display what
+    is there, not change it.  Changing it can disrupt the MVC pattern and dirty data that
+    is not expecting to be dirtied while being drawn.
+  */
+  autoSelectValueFirstTime: YES,
+
   /**
      Key used to extract icons from the objects array
   */
@@ -454,7 +467,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     this.set('itemList', itemList) ;
     }, this ) ;
 
-    if(firstTime) {
+    if(firstTime && this.get('autoSelectValueFirstTime')) {
       this.invokeLast(function() {
         var value = this.get('value') ;
         if(SC.none(value)) {
