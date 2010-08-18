@@ -80,8 +80,9 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
   */
   subMenu: function() {
     var content = this.get('content'), menuItems, parentMenu;
+    var isEnabled = this.get('isEnabled');
 
-    if (!content) return null;
+    if (!content || !isEnabled) return null;
 
     parentMenu = this.get('parentMenu');
     menuItems = content.get(parentMenu.itemSubMenuKey );
