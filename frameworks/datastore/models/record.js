@@ -123,7 +123,7 @@ SC.Record = SC.Object.extend(
     @property {Boolean}
   */
   isDestroyed: function() {
-    return !!(this.get('status') & SC.Record.DESTROYED);  
+    return !!(this.get('status') & SC.Record.DESTROYED);
   }.property('status').cacheable(),
   
   /**
@@ -427,7 +427,7 @@ SC.Record = SC.Object.extend(
     have changed.
     
     @param {Boolean} statusOnly changed
-    @param {String} key that changed (optional)
+    @param {String} keys that changed (optional)
     @returns {SC.Record} receiver
   */
   storeDidChangeProperties: function(statusOnly, keys) {
@@ -446,6 +446,7 @@ SC.Record = SC.Object.extend(
           loc        = manyArrays ? manyArrays.length : 0 ;
       while(--loc>=0) manyArrays[loc].recordPropertyDidChange(keys);
     }
+    return this ;
   },
   
   /**

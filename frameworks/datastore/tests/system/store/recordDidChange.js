@@ -45,6 +45,8 @@ module("SC.Store#recordDidChange", {
       store.writeDataHash(storeKey3, json3, SC.Record.READY_NEW);
       storeKey4 = SC.Store.generateStoreKey();
       store.writeDataHash(storeKey4, json4, SC.Record.READY_CLEAN);
+
+      SC.RunLoop.begin() ;
     }
 });
 

@@ -62,6 +62,8 @@ module("SC.Store#destroyRecord", {
     store.writeDataHash(storeKey5, json5, SC.Record.READY_NEW);
     storeKey6 = SC.Store.generateStoreKey();
     store.writeDataHash(storeKey6, json6, SC.Record.READY_CLEAN);
+
+    SC.RunLoop.begin() ;
   }
 });
 

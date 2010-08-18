@@ -98,6 +98,16 @@ SC.NestedStore = SC.Store.extend(
     @property {Array}
   */
   chainedChanges: null,
+
+  /** @private
+    JSON data hashes saved before an edit is made, allowing a merge when
+    changes are committed. Indexed by store key.
+
+    *IMPORTANT: Property is not observable*
+
+    @property {Hash}
+  */
+  originals: null,
     
   // ..........................................................
   // STORE CHAINING
@@ -196,12 +206,13 @@ SC.NestedStore = SC.Store.extend(
     this.statuses   = SC.beget(parentStore.statuses);
     
     // also, reset private temporary objects
-    this.chainedChanges = this.locks = this.editables = null;
+    this.chainedChanges = this.locks = this.editables = this.originals = null;
     this.changelog = null ;
 
     // TODO: Notify record instances
     
     this.set('hasChanges', NO);
+    return this ;
   },
   
   /** @private
@@ -277,7 +288,10 @@ SC.NestedStore = SC.Store.extend(
     // fixup editables
     editables = this.editables;
     if (editables) editables[storeKey] = 0;
-    
+
+    // if we want to be able to merge changes, then we'll save a clean copy
+    // to make this easier down the road.
+    if (this.mergeNestedStoreChanges) this._saveCopy(storeKey) ;
     
     // if the data hash in the parent store is editable, then clone the hash
     // for our own use.  Otherwise, just copy a reference to the data hash
@@ -302,6 +316,37 @@ SC.NestedStore = SC.Store.extend(
     locks[storeKey] = rev || 1;    
     
     return this ;
+  },
+
+  /** @private
+    Takes a snapshot of the record, so that we can merge it later on.
+  */
+  _saveCopy: function(storeKey) {
+    var originals = this.originals ;
+    if (!originals) originals = this.originals = {} ;
+
+    // Just copy a refrence, as the data hash will be cloned if edited anyways.
+    originals[storeKey] = this.dataHashes[storeKey] ;
+  },
+
+  /** @private - adds merging support */
+  readStatus: function(storeKey) {
+    this.readDataHash(storeKey);
+    var ret = this.statuses[storeKey] || SC.Record.EMPTY;
+    if (this.mergeNestedStoreChanges && (ret & SC.Record.BUSY) ) {
+      ret = SC.Record.READY_DIRTY ;
+    }
+//    console.log('%@#readStatus: %@ - %@'.fmt(this.toString(), storeKey, ret)) ;
+    return ret ;
+  },
+
+  peekStatus: function(storeKey) {
+    var ret = this.statuses[storeKey] || SC.Record.EMPTY;
+    if (this.mergeNestedStoreChanges && (ret & SC.Record.BUSY) ) {
+      ret = SC.Record.READY_DIRTY ;
+    }
+//    console.log('%@#peekStatus: %@ - %@'.fmt(this.toString(), storeKey, ret)) ;
+    return ret ;
   },
   
   /** @private - adds chaining support */

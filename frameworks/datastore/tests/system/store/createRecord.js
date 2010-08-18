@@ -45,15 +45,19 @@ test("create a record", function() {
     bool:   NO
   };
 
+  SC.RunLoop.begin() ;
   rec = store.createRecord(SC.Record, hash);
   ok(rec, "a record was created");
   sk=store.storeKeyFor(SC.Record, rec.id());
+  SC.RunLoop.end() ;
   equals(store.readDataHash(sk), hash, "data hashes are equivalent");
   equals(rec.id(), "1234abcd", "guids are the same");
 
+  SC.RunLoop.begin() ;
   rec = store.createRecord(SC.Record, hash2, "priKey");
   ok(rec, "a record with a custom id was created");
   sk=store.storeKeyFor(SC.Record, "priKey");
+  SC.RunLoop.end() ;
   equals(store.readDataHash(sk), hash2, "data hashes are equivalent");
   equals(rec.id(), "priKey", "guids are the same");
   

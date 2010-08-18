@@ -59,6 +59,16 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @property {Boolean}
   */
   isNested: NO,
+
+  /**
+   If set to YES, will attempt to merge changed records on nested store with
+   changed records in parent store.
+
+   This value should not be changed once set.
+
+   @property {Boolean}
+  */
+  mergeNestedStoreChanges: NO,
   
   /**
     This type of store is not nested.
@@ -149,6 +159,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     var ret    = newStoreClass.create(attrs),
         nested = this.nestedStores;
+
+    // Ensure that all nested stores inherit this property.
+    ret.mergeNestedStoreChanges = this.mergeNestedStoreChanges ;
         
     if (!nested) nested = this.nestedStores = [];
     nested.push(ret);
@@ -433,7 +446,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // use readDataHash to handle optimistic locking.  this could be inlined
     // but for now this minimized copy-and-paste code.
     this.readDataHash(storeKey);
-    return this.statuses[storeKey] || SC.Record.EMPTY;
+    var ret = this.statuses[storeKey] || SC.Record.EMPTY;
+//    console.log('%@#readStatus: %@ - %@'.fmt(this.toString(), storeKey, ret)) ;
+    return ret ;
   },
   
   /**
@@ -445,7 +460,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {Number} status
   */
   peekStatus: function(storeKey) {
-    return this.statuses[storeKey] || SC.Record.EMPTY;  
+    var ret = this.statuses[storeKey] || SC.Record.EMPTY;
+//    console.log('%@#peekStatus: %@ - %@'.fmt(this.toString(), storeKey, ret)) ;
+    return ret ;
   },
   
   /**
@@ -461,6 +478,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   writeStatus: function(storeKey, newStatus) {
     // use writeDataHash for now to handle optimistic lock.  maximize code 
     // reuse.
+//    console.log('%@#writeStatus: %@ - %@'.fmt(this.toString(), storeKey, newStatus)) ;
     return this.writeDataHash(storeKey, null, newStatus);
   },
   
@@ -518,12 +536,17 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       store = nestedStores[idx];
       status = store.peekStatus(storeKey); // important: peek avoids read-lock
       editState = store.storeKeyEditState(storeKey);
-      
+
       // when store needs to propagate out changes in the parent store
       // to nested stores
       if (editState === K.INHERITED) {
         store._notifyRecordPropertyChange(storeKey, statusOnly, key);
 
+      } else if (editState === K.EDITABLE && this.mergeNestedStoreChanges) {
+        // if this records is marked as editable, it has some changes, so we
+        // need to merge in the changes. If we are allowed.
+        this.mergeChangeFromNestedStore(storeKey, store, key) ;
+        
       } else if (status & SC.Record.BUSY) {
         // make sure nested store does not have any changes before resetting
         if(store.get('hasChanges')) throw K.CHAIN_CONFLICT_ERROR;
@@ -678,7 +701,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   */
   commitChangesFromNestedStore: function(nestedStore, changes, force) {
     // first, check for optimistic locking problems
-    if (!force) this._verifyLockRevisions(changes, nestedStore.locks);
+    if (!force) this._verifyLockRevisions(changes, nestedStore.locks, nestedStore);
     
     // OK, no locking issues.  So let's just copy them changes. 
     // get local reference to values.
@@ -725,6 +748,123 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     return this ;
   },
 
+  /**
+    Called when there are changes on both the parent store and the child store
+    to allow changes to be merged. If an attribute has been edited on both, then
+    mergeConflict() is called. You should override that function to match your
+    apps needs.
+
+    @param {Number} storeKey
+    @param {SC.NestedStore} nestedStore
+  */
+  mergeChangeFromNestedStore: function(storeKey, nestedStore, key) {
+    var original = nestedStore.originals[storeKey],
+        nested   = nestedStore.dataHashes[storeKey],
+        parent   = this.dataHashes[storeKey],
+        oAt, nAt, pAt,
+        nChanged = NO,
+        pChanged = NO,
+        self = this ;
+
+    // Make sure that we actually have a need for merging
+    if (!nested || !nestedStore.locks[storeKey] ||
+        this.revisions[storeKey] === nestedStore.revisions[storeKey]
+    ) {
+      return ;
+    }
+
+    function mergeAtt(oAt, nAt, pAt, target, key) {
+//      console.log("merging key: %@".fmt(key)) ;
+
+      if (SC.typeOf(pAt) === SC.T_ARRAY) {
+        pAt.forEach(function(a, idx) {
+          for (var att2 in a) {
+            // TODO: [GD] check to make sure that n exists!
+            var oAt2 = oAt ? oAt[idx][att2] : null,
+                nAt2 = nAt ? nAt[idx][att2] : null,
+                pAt2 = pAt ? pAt[idx][att2] : null ;
+
+            mergeAtt(oAt2, nAt2, pAt2, target[key][idx], att2) ;
+          }
+        }) ;
+        return ;
+      } else if (SC.typeOf(pAt) === SC.T_HASH || SC.typeOf(pAt) === SC.T_OBJECT ) {
+        for (var att2 in pAt) {
+            var oAt2 = oAt ? oAt[att2] : null,
+                nAt2 = nAt ? nAt[att2] : null,
+                pAt2 = pAt ? pAt[att2] : null;
+
+            mergeAtt(oAt2, nAt2, pAt2, target[key], att2) ;
+          }
+        return ;
+      }
+
+      if (nAt === pAt) {
+        // The edited version is the same as the parent version,
+        // nothing to worry about.
+//        console.log("Nothing changed %@ - %@ - %@".fmt(oAt, nAt, pAt)) ;
+      } else if (oAt === pAt) {
+        // Nested Store has changed, but parent hasn't
+//        console.log("Nested Store has changed %@ - %@ - %@".fmt(oAt, nAt, pAt)) ;
+        nChanged = YES ;
+        target[key] = nAt ; // so make the change on the parent.
+      } else if (oAt === nAt) {
+        // Parent store has changed but nested store hasn't
+//        console.log("Parent Store has changed %@ - %@ - %@".fmt(oAt, nAt, pAt)) ;
+        pChanged = YES ;
+        target[key] = pAt ;
+      } else {
+        // Both parent and nested store has changed
+        // ... what to do?
+        pChanged = nChanged = YES ;
+//        console.log("confict! %@ - %@ - %@".fmt(oAt, nAt, pAt)) ;
+        parent[key] = self.mergeConflict(storeKey, key, oAt, nAt, pAt) ;
+      }
+    }
+
+    if (key && key !== "*") {
+      oAt = original[key] ;
+      nAt = nested[key] ;
+      pAt = parent[key] ;
+
+      mergeAtt(oAt, nAt, pAt, nested, key) ;
+    } else {
+      for (var attr in parent) {
+        oAt = original[attr] ;
+        nAt = nested[attr] ;
+        pAt = parent[attr] ;
+
+        mergeAtt(oAt, nAt, pAt, nested, attr) ;
+      }
+    }
+
+    SC.RunLoop.begin() ;
+    nestedStore.dataHashDidChange(storeKey, null, NO, key) ;
+    SC.RunLoop.end() ;
+
+  },
+
+  /**
+    Override this to handle conflicts on records that are being merged.
+    The Default behaviour is to let the remote side (usually the server) win.
+
+    @param {Number} storeKey
+    @param {String} attribute The name of the conflicting attribute
+    @param {Object} original The original Value
+    @param {Object} local The local (nested store) Value
+    @param {Object} remote The remote (parent store) Value
+    @returns {Object} The chosen value
+  */
+  mergeConflict: function(storeKey, attribute, original, local, remote) {
+    throw "Merge Conflict! Override this function to work with your App" ;
+    // example: force the server to win `return remote`
+    // example: force the users change to win `return local`
+    // example: undo either change `return original`
+    // Of course to much more complex logic could be used to find what you want.
+    // You could even save your local & remote objects, return the original value,
+    // and popup a page to ask the user which of the changes they want.
+  },
+
   /** @private
     Verifies that the passed lock revisions match the current revisions 
     in the receiver store.  If the lock revisions do not match, then the 
@@ -734,7 +874,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {SC.Set} locks the locks to verify
     @returns {SC.Store} receiver
   */
-  _verifyLockRevisions: function(changes, locks) {
+  _verifyLockRevisions: function(changes, locks, nestedStore) {
     var len = changes.length, revs = this.revisions, i, storeKey, lock, rev ;
     if (locks && revs) {
       for(i=0;i<len;i++) {
@@ -745,7 +885,13 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         // if the save revision for the item does not match the current rev
         // the someone has changed the data hash in this store and we have
         // a conflict. 
-        if (lock < rev) throw SC.Store.CHAIN_CONFLICT_ERROR;
+        if (lock < rev) {
+          if (this.mergeNestedStoreChanges) {
+            this.mergeChangeFromNestedStore(storeKey, nestedStore) ;
+          } else {
+            throw SC.Store.CHAIN_CONFLICT_ERROR;
+          }
+        }
       }   
     }
     return this ;

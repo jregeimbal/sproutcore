@@ -41,7 +41,7 @@ module("SC.NestedStore#discardChanges", {
         force: force 
       });
     };
-    
+    SC.RunLoop.begin() ;
   }
 });
 

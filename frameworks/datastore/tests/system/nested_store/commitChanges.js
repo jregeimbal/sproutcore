@@ -106,7 +106,9 @@ test("state = EDITABLE", function() {
   
   // write in some data to parent
   store.writeDataHash(storeKey, json);
+  SC.RunLoop.begin() ;
   store.dataHashDidChange(storeKey);
+  SC.RunLoop.end() ;
   
   // check preconditions
   equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - data edit state');
