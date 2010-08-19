@@ -1408,7 +1408,7 @@ SC.RootResponder = SC.Object.extend({
       console.warn('Exception during mousedown: %@'.fmt(e)) ;
       this._mouseDownView = null ;
       this._mouseCanDrag = NO ;
-      throw e;
+      //throw e;
     }
 
     return view ? evt.hasCustomEventHandling : YES;
@@ -1500,7 +1500,8 @@ SC.RootResponder = SC.Object.extend({
       this._mouseCanDrag = NO; this._mouseDownView = null ;
     } catch (e) {
       this._drag = null; this._mouseCanDrag = NO; this._mouseDownView = null ;
-      throw e;
+      console.error(e);
+      //throw e;
     }
     return (handler) ? evt.hasCustomEventHandling : YES ;
   },
@@ -1518,7 +1519,8 @@ SC.RootResponder = SC.Object.extend({
       var view = this.targetViewForEvent(evt) ,
           handler = this.sendEvent('mouseWheel', evt, view) ;
     } catch (e) {
-      throw e;
+      console.error(e);
+      //throw e;
     }
     return (handler) ? evt.hasCustomEventHandling : YES ;
   },
@@ -1606,7 +1608,8 @@ SC.RootResponder = SC.Object.extend({
       //This screws up dragging on IE, which is why we don't want it unless we're on some other browser
       if (!SC.browser.msie)
       {
-        throw e;
+        console.error(e);
+        //throw e;
       }
     }
     SC.RunLoop.end();
