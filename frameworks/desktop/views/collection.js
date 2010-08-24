@@ -63,10 +63,12 @@ SC.CollectionView = SC.View.extend(
 	
 		render: function(context, firstTime) {
 	    var content = this.get('content'),
+	      idx     = this.get('contentIndex'),
 				classArray = [];
 		
 	    // add alternating row classes
-	    classArray.push((this.get('contentIndex') % 2 === 0) ? 'even' : 'odd');
+	    classArray.push((idx % 2 === 0) ? 'even' : 'odd');
+	    if (idx === 0) { classArray.push('first'); }
 	    context.addClass(classArray);
 			sc_super();
 		}
@@ -2919,7 +2921,7 @@ SC.CollectionView = SC.View.extend(
       this.hideInsertionPoint() ;
       this._lastInsertionIndex = this._lastDropOperation = null ;
     }
-    
+
     // Normalize drag operation to the standard kinds accepted by the drag 
     // system.
     return (dragOp & SC.DRAG_REORDER) ? SC.DRAG_MOVE : dragOp;  
