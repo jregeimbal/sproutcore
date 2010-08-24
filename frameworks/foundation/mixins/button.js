@@ -95,12 +95,23 @@ SC.Button = {
   title: '',
   
   /**
-    The button tooltip (title attribute). This is used for a custom html title attribute. If it exists, it will go through the localization title does and then be inserted.
+    The button tooltip (title attribute). This is used for a custom html title attribute.
+    If it exists, it will go through the localization title does and then be inserted.
     
     @property {String}
   */
   
   tooltip: null,
+  
+  /**
+    This is an option to enable tooltips regardless of this.tooltip being set.
+    The option will allow title to be used if tooltip is null or default to blank
+    if neither is set.
+    
+    @property {Boolean}    
+  */
+  
+  enableGlobalTooltip: NO,
 
   /**
     If you set this property, the title property will be updated automatically
@@ -158,8 +169,8 @@ SC.Button = {
   */
   displayTooltip: function() {
     var tt = this.get('tooltip');
-    if ( tt ) {
-      var ret = this.get('tooltip') || this.get('title');
+    if ( tt || this.get('enableGlobalTooltip') ) {
+      var ret = tt || this.get('title');
       return (ret && this.get('localize')) ? ret.loc() : (ret || '');
     } else {
       return NO;
