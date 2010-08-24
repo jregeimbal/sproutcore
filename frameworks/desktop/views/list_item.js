@@ -199,10 +199,12 @@ SC.ListItemView = SC.View.extend(
         del     = this.displayDelegate,
         level   = this.get('outlineLevel'),
         indent  = this.get('outlineIndent'),
+        idx     = this.get('contentIndex'),
         key, value, working, classArray = [];
     
     // add alternating row classes
-    classArray.push((this.get('contentIndex')%2 === 0) ? 'even' : 'odd');
+    classArray.push( (idx % 2 === 0) ? 'even' : 'odd');
+    if (idx === 0) { classArray.push('first'); }
     context.setClass('disabled', !this.get('isEnabled'));
 
     // outline level wrapper
