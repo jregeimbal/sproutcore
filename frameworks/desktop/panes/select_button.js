@@ -294,6 +294,15 @@ SC.SelectButtonView = SC.ButtonView.extend(
     @default YES
   */
   supportFocusRing: YES,
+  
+  /** 
+    Toggling an attribute in SC.Button to provide an arrow div in the button
+    for styling convenience
+    
+    @property {Boolean}
+  */
+  
+  isSelect: YES,
 
   /**
     Left Alignment based on the size of the button
