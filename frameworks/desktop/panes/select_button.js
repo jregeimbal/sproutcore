@@ -297,6 +297,15 @@ SC.SelectButtonView = SC.ButtonView.extend(
   */
   supportFocusRing: YES,
   
+  /** 
+    Toggling an attribute in SC.Button to provide an arrow div in the button
+    for styling convenience
+    
+    @property {Boolean}
+  */
+  
+  isSelect: YES,
+
   /**
     Disable context menu.
   */
