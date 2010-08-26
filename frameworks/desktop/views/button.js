@@ -99,6 +99,16 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
   */  
   isCancel: NO,
   isCancelBindingDefault: SC.Binding.oneWay().bool(),
+  
+  
+  /**
+    If YES, adds an arrow div into the button render
+    
+    @property {Boolean}
+  */
+  
+  isSelect: NO,
+  
 
   /**
     The button href value.  This can be used to create localized button href 
@@ -279,6 +289,7 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
         "px'>");
     
       this.renderTitle(context, firstTime) ; // from button mixin
+      if ( this.get('isSelect') ) { context.push("<div class='sc-button-inner-arrow' style='width: 16px;height: 16px;position: absolute;right: 0;top: 0;'></div>"); }
       context.push("</span>") ;
     
       if(this.get('supportFocusRing')) {
