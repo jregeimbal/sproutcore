@@ -87,26 +87,27 @@ SC.TableHeaderView = SC.View.extend(SC.SimpleLayout, {
   
   /** @private */
   adjustDrag: function(view, offset) {
+    var idx, idx2;
     var direction = this.get('layoutDirection');
     var frame = view.get('frame');
-    var put = (direction === SC.LAYOUT_HORIZONTAL ? frame['x'] : frame['y']) + offset;
+    var put = (direction === SC.LAYOUT_HORIZONTAL ? frame.x : frame.y) + offset;
     view.adjust((direction === SC.LAYOUT_HORIZONTAL ? 'left' : 'top') , put);
     
     this.set('_draggingOffset', put);
     
     var childViews = this.get('childViews');
-    var idx = childViews.indexOf(view);
+    idx = childViews.indexOf(view);
     var view2;
 
     if(offset < 1 && idx > 0)
     {
-      var idx2 = idx - 1;
+      idx2 = idx - 1;
     }
     else 
     {
       if(offset > 1 && idx < childViews.get('length') - 1)
       {
-        var idx2 = idx + 1;
+        idx2 = idx + 1;
       }
     }
 

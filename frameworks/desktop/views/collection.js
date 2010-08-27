@@ -908,7 +908,7 @@ SC.CollectionView = SC.View.extend(
       
       
       // Now that we know what operations we need to perform, let's perform
-      // all the removals first…
+      // all the removals first..
       for (i = 0, len = viewsToRemove.length;  i < len;  ++i) {
         idx = viewsToRemove[i];
         existing = itemViews ? itemViews[idx] : null;        
@@ -937,7 +937,7 @@ SC.CollectionView = SC.View.extend(
         containerView.removeChild(existing);
       }
       
-      // …then the redraws…
+      // then the redraws...
       for (i = 0, len = viewsToRedraw.length;  i < len;  ++i) {
         idx = viewsToRedraw[i];
         existing = itemViews ? itemViews[idx] : null;
@@ -950,7 +950,7 @@ SC.CollectionView = SC.View.extend(
         containerView.replaceChild(view, existing);
       }
       
-      // …and finally the creations.
+      // ...and finally the creations.
       for (i = 0, len = viewsToCreate.length;  i < len;  ++i) {
         idx = viewsToCreate[i];
         view = this.itemViewForContentIndex(idx, YES);

@@ -933,7 +933,7 @@ SC.RootResponder = SC.Object.extend({
     // work down the chain
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
+      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response...'.fmt(view.toString()));
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
@@ -1345,10 +1345,10 @@ SC.RootResponder = SC.Object.extend({
     element is clicked, regardless of whether that element belongs to a view
     that has 'acceptsFirstResponder' set to NO.
 
-    If we detect that the active element is “losing out” to an element that
+    If we detect that the active element is "losing out" to an element that
     belongs to a view that does not accept keyPane or firstResponder, then
     cancel the event.  In this way, clients can create elements that behave as
-    if they're part of a single user interface element — for example, a text
+    if they're part of a single user interface element -- for example, a text
     field with a drop-down menu.  (Without this, clicking on a menu item
     element would cause the text field to lose focus!)
   */
@@ -1356,8 +1356,8 @@ SC.RootResponder = SC.Object.extend({
     var toElement = evt.toElement;
     if (toElement && toElement.tagName && toElement.tagName!=="IFRAME" && toElement.tagName!=="DIV" && toElement.tagName!=="SELECT" && !(toElement.type && toElement.type==='file' && toElement.tagName==='INPUT')) {
       var view = SC.$(toElement).view()[0];
-      if (view && !view.get('acceptsKeyPane')
-        && !view.get('acceptsFirstResponder') ) return NO;
+      if (view && !view.get('acceptsKeyPane') && 
+          !view.get('acceptsFirstResponder') ) return NO;
     }
 
     return YES;
