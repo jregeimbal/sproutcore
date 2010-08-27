@@ -425,11 +425,11 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     Use to control the positioning of the vertical scroller.  If you do not
     set 'verticalOverlay' to YES, then the content view will be automatically
     sized to meet the left edge of the vertical scroller, wherever it may be.
-    This allows you to easily, for example, have “one pixel higher and one
-    pixel lower” scroll bars that blend into their parent views.
+    This allows you to easily, for example, have "one pixel higher and one
+    pixel lower" scroll bars that blend into their parent views.
     
     If you do set 'verticalOverlay' to YES, then the scroller view will
-    “float on top” of the content view.
+    "float on top" of the content view.
     
     Example: { top: -1, bottom: -1, right: 0 }
   */
@@ -442,7 +442,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     wherever it may be.
     
     If you do set 'horizontalOverlay' to YES, then the scroller view will
-    “float on top” of the content view.
+    "float on top" of the content view.
     
     Example: { left: 0, bottom: 0, right: 0 }
   */
@@ -1630,7 +1630,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     size of the contentView changes.  We don't care about the origin since
     that is tracked separately from the offset values.
 
-    @param {Boolean} force (optional)  Re-calculate everything even if the contentView’s frame didn’t change size
+    @param {Boolean} force (optional)  Re-calculate everything even if the contentView's frame didn't change size
   */
 
   oldMaxHOffset: 0,

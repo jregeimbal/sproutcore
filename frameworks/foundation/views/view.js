@@ -355,7 +355,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
 
 
   /** @private
-    Whenever the view’s visibility changes, we need to recompute whether it is
+    Whenever the view's visibility changes, we need to recompute whether it is
     actually visible inside the window (a view is only visible in the window
     if it is marked as visibile and its parent view is as well), in addition
     to updating the layer accordingly.
@@ -754,7 +754,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
   },
   
   /**
-    Returns YES if the receiver is a subview of a given view or if it’s 
+    Returns YES if the receiver is a subview of a given view or if it's 
     identical to that view. Otherwise, it returns NO.
     
     @property {SC.View} view
@@ -1751,7 +1751,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
 
   /**
     The 'frame' property depends on the 'layout' property as well as the
-    parent view’s frame.  In order to properly invalidate any cached values,
+    parent view's frame.  In order to properly invalidate any cached values,
     we need to invalidate the cache whenever 'layout' changes.  However,
     observing 'layout' does not guarantee that; the observer might not be run
     immediately.
@@ -2346,7 +2346,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
 
   /**
     This method is invoked on your view when the view resizes due to a layout
-    change or potentially due to the parent view resizing (if your view’s size
+    change or potentially due to the parent view resizing (if your view's size
     depends on the size of your parent view).  You can override this method
     to implement your own layout if you like, such as performing a grid 
     layout.

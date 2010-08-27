@@ -956,7 +956,7 @@ SC.DateTime.mixin(SC.Comparable,
   },
   
   /** @private
-    Converts the x parameter into a string padded with 0s so that the string’s
+    Converts the x parameter into a string padded with 0s so that the string's
     length is at least equal to the len parameter.
     
     @param x the object to convert to a string

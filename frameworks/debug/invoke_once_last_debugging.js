@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-// When in debug mode, it’s useful for our observer sets (which are used by
+// When in debug mode, it's useful for our observer sets (which are used by
 // invokeOnce and invokeLast) to record which code scheduled the
 // invokeOnce/invokeLast targets/methods.
 
@@ -233,7 +233,7 @@ SC.addInvokeOnceLastDebuggingInfo = function() {
   
   
   // Will return the recent stack as a hash with numerical keys, for nice
-  // output in some browser's debuggers.  The “recent” stack is capped at 6
+  // output in some browser's debuggers.  The "recent" stack is capped at 6
   // entries.
   SC.getRecentStack = function() {
     var currentFunction = arguments.callee.caller,

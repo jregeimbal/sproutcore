@@ -1074,7 +1074,7 @@ SC.RootResponder = SC.Object.extend({
     // work down the chain
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
+      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response...'.fmt(view.toString()));
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
