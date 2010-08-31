@@ -358,7 +358,7 @@ SC.Record = SC.Object.extend(
     }
     
     // if any aggregates, propagate the state
-    if(!recordType.aggregates || recordType.aggregates.length>0) {
+    if((!recordType.aggregates || recordType.aggregates.length>0) && !ignoreDidChange) {
       this.propagateToAggregates();
     }
     
