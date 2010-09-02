@@ -712,7 +712,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
         // we can assume that they are clicking and dragging to the menu item,
         // and we should close the menu if they mouseup anywhere not inside
         // the menu.
-        if (evt.timeStamp - this._mouseDownTimestamp > 400) {
+        if (evt.timeStamp - this._mouseDownTimestamp > 550) {
           menu.remove();
         }
       }
