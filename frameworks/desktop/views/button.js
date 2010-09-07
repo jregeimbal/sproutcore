@@ -236,6 +236,7 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
   renderStyle: 'renderDefault', //SUPPORTED DEFAULT, IMAGE
 
   render: function(context, firstTime) {
+    console.log('hi');
     // add href attr if tagName is anchor...
     var href, toolTip, classes, theme;
     if (this.get('tagName') === 'a') {
@@ -248,6 +249,12 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
 
     // If there is a toolTip set, grab it and localize if necessary.
     toolTip = this.get('toolTip') ;
+    
+    // If alwaysEnableToolTip is YES and there is no ToolTip, find
+    // the title and use that instead.
+    if (this.get('alwaysEnableToolTip') && !toolTip) {
+      toolTip = this.get('title');
+    }
     if (SC.typeOf(toolTip) === SC.T_STRING) {
       if (this.get('localize')) toolTip = toolTip.loc() ;
       context.attr('title', toolTip) ;
