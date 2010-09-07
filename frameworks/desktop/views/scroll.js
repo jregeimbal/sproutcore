@@ -1449,6 +1449,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
         height = (f) ? f.height * this._scale : 0,
         dim    = this.get('frame'),
         ourFrame = this.get("frame");
+        
     
     // cache out scroll settings...
     //if ((width === this._scroll_contentWidth) && (height === this._scroll_contentHeight)) return ;
@@ -1463,7 +1464,6 @@ SC.ScrollView = SC.View.extend(SC.Border, {
       view.setIfChanged('maximum', width-dim.width) ;
       view.setIfChanged('proportion', dim.width/width);
     }
-    
     if (this.get('hasVerticalScroller') && (view = this.get('verticalScrollerView'))) {
       // decide if it should be visible or not
       if (this.get('autohidesVerticalScroller')) {
