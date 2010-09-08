@@ -236,7 +236,6 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
   renderStyle: 'renderDefault', //SUPPORTED DEFAULT, IMAGE
 
   render: function(context, firstTime) {
-    console.log('hi');
     // add href attr if tagName is anchor...
     var href, toolTip, classes, theme;
     if (this.get('tagName') === 'a') {
