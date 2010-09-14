@@ -99,6 +99,14 @@ SC.TableView = SC.View.extend({
   isEditable: YES,
   canEditContent: YES,
   
+  canDeleteContent: NO,
+  
+  isDropTarget: NO,
+  
+  allowDeselectAll: NO,
+
+  delegate: null,
+  
   /**
      Equivalent of the orderBy property of an SC.ArrayController. It is actually bound to the content orderBy property
 
@@ -180,7 +188,7 @@ SC.TableView = SC.View.extend({
           delegate: this.get('delegate'),
           beginEditingSelectionBinding: this.get('beginEditingSelectionPath') || SC.binding('.beginEditingSelection',this.get('delegate')),
           folderedListViewDelegate: this.get('delegate'),
-          isDropTarget: YES,
+          isDropTarget: this.get('isDropTarget'),
           allowActionOnFolder: this.get('allowActionOnFolder'),
           needsContextMenuBinding: SC.Binding.from('.needsContextMenu',this),
           allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this)
@@ -208,14 +216,17 @@ SC.TableView = SC.View.extend({
 
           rowHeight: this.get('rowHeight'),
 
-          isEditableBinding: SC.Binding.from('.isEditable',this),
-          canEditContentBinding: SC.Binding.from('.canEditContent',this),
-          allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this),
+          isEditableBinding: SC.Binding.oneWay().from('.isEditable',this),
+          canEditContentBinding: SC.Binding.oneWay().from('.canEditContent',this),
+          canDeleteContentBinding: SC.Binding.oneWay().from('canDeleteContent',this),
+          allowDeselectAllBinding: SC.Binding.oneWay().from('allowDeselectAll', this),
+          isDropTarget: this.get('isDropTarget'),
+          delegate: this.get('delegate'),
 
           targetBinding: SC.Binding.from('.target',this),
           actionBinding: SC.Binding.from('.action',this),
           
-          canReorderContentBinding: SC.Binding.from('.canReorderContent',this),
+          canReorderContentBinding: SC.Binding.oneWay().from('.canReorderContent',this),
 
           selectionBinding: SC.Binding.from('.selection',this),
 
