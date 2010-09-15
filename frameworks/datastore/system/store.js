@@ -643,7 +643,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         propertyForStoreKeys  = changes.propertyForStoreKeys,
         that                  = this,
         recordTypes           = SC.CoreSet.create(),
-        chunk                 = 400,    
+        chunk                 = 200,    
         rec, recordType, statusOnly, storeKey, keys;
         
     var currentStoreKeys = storeKeys.length > chunk ? storeKeys.slice(0, chunk) : storeKeys;
@@ -671,8 +671,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         recordType = SC.Store.recordTypeFor(storeKey);
         recordTypes.add(recordType);
       }
-      
       that.chunkedFlush(remainingStoreKeys);
+      
+      that.invokeLater(function(){
+        that.chunkedFlush(remainingStoreKeys);
+      });
     };
     
     if (currentStoreKeys.length > 0) {
