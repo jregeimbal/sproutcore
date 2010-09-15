@@ -674,7 +674,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         recordType = SC.Store.recordTypeFor(storeKey);
         recordTypes.add(recordType);
       }
-      this.invokeLater(function(){
+      that.chunkedFlush(remainingStoreKeys);
+      
+      that.invokeLater(function(){
         that.chunkedFlush(remainingStoreKeys);
       });
     };
