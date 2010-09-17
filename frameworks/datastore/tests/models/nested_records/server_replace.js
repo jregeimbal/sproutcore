@@ -22,7 +22,7 @@ var initModels = function(){
     childRecordNamespace: NestedRecord,
     primaryKey: 'id',
     name: SC.Record.attr(String),
-    relationships: SC.Record.toMany('SC.Record', { nested: true })
+    relatedTo: SC.Record.toMany('SC.Record', { nested: true })
   });
   
   NestedRecord.Relationship = SC.ChildRecord.extend({
@@ -74,6 +74,19 @@ module("Server Data Replace, SC.ChildRecord", {
             id: 3
           }
         ]
+      },
+      // Third Family
+      {
+        type: 'Family',
+        name: 'Doe',
+        id: 3,
+        members: [
+          {
+            type: 'Person',
+            name: 'John',
+            id: 30
+          }
+        ]
       }
     ]);
     SC.RunLoop.end();
@@ -89,8 +102,8 @@ module("Server Data Replace, SC.ChildRecord", {
 });
 
 test("Proper Initialization",function() {
-  var first, second;
-  equals(storeKeys.get('length'), 2, "number of primary store keys should be 2");
+  var first, second, third;
+  equals(storeKeys.get('length'), 3, "number of primary store keys should be 3");
   
   // First
   first = store.materializeRecord(storeKeys[0]);
@@ -101,6 +114,11 @@ test("Proper Initialization",function() {
   second = store.materializeRecord(storeKeys[1]);
   ok(SC.kindOf(second, SC.Record), "second record is a kind of a SC.Record Object");
   ok(SC.instanceOf(second, NestedRecord.Family), "second record is a instance of a NestedRecord.Family Object");
+
+  // Third
+  third = store.materializeRecord(storeKeys[2]);
+  ok(SC.kindOf(third, SC.Record), "third record is a kind of a SC.Record Object");
+  ok(SC.instanceOf(third, NestedRecord.Family), "third record is a instance of a NestedRecord.Family Object");
 });
 
 test("Test Commit to server and data return",function() {
@@ -219,4 +237,76 @@ test("Test Commit to server and new member addition",function() {
   same(secondHash, familyHash.members[0], "the Family Record and the member id hash should match");
 });
 
+test("", function() {
+  var family, members, realHash, testHash, john, wilma, rel;
+  
+  // third family
+  family = store.materializeRecord(storeKeys[2]);
+  
+  // Add new member
+  family.get('members').pushObject({ id: -31, type: 'Person', name: "Wilma"});
+  john = family.get('members').objectAt(0);
+  john.get('relatedTo').pushObject({ type: 'Relationship', id: -310, name: 'wife', connectedId: -31 });
 
+  testHash = {
+    type: 'Family',
+    name: 'Doe',
+    id: 3,
+    members: [
+      { type: 'Person', id: 30, name: 'John', relatedTo: [{ type: 'Relationship', id: -310, name: 'wife', connectedId: -31 }] },
+      { type: 'Person', id: -31, name: "Wilma" }
+    ]
+  };
+  realHash = store.readDataHash(storeKeys[2]);
+  equals(realHash.members.length, testHash.members.length, "Doe Family Members have the same length");
+  equals(realHash.members[0].name, testHash.members[0].name, "Doe Family Member 1 have the same name");
+  equals(realHash.members[0].id, testHash.members[0].id, "Doe Family Member 1 have the same id");
+  equals(realHash.members[1].name, testHash.members[1].name, "Doe Family Member 2 have the same name");
+  equals(realHash.members[1].id, testHash.members[1].id, "Doe Family Member 1 have the same id");
+  equals(realHash.members[0].relatedTo.length, testHash.members[0].relatedTo.length, "John has same number of relatedTo");
+  equals(realHash.members[0].relatedTo[0].name, testHash.members[0].relatedTo[0].name, "John has a wife");
+  equals(realHash.members[0].relatedTo[0].id, testHash.members[0].relatedTo[0].id, "Relationship ID is the same");
+  equals(realHash.members[0].relatedTo[0].connectedId, testHash.members[0].relatedTo[0].connectedId, "Relationship connectedId maintained");
+
+  store.writeStatus(storeKeys[2], SC.Record.BUSY_LOADING);
+  store.dataSourceDidComplete(storeKeys[2], {
+    type: 'Family',
+    name: 'Doe',
+    id: 3,
+    members: [
+      { type: 'Person', id: 30, name: 'John', relatedTo: [{ type: 'Relationship', id: 310, name: 'wife', connectedId: 31 }] },
+      { type: 'Person', id: 31, name: "Wilma"}
+    ]
+  });
+  
+  realHash = store.readDataHash(storeKeys[2]);
+  members = family.get('members');
+  testHash = {
+    type: 'Family',
+    name: 'Doe',
+    id: 3,
+    members: [
+      { type: 'Person', id: 30, name: 'John', relatedTo: [{ type: 'Relationship', id: 310, name: 'wife', connectedId: 31 }] },
+      { type: 'Person', id: 31, name: "Wilma"}
+    ]
+  };
+  equals(members.get('length'), 2, 'Smith Family has 2 members...length is correct');
+  equals(realHash.members[0].name, testHash.members[0].name, "Doe Family Member 1 have the same name after save");
+  equals(realHash.members[0].id, testHash.members[0].id, "Doe Family Member 1 have the same id after save");
+  equals(realHash.members[1].name, testHash.members[1].name, "Doe Family Member 2 have the same name after save");
+  equals(realHash.members[1].id, testHash.members[1].id, "Doe Family Member 2 have the same id after save");
+  equals(realHash.members[0].relatedTo.length, testHash.members[0].relatedTo.length, "John has same number of relatedTo");
+  equals(realHash.members[0].relatedTo[0].name, testHash.members[0].relatedTo[0].name, "John has a wife");
+  equals(realHash.members[0].relatedTo[0].id, testHash.members[0].relatedTo[0].id, "Relationship ID is the same");
+  equals(realHash.members[0].relatedTo[0].connectedId, testHash.members[0].relatedTo[0].connectedId, "Relationship connectedId maintained");
+  
+  // make sure the record instances match the data hashes
+  john = family.get('members').objectAt(0);
+  wilma = family.get('members').objectAt(1);
+  equals(john.get('id'), testHash.members[0].id, "John's record ID matches his hash ID");
+  equals(wilma.get('id'), testHash.members[1].id, "Wilma's record ID matches her hash ID");
+  
+  rel = john.get('relatedTo').objectAt(0);
+  equals(rel.get('id'), testHash.members[0].relatedTo[0].id, "John's relationship record ID matches the hash value");
+  equals(rel.get('connectedId'), testHash.members[0].relatedTo[0].connectedId, "John's record 'connectedId' matches what's in the data hash");
+});
