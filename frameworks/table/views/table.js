@@ -303,7 +303,7 @@ SC.TableView = SC.View.extend({
     
     var columns = this.get('columns'),
       stylesheet = this._stylesheet,
-      left = 6,
+      left = 0,
       offsets = this._offsets,
       widths = this._widths,
       width;
