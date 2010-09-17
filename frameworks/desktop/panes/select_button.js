@@ -366,7 +366,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
       idx, name, icon, value, item, itemEnabled, isEnabledKey ;
     layoutWidth = this.layout.width ;
     if(firstTime && layoutWidth) {
-      this.adjust({ width: layoutWidth - this.SELECT_BUTTON_SPRITE_WIDTH }) ;
+      this.adjust({ width: layoutWidth + 2 }) ;
     }
 
     objects = this.get('objects') ;
