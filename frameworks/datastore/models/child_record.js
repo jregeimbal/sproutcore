@@ -70,28 +70,28 @@ SC.ChildRecord = SC.Record.extend(
     return pStatus;
   }.property('storeKey').cacheable(),
   
-  /**
-    relationship property triggers up the chain
-  */
-  relationships: function(key, value){
-    var p = this._parentRecord, rels;
-    var temp = value;
-
-    if (p) {
-      if (value === undefined) {
-        value = p.get('relationships');
-      }
-      else {
-        rels = p.get('relationships') || [];
-        value = rels.concat(value);
-        p.set('relationships', value);
-      }
-    }
-
-    console.log('%@.relationships(p: %@, value in: %@, value out: %@)'.fmt(this, p, temp, value));
-
-    return value;
-  }.property(),
+  // /**
+  //   relationship property triggers up the chain
+  // */
+  // relationships: function(key, value){
+  //   var p = this._parentRecord, rels;
+  //   var temp = value;
+  // 
+  //   if (p) {
+  //     if (value === undefined) {
+  //       value = p.get('relationships');
+  //     }
+  //     else {
+  //       rels = p.get('relationships') || [];
+  //       value = rels.concat(value);
+  //       p.set('relationships', value);
+  //     }
+  //   }
+  // 
+  //   console.log('%@.relationships(p: %@, value in: %@, value out: %@)'.fmt(this, p, temp, value));
+  // 
+  //   return value;
+  // }.property(),
   
   /**
    * Marks the record as dirty.
