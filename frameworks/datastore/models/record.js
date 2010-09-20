@@ -440,9 +440,12 @@ SC.Record = SC.Object.extend(
       } else this.allPropertiesDidChange(); 
     
       // also notify manyArrays
-      var manyArrays = this.relationships,
+      var manyArrays = this.get('relationships'),
           loc        = manyArrays ? manyArrays.length : 0 ;
-      while(--loc>=0) manyArrays[loc].recordPropertyDidChange(keys);
+      while(--loc>=0) {
+        manyArrays[loc].recordPropertyDidChange(keys);
+        console.log('%@.storeDidChangeProperties(%@)'.fmt(this, manyArrays[loc].get('propertyName')));
+      }
     }
   },
   
