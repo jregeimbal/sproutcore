@@ -210,17 +210,39 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
   */
   recordPropertyDidChange: function(keys) {
     
+    // if (keys && !keys.contains(this.get('propertyName'))) return this;
+    // 
+    // var children = this.get('readOnlyChildren');
+    // var prev = this._prevChildren, f = this._childrenContentDidChange;
+    // 
+    // if (children === prev) return this; // nothing to do
+    // 
+    // if (prev) prev.removeObserver('[]', this, f);
+    // this._prevChildren = children;
+    // if (children) children.addObserver('[]', this, f);
+    // 
+    // var rev = (children) ? children.propertyRevision : -1 ;
+    // this._childrenContentDidChange(children, '[]', children, rev);
+
+    var recs = this._records || [];
+
     if (keys && !keys.contains(this.get('propertyName'))) return this;
-    
+
     var children = this.get('readOnlyChildren');
     var prev = this._prevChildren, f = this._childrenContentDidChange;
-    
+
     if (children === prev) return this; // nothing to do
-    
+
+    // Trigger calls to all properties that they have changes as well
+    recs.forEach( function(r){
+      // debugger;
+      r.storeDidChangeProperties(null, keys);
+    });
+
     if (prev) prev.removeObserver('[]', this, f);
     this._prevChildren = children;
     if (children) children.addObserver('[]', this, f);
-    
+
     var rev = (children) ? children.propertyRevision : -1 ;
     this._childrenContentDidChange(children, '[]', children, rev);
   },
