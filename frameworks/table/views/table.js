@@ -162,7 +162,7 @@ SC.TableView = SC.View.extend({
       
       this._dataView = childView = this.createChildView(this.get('exampleScrollView').design({
         autohidesVerticalScroller: NO,
-        layout: { left: 6, right: 0, top: this.get('headerHeight'), bottom: 0 },
+        layout: { left: 0, right: 0, top: this.get('headerHeight'), bottom: 0 },
         verticalScrollOffset:0,
         hasHorizontalScrollerBinding: SC.Binding.from('hasHorizontalScroller', this),
         contentView: this.get('exampleFolderedListView').design({
