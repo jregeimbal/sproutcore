@@ -223,13 +223,6 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     
     var rev = (children) ? children.propertyRevision : -1 ;
     this._childrenContentDidChange(children, '[]', children, rev);
-    
-    //HACK: [MB/EG] shouldn't flush the child arrays contents in a range updater
-    this.forEach(function(child){
-      child.storeDidChangeProperties();
-    });
-    //end HACK
-    
   },
 
   /** @private
