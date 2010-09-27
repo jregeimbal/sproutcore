@@ -407,7 +407,9 @@ SC.PickerPane = SC.PalettePane.extend({
     of the parent menu if it would otherwise exceed the width of the viewport.
   */
   fitPositionToScreenMenu: function(windowFrame, paneFrame, subMenu) {
-
+    var parentMenu = this.get('parentMenu'),
+        parentLayout = parentMenu ? parentMenu.get('layout') : null,
+        parentWidth = parentLayout ? parentLayout.width : null ;
     // Set up init location for submenu
     if (subMenu) {
       paneFrame.x -= this.get('submenuOffsetX');
@@ -419,7 +421,11 @@ SC.PickerPane = SC.PalettePane.extend({
     if( (paneFrame.x + paneFrame.width) > (windowFrame.width-20) ) {
       if (subMenu) {
         // Submenus should be re-anchored to the left of the parent menu
-        paneFrame.x = paneFrame.x - (paneFrame.width*2);
+        if (parentWidth) {
+          paneFrame.x = paneFrame.x - paneFrame.width - parentWidth;
+        } else {
+          paneFrame.x = paneFrame.x - (paneFrame.width*2);
+        }
       } else {
         // Otherwise, just position the pane 20 pixels from the right edge
         paneFrame.x = windowFrame.width - paneFrame.width - 20;
