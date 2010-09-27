@@ -642,16 +642,23 @@ SC.Drag = SC.Object.extend(
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
       target = ary[idx] ;
-      
-      // If the target is not visible, it is not valid.
-      if (!target.get('isVisibleInWindow')) continue ;
-      
-      // get clippingFrame, converted to the pane.
-      frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
-      
-      // check to see if loc is inside.  If so, then make this the drop target
-      // unless there is a drop target and the current one is not deeper.
-      if (SC.pointInRect(loc, frame)) return target;
+      //Because the items in the targets array could come from the
+      //innerIframe (which no longer exists) try and remove them...
+      //TODO: [MB] got to be a better way...
+      try{
+        // If the target is not visible, it is not valid.
+        if (!target.get('isVisibleInWindow')) continue ;
+
+        // get clippingFrame, converted to the pane.
+        frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
+        
+        // check to see if loc is inside.  If so, then make this the drop target
+        // unless there is a drop target and the current one is not deeper.
+        if (SC.pointInRect(loc, frame)) return target;
+      }catch(e){
+        SC.Drag.removeDropTarget(target);
+      }
+
     } 
     return null ;
   },
