@@ -29,7 +29,7 @@
 
 /* Class to hide any view */
 
-.sc-view.hidden {
+.sc-view.hidden, .sc-view .hidden {
   display: none !important;
 }
 
