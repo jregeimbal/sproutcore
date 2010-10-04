@@ -597,7 +597,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         recordTypes = SC.CoreSet.create(),
         rec, recordType, statusOnly, idx, len, storeKey, keys;
         
-    if (SC.browser.msie) {
+    if (NO) {
       var sKeys = storeKeys.toArray();
       this.chunkedFlush(sKeys);
       
