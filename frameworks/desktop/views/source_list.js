@@ -8,7 +8,7 @@
 sc_require('views/list') ;
 sc_require('views/source_list_group');
 
-SC.BENCHMARK_SOURCE_LIST_VIEW = YES ;
+SC.BENCHMARK_SOURCE_LIST_VIEW = NO ;
 
 /** @class
   
