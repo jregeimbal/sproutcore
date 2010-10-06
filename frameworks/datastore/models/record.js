@@ -254,10 +254,12 @@ SC.Record = SC.Object.extend(
     only once for the changed property instead of allPropertiesDidChange()
     
     @param {String} key that changed (optional)
+    @param {Boolean} statusOnly (optional) YES if only the status should be
+                     marked as dirty.  If YES, 'key' will be ignored.
     @returns {SC.Record} receiver
   */
-  recordDidChange: function(key) {
-    this.get('store').recordDidChange(null, null, this.get('storeKey'), key);
+  recordDidChange: function(key, statusOnly) {
+    this.get('store').recordDidChange(null, null, this.get('storeKey'), key, statusOnly);
     this.notifyPropertyChange('status');
     return this ;
   },

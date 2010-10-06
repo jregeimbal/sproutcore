@@ -77,9 +77,11 @@ SC.ChildRecord = SC.Record.extend(
    * Invokes the parent's recordDidChange() function until it gets to an SC.Record instance, at
    * which point the record is marked as dirty in the store.
    */
-  recordDidChange: function() {
+  recordDidChange: function(key, statusOnly) {
     if (this._parentRecord && this._parentRecord.recordDidChange) {
-      this._parentRecord.recordDidChange();
+      // Key doesn't apply to parent record, so don't pass it.
+      // Do indicate that only status should be changed on any parents.
+      this._parentRecord.recordDidChange(null, YES);
     }
     else{
       sc_super();
