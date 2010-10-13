@@ -582,7 +582,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     you may call this manually.
 
     @returns {SC.Store} receiver
-  */  
+  */
   flush: function() {
     if (!this.recordPropertyChanges) return this;
     
@@ -593,96 +593,37 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         propertyForStoreKeys = changes.propertyForStoreKeys,
         recordTypes = SC.CoreSet.create(),
         rec, recordType, statusOnly, idx, len, storeKey, keys;
-        
-    if (SC.browser.msie) {
-      var sKeys = storeKeys.toArray();
-      this.chunkedFlush(sKeys);
-      
-      if (storeKeys.get('length') > 0) this._notifyRecordArrays(storeKeys, this.__recordTypes);
-      this.__records.clear();
-      
-    } else {
-      storeKeys.forEach(function(storeKey) {
-        if (records.contains(storeKey)) {
-          statusOnly = hasDataChanges.contains(storeKey) ? NO : YES;
-          rec = this.records[storeKey];
-          keys = propertyForStoreKeys ? propertyForStoreKeys[storeKey] : null;
-
-          // Are we invalidating all keys?  If so, don't pass any to
-          // storeDidChangeProperties.
-          if (keys === '*') keys = null;
-
-          // remove it so we don't trigger this twice
-          records.remove(storeKey);
-
-          if (rec) rec.storeDidChangeProperties(statusOnly, keys);
-        }
-
-        recordType = SC.Store.recordTypeFor(storeKey);
-        recordTypes.add(recordType);
-
-      }, this);
-      
-      
-      if (storeKeys.get('length') > 0) this._notifyRecordArrays(storeKeys, recordTypes);
-      records.clear();
-      // Provide full reference to overwrite
-    }
     
+    storeKeys.forEach(function(storeKey) {
+      if (records.contains(storeKey)) {
+        statusOnly = hasDataChanges.contains(storeKey) ? NO : YES;
+        rec = this.records[storeKey];
+        keys = propertyForStoreKeys ? propertyForStoreKeys[storeKey] : null;
+        
+        // Are we invalidating all keys?  If so, don't pass any to
+        // storeDidChangeProperties.
+        if (keys === '*') keys = null;
+        
+        // remove it so we don't trigger this twice
+        records.remove(storeKey);
+        
+        if (rec) rec.storeDidChangeProperties(statusOnly, keys);
+      }
+      
+      recordType = SC.Store.recordTypeFor(storeKey);
+      recordTypes.add(recordType);
+      
+    }, this);
+
+    if (storeKeys.get('length') > 0) this._notifyRecordArrays(storeKeys, recordTypes);
+
     storeKeys.clear();
     hasDataChanges.clear();
+    records.clear();
+    // Provide full reference to overwrite
     this.recordPropertyChanges.propertyForStoreKeys = {};
     
     return this;
-  },
-  
-  chunkedFlush: function(storeKeys) {
-    var changes               = this.recordPropertyChanges,
-        hasDataChanges        = changes.hasDataChanges,
-        records               = changes.records,
-        propertyForStoreKeys  = changes.propertyForStoreKeys,
-        that                  = this,
-        recordTypes           = SC.CoreSet.create(),
-        chunk                 = 25,    
-        rec, recordType, statusOnly, storeKey, keys;
-        
-    var currentStoreKeys = storeKeys.length > chunk ? storeKeys.slice(0, chunk) : storeKeys;
-    
-    var iterate = function(sKeys) {
-      var remainingStoreKeys = [];
-      if (storeKeys.length > chunk) {
-        remainingStoreKeys = storeKeys.slice(chunk, storeKeys.length);
-      }
-
-      for (var x = 0, y = sKeys.length; x < y; x++) {
-        storeKey = sKeys[x];
-        
-        if (records.contains(storeKey)) {
-          statusOnly = hasDataChanges.contains(storeKey) ? NO : YES;
-          rec = that.records[storeKey];
-          keys = propertyForStoreKeys ? propertyForStoreKeys[storeKey] : null;
-          // Are we invalidating all keys?  If so, don't pass any to
-          // storeDidChangeProperties.
-          if (keys === '*') keys = null;
-          // remove it so we don't trigger this twice
-          records.remove(storeKey);
-          if (rec) rec.storeDidChangeProperties(statusOnly, keys);
-        }
-        recordType = SC.Store.recordTypeFor(storeKey);
-        recordTypes.add(recordType);
-      }
-      
-      setTimeout(function(){
-        that.chunkedFlush(remainingStoreKeys);
-      },100);
-    };
-    
-    if (currentStoreKeys.length > 0) {
-      iterate(currentStoreKeys);
-    }
-    
-    this.__records = records;
-    this.__recordTypes = recordTypes;
   },
   
   /**
