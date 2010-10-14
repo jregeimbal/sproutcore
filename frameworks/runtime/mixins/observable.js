@@ -214,8 +214,9 @@ SC.Observable = {
       return this.unknownProperty(key) ;
     } else if (ret && ret.isProperty) {
       if (ret.isCacheable) {
-        this._kvo_cache = this._kvo_cache || {};
-        return this._kvo_cache[ret.cacheKey] !== undefined ? this._kvo_cache[ret.cacheKey] : (this._kvo_cache[ret.cacheKey] = ret.call(this,key)) ;
+        cache = this._kvo_cache ;
+        if (!cache) cache = this._kvo_cache = {};
+        return (cache[ret.cacheKey] !== undefined) ? cache[ret.cacheKey] : (cache[ret.cacheKey] = ret.call(this,key)) ;
       } else return ret.call(this,key);
     } else return ret ;
   },

@@ -322,7 +322,8 @@ SC.mixin(/** @scope SC */ {
     if (obj === Object) return '(Object)';
     if (obj === Array) return '(Array)';
     
-    if (obj[this.guidKey]) return obj[this.guidKey] ;
+    var guidKey = this.guidKey ;
+    if (obj[guidKey]) return obj[guidKey] ;
 
     switch(typeof obj) {
       case SC.T_NUMBER:
