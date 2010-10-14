@@ -6,6 +6,7 @@
 // ==========================================================================
 sc_require('views/table_header');
 sc_require('views/table_cell');
+sc_require('views/data');
 
 
 SC.TableView = SC.View.extend({
@@ -77,6 +78,11 @@ SC.TableView = SC.View.extend({
     @property {SC.ListView}
   */
   exampleFolderedListView: null,
+  
+  /**
+    An example data view that will be used to paint a list view within the table view.
+  */
+  exampleDataView: SC.DataView,
   
   /**
     Use this method to swap out a column on the columns collection.
@@ -208,7 +214,7 @@ SC.TableView = SC.View.extend({
         },
         hasHorizontalScrollerBinding: SC.Binding.from('hasHorizontalScroller', this),
         borderStyle: SC.BORDER_NONE,
-        contentView: SC.DataView.design({
+        contentView: this.get('exampleDataView').design({
 
           classNames: ['sc-table-data-view'],
 
