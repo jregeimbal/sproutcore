@@ -18,63 +18,6 @@ SC.FolderedListView = SC.ListView.extend(SC.FolderedListViewDelegate,
     Set to NO if you don't want to allow target/action on a folder.
   */
   allowActionOnFolder: YES,
-  
-  /**
-   Enable or disable Context Menus
-  */
-  needsContextMenu: YES,
-    
-  /**
-    Computes the delegate responsible for context menus
-    
-    @property
-    @type {Object}
-  */
-  contextMenuDelegate: function() {
-    var del = this.get('delegate'), content = this.get('content');
-    return this.delegateFor('isFolderedListViewDelegate', del, content);  
-  }.property('delegate', 'content').cacheable(),
-     
-  mouseDown: function(evt) {
-    
-    var result = sc_super();
-    
-   /* var itemView = this.itemViewForEvent(evt);
-    var contentIndex = itemView ? itemView.get('contentIndex') : -1;
-    if (contentIndex === -1) {
-      // if left-click with no selected itemView, de-select
-      if (evt && evt.which === 1) {
-        this.set('selection', null);
-      }
-    }
-    
-    var ctxMenuItems = [];
-    var del = this.get('contextMenuDelegate');
-    
-    if (this.get('needsContextMenu')) {
-      ctxMenuItems = del.folderedListViewContextMenuItems(this, itemView);
-    }
-    
-    if (ctxMenuItems && ctxMenuItems.length > 0 && evt.which > 1) {
-      
-      var pane = SCUI.ContextMenuPane.create({
-        contentView: SC.View.design({}),
-        layout: { width: 194, height: 0 },
-        itemTitleKey: 'title',
-        itemTargetKey: 'target',
-        itemActionKey: 'action',
-        itemSeparatorKey: 'isSeparator',
-        itemIsEnabledKey: 'isEnabled',
-        items: ctxMenuItems
-      });
-  
-      pane.popup(this, evt);
-     
-      return NO;
-    }*/
-    
-    return result;
-  },
     
   dragDidBegin: function(drag, loc) {
     var ghostView = drag.get('ghostView');
