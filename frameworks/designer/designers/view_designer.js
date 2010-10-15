@@ -225,7 +225,7 @@ SC.ViewDesigner = SC.Object.extend(
     var layout = this.get('layout');
     if (!layout) return null;
     
-    if (!SC.none(layout) && (value !== undefined)) {
+    if (!SC.none(layout) && (value !== undefined) && !isNaN(value) && !isNaN(value*1)) {
       layout = SC.copy(layout);
       layout[key] = value*1;
       this.set('layout', layout);
