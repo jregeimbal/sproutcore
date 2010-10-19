@@ -170,6 +170,11 @@ SC.ListItemView = SC.View.extend(
     is edited.
   */
   validator: null,
+  
+  /**
+   The Inline Text Editor to use (Leave Null to get the default)
+  */
+  exampleInlineTextFieldView: null,
 
 	displayValue: function() {
 		var content = this.get('content'),
@@ -801,7 +806,8 @@ SC.ListItemView = SC.View.extend(
 
     ret = SC.InlineTextFieldView.beginEditing({
       frame: f, 
-      exampleElement: el, 
+      exampleElement: el,
+      exampleInlineTextFieldView: this.get('exampleInlineTextFieldView'),
       delegate: this, 
       value: v,
       multiline: NO,
