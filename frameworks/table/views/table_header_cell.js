@@ -135,9 +135,11 @@ SC.TableHeaderCellView = SC.View.extend(SC.Button,{
         return;
       }
       else {
-        this._dragging = YES;
-        this.set('dragging', YES);
-        this.invokeDelegateMethod(this.delegate, 'headerDidBeginDrag', this, evt);
+        if(this.getPath('column.isReorderable')) {
+          this._dragging = YES;
+          this.set('dragging', YES);
+          this.invokeDelegateMethod(this.delegate, 'headerDidBeginDrag', this, evt);
+        }
         return YES;
       }
     }
