@@ -1,7 +1,7 @@
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2009 Sprout Systems, Inc. and contributors.
-//            Portions ©2008-2009 Apple Inc. All rights reserved.
+// Copyright: ©2006-2010 Sprout Systems, Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -223,7 +223,10 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     @returns {Number} index
   */
   indexOf: function(record, startAt) {
-    if (!SC.kindOf(record, SC.Record)) return NO ; // only takes records
+    if (!SC.kindOf(record, SC.Record)) {
+      SC.Logger.warn("Using indexOf on %@ with an object that is not an SC.Record".fmt(record));
+      return -1; // only takes records
+    }
     
     this.flush();
     
@@ -241,7 +244,10 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     @returns {Number} index
   */
   lastIndexOf: function(record, startAt) {
-    if (!SC.kindOf(record, SC.Record)) return NO ; // only takes records
+    if (!SC.kindOf(record, SC.Record)) {
+      SC.Logger.warn("Using lastIndexOf on %@ with an object that is not an SC.Record".fmt(record));
+      return -1; // only takes records
+    }
 
     this.flush();
     
@@ -471,11 +477,9 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     if (storeKeys && !_flush) {
       if (changed) {
         changed.forEach(function(storeKey) {
-          // get record - do not include EMPTY or DESTROYED records, or
-          // records that are BUSY_DESTROYED (only)
+          // get record - do not include EMPTY or DESTROYED records
           status = store.peekStatus(storeKey);
-          if (!(status & K.EMPTY) && !(status & K.DESTROYED) &&
-              !(status & (SC.Record.BUSY ^ SC.Record.BUSY_DESTROYING))) {
+          if (!(status & K.EMPTY) && !((status & K.DESTROYED) || (status === K.BUSY_DESTROYING))) {
             rec = store.materializeRecord(storeKey);
             included = !!(rec && query.contains(rec));
           } else included = NO ;
@@ -539,12 +543,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         storeKeys = storeKeys.copy();
       }
       
-      // HACK: [MT] - Dont' sort records in IE. This causes a lot of
-      // js timeouts especially when dealing with large data sets
-      if (!SC.browser.msie) {
-        storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
-      }
-      
+      //storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
       if (SC.compare(oldStoreKeys, storeKeys) !== 0){
         this.set('storeKeys', SC.clone(storeKeys)); // replace content
       }
