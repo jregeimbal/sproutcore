@@ -130,25 +130,18 @@ SC.TableHeaderCellView = SC.View.extend(SC.Button,{
     var x = evt.pageX;
     if(!this._dragging)
     {
-       if(Math.abs(this._initialX - x) < 6)
-       {
-        return;
+      if(Math.abs(this._initialX - x) < 6) return;
+      var isReorderable = this.getPath('column.isReorderable');
+      if(isReorderable || SC.none(isReorderable)) {
+        this._dragging = YES;
+        this.set('dragging', YES);
+        this.invokeDelegateMethod(this.delegate, 'headerDidBeginDrag', this, evt);
       }
-      else {
-        if(this.getPath('column.isReorderable')) {
-          this._dragging = YES;
-          this.set('dragging', YES);
-          this.invokeDelegateMethod(this.delegate, 'headerDidBeginDrag', this, evt);
-        }
-        return YES;
-      }
+      return YES;
     }
-      var lastX = this._lastX;
-      if(SC.none(lastX))
-      {
-        lastX = this._lastX = x;
-      }
-
+    var lastX = this._lastX;
+    
+    if(SC.none(lastX)) lastX = this._lastX = x;
     var offset = x - lastX;
     this._lastX = x;
     
