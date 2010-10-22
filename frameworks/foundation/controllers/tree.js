@@ -79,24 +79,6 @@ SC.TreeController = SC.ObjectController.extend(SC.SelectionSupport,
   // PRIVATE
   // 
   
-  /**
-    @private
-    
-    Manually invalidate the arrangedObjects cache so that we can teardown
-    any existing value.  We do it via an observer so that this will fire 
-    immediately instead of waiting on some other component to get 
-    arrangedObjects again.
-  */
-  _sctc_invalidateArrangedObjects: function() {
-    this.propertyWillChange('arrangedObjects');
-    
-    var ret = this._sctc_arrangedObjects;
-    if (ret) ret.destroy();
-    this._sctc_arrangedObjects = null;
-    
-    this.propertyDidChange('arrangedObjects');
-  }.observes('content', 'treeItemIsExpandedKey', 'treeItemChildrenKey', 'treeItemIsGrouped'),
-  
   _sctc_arrangedObjectsContentDidChange: function() {
     this.updateSelectionAfterContentChange();
   }.observes('*arrangedObjects.[]'),
