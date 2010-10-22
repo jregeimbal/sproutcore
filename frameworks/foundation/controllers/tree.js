@@ -73,7 +73,7 @@ SC.TreeController = SC.ObjectController.extend(SC.SelectionSupport,
     this._sctc_arrangedObjects = ret ;
     
     return ret ;
-  }.property().cacheable(),
+  }.property('content').cacheable(),
 
   // ..........................................................
   // PRIVATE
