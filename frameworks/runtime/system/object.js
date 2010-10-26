@@ -497,6 +497,25 @@ SC.Object.prototype = {
   */
   init: function() {
     this.initObservable();
+    if( SC.Benchmark )  SC.Benchmark.start('Generating Display Names');
+    // Add Nice DisplayNames for Profiling 
+    for (var key in this) {
+      var value = this[key];
+      if (value && (value instanceof Function)) {
+        if (!value.displayName) {
+          var klassName;
+          if (klassName = SC._object_className(this.constructor)) {
+            value.displayName = klassName + '.' + key;  
+          } else if (klassName = SC._object_className(this)) {
+            value.displayName = klassName + '.' + key;  
+          }
+          else if (klassName = SC._object_className(this.superclass)) {
+            value.displayName = klassName + '.' + key;  
+          }
+        }
+      }
+    }
+    if( SC.Benchmark ) SC.Benchmark.end('Generating Display Names');
     return this ;
   },
 
