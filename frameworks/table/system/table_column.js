@@ -85,7 +85,7 @@ SC.TableColumn = SC.Object.extend({
     @property
     @type Boolean
   */
-  isReorderable: YES,
+  isReorderable: NO,
   
   /**
     Whether the column can be sorted.
@@ -123,8 +123,8 @@ SC.TableColumn = SC.Object.extend({
   tableContent: null,
 
   toggleSortState: function() {
-    var sortState = this.get('sortState')
-    this.set('sortState', (sortState != "ASC" ? "ASC" : "DESC"))
+    var sortState = this.get('sortState');
+    this.set('sortState', (sortState != "ASC" ? "ASC" : "DESC"));
   }
   
 });

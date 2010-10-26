@@ -8,7 +8,6 @@
 SC.LIST_ITEM_ACTION_CANCEL = 'sc-list-item-cancel-action';
 SC.LIST_ITEM_ACTION_REFRESH = 'sc-list-item-cancel-refresh';
 SC.LIST_ITEM_ACTION_EJECT = 'sc-list-item-cancel-eject';
-
 /**
   @class
   
@@ -262,7 +261,22 @@ SC.ListItemView = SC.View.extend(
     }
     
     // handle icon
-    if (this.getDelegateProperty('hasContentIcon', del)) {
+    /**
+      [code-rape]
+      disableContentIcon is due to TableView and the builder and the fact that
+      all columns populate the same attributes of contentIcon, disclosureState,
+      and outlineIndent. This is a table-only thing and should not have to be
+      done here since we'd have to override the entire render method in views
+      which is almost just as bad. It wouldn't be an issue if we didn't rely
+      on the delegate (TableView, in this case) for the content icon which is
+      why I 'created' a property on CollectionView to prevent this. Real solution
+      is to have SC.TableColumn handle contentIcon. If you *really* want the icon,
+      it will be the delegate's contentIcon and you can set disableContentIcon: NO in
+      your SC.TableColumn.extend and you'll have it there.
+      
+      Solution: Make TableColumn handle this and not be just an Object
+    */
+    if (this.getDelegateProperty('hasContentIcon', del) && !this.get('disableContentIcon')) {
       key = this.getDelegateProperty('contentIconKey', del) ;
       value = (key && content) ? (content.get ? content.get(key) : content[key]) : null ;
       

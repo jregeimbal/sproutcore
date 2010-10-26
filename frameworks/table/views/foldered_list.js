@@ -10,7 +10,7 @@
 
 */
 
-SC.FolderedListView = SC.ListView.extend(SC.FolderedListViewDelegate,
+SC.FolderedListView = SC.DataView.extend(SC.FolderedListViewDelegate,
 /** @scope SC.FolderedListView.prototype */ { 
   beginEditingSelection: '',
   
@@ -41,14 +41,23 @@ SC.FolderedListView = SC.ListView.extend(SC.FolderedListViewDelegate,
   _selectionDidChange: function() {
     var selectedObject = this.getPath('selection.firstObject');
     if (selectedObject) {
-      var content = this.get('content');
-      var itemView = this.itemViewForContentObject(selectedObject);
-      var beginEditingSelection = this.get('beginEditingSelection');
-      if (beginEditingSelection) { 
-        itemView.beginEditing();
-        this.set('beginEditingSelection', NO);
+      var bES = this.get('beginEditingSelection');
+      if (bES) {
+        var itemView = this.itemViewForContentObject(selectedObject);
+        var columns = itemView.get('childViews');
+        
+        // search for an editable column then break on it and edit
+        for(var i=0,len = columns.length;i<len;i++) {
+          if (columns[i].get('isEditable')) {
+            this.set('beginEditingSelection', NO);
+            columns[i].beginEditing();
+            break;
+          }
+        }
+        
       }
     }
+    
   }.observes('selection'),
   
   didReload: function() {

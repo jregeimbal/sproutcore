@@ -174,15 +174,12 @@ SC.TableView = SC.View.extend({
         contentView: this.get('exampleFolderedListView').design({
           layout:{top:0,left:0,right:0,bottom:0},
           exampleView: this.get('exampleView'),
-          keys: [],
-          columnWidths: [],
           rowHeight: this.get('rowHeight'),
           table: this,
           contentBinding: SC.Binding.from('.content.arrangedObjects',this),
           selectionBinding: SC.Binding.from('.selection',this),
           targetBinding: SC.Binding.from('.target',this),
           actionBinding: SC.Binding.from('.action',this),
-          contentValueKey: 'name',
           hasContentIcon: this.get('hasContentIcon'),
           contentIconKey: 'icon',
           newTargetBinding: SC.Binding.from('.delegate',this),
@@ -197,7 +194,9 @@ SC.TableView = SC.View.extend({
           isDropTarget: this.get('isDropTarget'),
           allowActionOnFolder: this.get('allowActionOnFolder'),
           needsContextMenuBinding: SC.Binding.from('.needsContextMenu',this),
-          allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this)
+          allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this),
+          columnsBinding: SC.Binding.from('.columns',this).oneWay()
+          
         })
       }));
     }
@@ -228,7 +227,7 @@ SC.TableView = SC.View.extend({
           allowDeselectAllBinding: SC.Binding.oneWay().from('allowDeselectAll', this),
           isDropTarget: this.get('isDropTarget'),
           delegate: this.get('delegate'),
-
+          
           targetBinding: SC.Binding.from('.target',this),
           actionBinding: SC.Binding.from('.action',this),
           
@@ -323,7 +322,7 @@ SC.TableView = SC.View.extend({
 
     columns.forEach(function(column, i) {
       offsets[i] = left;
-      stylesheet.insertRule(this._sctv_ruleForColumn(i), i);
+      stylesheet.insertRule(this._sctv_ruleForColumn(i,columns), i);
       left += widths[i] + 1;
     }, this);
     
@@ -335,9 +334,9 @@ SC.TableView = SC.View.extend({
 
      @private
    */
-  _sctv_ruleForColumn: function(column) {
-    var columns = this.get('columns'),
-      col = columns.objectAt(column),
+  _sctv_ruleForColumn: function(column,columns) {
+    if (!columns) columns = this.get('columns');
+    var col = columns.objectAt(column),
       width = col.get('width') - 1;
     this._widths[column] = width ;
     return ['#'+this.get('layerId')+' div.column-' + column + ' {',
@@ -376,7 +375,7 @@ SC.TableView = SC.View.extend({
         {
           this._offsets[i] += diff;
         }
-        css.insertRule(this._sctv_ruleForColumn(i), i);
+        css.insertRule(this._sctv_ruleForColumn(i,columns), i);
       }
       
       this._dataView.get('contentView').calculatedWidth += diff;

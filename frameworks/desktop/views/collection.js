@@ -429,6 +429,12 @@ SC.CollectionView = SC.View.extend(
   */
   calculatedWidth: 0,
   
+  /**
+    outlineIndent is used for padding in the rows that are created here
+  */
+  
+  outlineIndent: 16,
+  
   
   // ..........................................................
   // SUBCLASS METHODS
@@ -1077,8 +1083,9 @@ SC.CollectionView = SC.View.extend(
   itemViewForContentIndex: function(idx, rebuild) {
     var ret, 
         rowView=this.get('rowView') || SC.View,
-        rowViewInstance,
+        rowViewInstance, canEditContent = this.get('canEditContent'),
         columns = this.get('columns') || [null];
+    var isEditable = canEditContent;
 
     // Use the cached view for this index, if we have it.  We'll do this up-
     // front to avoid 
@@ -1095,6 +1102,7 @@ SC.CollectionView = SC.View.extend(
         item = content.objectAt(idx),
         del  = this.get('contentDelegate'),
         groupIndexes = this.get('_contentGroupIndexes'),
+        outlineIndent = this.get('outlineIndent'),
         isGroupView = NO,
         key, E, layout, layerId,
         viewPoolKey, viewPool, reuseFunc, parentView, isEnabled, isSelected,
@@ -1132,6 +1140,10 @@ SC.CollectionView = SC.View.extend(
     layout            = this.layoutForContentIndex(idx); 
     for (var i=0;i<columns.length;i++)
     {
+      if(columns[i] && canEditContent) {
+        var _ie = columns[i].get('isEditable');
+        isEditable = SC.none(_ie) ? YES : _ie;
+      }
       //TODO [AP]: rowViews should be cached too. Also consider cell selection
       if (columns[i]!==null && !rowViewInstance){
         rowViewInstance = this.createChildView(rowView.design({
@@ -1144,7 +1156,8 @@ SC.CollectionView = SC.View.extend(
           content:item,
           isSelected:isSelected,
           outlineLevel:outlineLevel,
-          disclosureState:disclosureState
+          disclosureState:(i===0)?disclosureState:SC.LEAF_NODE,
+          isEditable: isEditable
         }));
       }
       
@@ -1171,8 +1184,32 @@ SC.CollectionView = SC.View.extend(
           ret.set('isEnabled', isEnabled);
           ret.set('isSelected', isSelected);
           ret.set('outlineLevel', outlineLevel);
-          ret.set('disclosureState', disclosureState);
+          ret.set('disclosureState', (i===0)?disclosureState:SC.LEAF_NODE);
+          ret.set('isEditable', isEditable);
           ret.set('isVisibleInWindow', isVisibleInWindow);
+          
+          /**
+            toggle attributes based on index
+            
+            This is crazy code-rape: Because this is setting up a master stamp
+            to create columns in a row, it applies the contentIcon, disclosureState,
+            and outlineIndent on ALL columns in a row. This is a shortcut that renders
+            the view factory concept useless. This should not have to be triggered
+            here since it is, from what I can tell, really only used for TableView as
+            evidenced by the gets for rowView and columns at the start of itemViewForContentIndex.
+            
+            Long term solution:
+            This whole part needs to be stripped out of CollectionView
+            and to be handled by Table since this is for Table and Table only.
+          */
+          
+          if (i!==0) {
+            ret.set('disableContentIcon',YES);
+            ret.set('outlineIndent',0);
+          } else {
+            ret.set('disableContentIcon',NO);
+            ret.set('outlineIndent',outlineIndent);
+          }
           var classNames = ret.get('classNames') || [];
           if (rowViewInstance){
             classNames.push('column-'+i);
@@ -1182,6 +1219,7 @@ SC.CollectionView = SC.View.extend(
             ret.set('contentValueKey', columns[i].get('key'));
             ret.set('column',columns[i]);
             ret.set('isSelected', SC.Binding.from('*parentView.isSelected',ret));
+            
           }
           ret.set('classNames',classNames);
 
@@ -1219,10 +1257,23 @@ SC.CollectionView = SC.View.extend(
         attrs.layerId           = rowViewInstance?this.layerIdFor(idx,i):layerId;
         attrs.isEnabled         = isEnabled;
         attrs.isSelected        = isSelected;
+        attrs.isEditable        = isEditable;
         attrs.outlineLevel      = outlineLevel;
-        attrs.disclosureState   = disclosureState;
         attrs.isGroupView       = isGroupView;
         attrs.isVisibleInWindow = isVisibleInWindow;
+        attrs.disclosureState   = (i===0) ? disclosureState:SC.LEAF_NODE;
+        
+        
+        // toggle attributes based on index
+        // see 'code-rape' above
+        if (i!==0) {
+          attrs.disableContentIcon = YES;
+          attrs.outlineIndent = 0;
+        } else {
+          attrs.disableContentIcon = NO;
+          attrs.outlineIndent = outlineIndent;
+        }
+        
         if (isGroupView) attrs.classNames = this._GROUP_COLLECTION_CLASS_NAMES.copy();
         else attrs.classNames = this._COLLECTION_CLASS_NAMES.copy();
         if(rowViewInstance){
