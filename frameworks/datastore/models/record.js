@@ -376,7 +376,7 @@ SC.Record = SC.Object.extend(
   propagateToAggregates: function() {
     var storeKey = this.get('storeKey'),
         recordType = SC.Store.recordTypeFor(storeKey), 
-        idx, len, key, val, recs;
+        idx, len, key, val, recs, f;
     
     var aggregates = recordType.aggregates;
     
@@ -396,27 +396,47 @@ SC.Record = SC.Object.extend(
     // now loop through all aggregate properties and mark their related
     // record objects as dirty
     var K = SC.Record;
+
+    f = function(rec) {
+      // If the child is dirty, then make sure the parent gets a dirty
+      // status.  (If the child is created or destroyed, there's no need,
+      // because the parent will dirty itself when it modifies that
+      // relationship.)
+      if (rec) { 
+        var childStatus = this.get('status');
+        if (childStatus & K.DIRTY) {
+          var parentStatus = rec.get('status');
+          if (parentStatus === K.READY_CLEAN) {
+            // Note:  storeDidChangeProperties() won't put it in the
+            //        changelog!
+            rec.get('store').recordDidChange(rec.constructor, null, rec.get('storeKey'), null, YES);
+          }
+        }
+      }
+    };
+
     for(idx=0,len=aggregates.length;idx<len;++idx) {
       key = aggregates[idx];
       val = this.get(key);
       recs = SC.kindOf(val, SC.ManyArray) ? val : [val];
-      recs.forEach(function(rec) {
-        // If the child is dirty, then make sure the parent gets a dirty
-        // status.  (If the child is created or destroyed, there's no need,
-        // because the parent will dirty itself when it modifies that
-        // relationship.)
-        if (rec) { 
-          var childStatus = this.get('status');
-          if (childStatus & K.DIRTY) {
-            var parentStatus = rec.get('status');
-            if (parentStatus === K.READY_CLEAN) {
-              // Note:  storeDidChangeProperties() won't put it in the
-              //        changelog!
-              rec.get('store').recordDidChange(rec.constructor, null, rec.get('storeKey'), null, YES);
-            }
-          }
-        }
-      }, this);
+      // recs.forEach(function(rec) {
+      //   // If the child is dirty, then make sure the parent gets a dirty
+      //   // status.  (If the child is created or destroyed, there's no need,
+      //   // because the parent will dirty itself when it modifies that
+      //   // relationship.)
+      //   if (rec) { 
+      //     var childStatus = this.get('status');
+      //     if (childStatus & K.DIRTY) {
+      //       var parentStatus = rec.get('status');
+      //       if (parentStatus === K.READY_CLEAN) {
+      //         // Note:  storeDidChangeProperties() won't put it in the
+      //         //        changelog!
+      //         rec.get('store').recordDidChange(rec.constructor, null, rec.get('storeKey'), null, YES);
+      //       }
+      //     }
+      //   }
+      // }, this);
+      recs.forEach(f, this);
     }
     
   },
@@ -1071,6 +1091,10 @@ SC.Record.mixin( /** @scope SC.Record */ {
       attr = SC.ManyAttribute.attr(recordType, opts);
     }
     return attr;
+  },
+  
+  toManyNested: function(recordType, opts) {
+    return SC.ManyNestedAttribute.attr(recordType, opts || {});
   },
   
   /**
