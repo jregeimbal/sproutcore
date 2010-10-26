@@ -543,7 +543,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         storeKeys = storeKeys.copy();
       }
       
-      if(query.get('allowOrderBy')) storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
+      //storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
       if (SC.compare(oldStoreKeys, storeKeys) !== 0){
         this.set('storeKeys', SC.clone(storeKeys)); // replace content
       }

@@ -169,13 +169,6 @@ SC.Query = SC.Object.extend(SC.Copyable, SC.Freezable,
   */
   isQuery: YES,
   
-  
-  /**
-    hack for preventing Long running scripts in asset choosers on server
-    response
-    @property {Boolean}
-  **/
-  allowOrderBy: YES,
   /**
     Unparsed query conditions.  If you are handling a query yourself, then 
     you will find the base query string here.
