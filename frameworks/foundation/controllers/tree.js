@@ -66,7 +66,9 @@ SC.TreeController = SC.ObjectController.extend(SC.SelectionSupport,
     @property {SC.Array}
   */
   arrangedObjects: function() {
-    var ret, content = this.get('content');
+    var content = this.get('content');
+    var ret = this._sctc_arrangedObjects;
+    if (ret) ret.destroy();
     if (content) {
       ret = SC.TreeItemObserver.create({ item: content, delegate: this });
     } else ret = null; // empty!
