@@ -514,7 +514,10 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       } else if (recordType = query.get('expandedRecordTypes')) {
         sourceKeys = SC.IndexSet.create();
         recordType.forEach(function(cur) { 
-          sourceKeys.addEach(store.storeKeysFor(recordType));
+          if (query.folderId) { 
+            sourceKeys.addEach(store.folderIdsFor(query.folderId));
+          }
+          else sourceKeys.addEach(store.storeKeysFor(recordType));
         });
       }
 
