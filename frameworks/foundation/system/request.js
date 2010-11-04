@@ -567,7 +567,9 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
     if (this.get('pending').length || this.get('inflight').length) {
       this.set('pending', []);
       this.get('inflight').forEach(function(r) { r.cancel(); });
+      SC.RunLoop.begin();
       this.set('inflight', []);
+      SC.RunLoop.end();
       return YES;
       
     } else return NO ;
