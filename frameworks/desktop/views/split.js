@@ -764,7 +764,8 @@ SC.SplitView = SC.View.extend(
   
   /* Force to rendering once the pane is attached */
   _forceSplitCalculation: function(){
-    this.updateLayout(); 
+    var isPaneAttached = this.getPath('pane.isPaneAttached');
+    if (isPaneAttached) this.updateLayout(); 
   }.observes('*pane.isPaneAttached'),
 
   /**
