@@ -167,6 +167,9 @@ SC.ImageView = SC.View.extend(SC.Control,
     // since changed.
     if (this.get('value') === url) {
       this.set('status', SC.$ok(imageOrError) ? SC.IMAGE_STATE_LOADED : SC.IMAGE_STATE_FAILED);
+      if (this.get('status') === SC.IMAGE_STATE_LOADED) {
+        this.adjust({ height: imageOrError.height, width: imageOrError.width });
+      } 
       this.displayDidChange();
     }
   }
