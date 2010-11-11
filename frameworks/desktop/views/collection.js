@@ -1293,7 +1293,8 @@ SC.CollectionView = SC.View.extend(
         }
 
         ret = rowViewInstance? rowViewInstance.createChildView(E,attrs):this.createItemView(E, idx, attrs);
-
+        ret.set('owner', this);
+        
         if (rowViewInstance){
           rowViewInstance.get('childViews').push(ret);
           ret = null;
