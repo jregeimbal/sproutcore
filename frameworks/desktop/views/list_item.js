@@ -786,7 +786,7 @@ SC.ListItemView = SC.View.extend(
     
     // nothing to do...    
     if (!parent || !el || el.get('length')===0) return NO ;
-    v = (labelKey && content && content.get) ? content.get(labelKey) : null ;
+    v = (labelKey && content && content.get) ? content.get(labelKey) : content ;
     
     f = this.computeFrameWithParentFrame(null);
     offset = SC.viewportOffset(el[0]);
@@ -895,12 +895,17 @@ SC.ListItemView = SC.View.extend(
   */
   inlineEditorDidEndEditing: function(inlineEditor, finalValue) {
     this.set('isEditing', NO) ;
-    
+
     var content = this.get('content') ;
     var del = this.displayDelegate ;
     var labelKey = this.getDelegateProperty('contentValueKey', del) ;
     if (labelKey && content && content.set) {
      content.set(labelKey, finalValue) ;
+    }
+    else {
+      var collectionViewContent = this.getPath('owner.content');
+      var idx = this.get('contentIndex');
+      collectionViewContent.replace(idx, 1, [finalValue]);
     }
     this.displayDidChange();
   }
