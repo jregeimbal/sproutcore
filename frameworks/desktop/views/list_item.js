@@ -780,6 +780,16 @@ SC.ListItemView = SC.View.extend(
       this.invokeLast(function() {
         var item = collectionView.itemViewForContentIndex(idx);
         if (item && item._beginEditing) item._beginEditing(NO);
+        else {
+          var columns = item.get('childViews');
+          // search for an editable column then break on it and edit
+          for(var i=0,len = columns.length;i<len;i++) {
+            if (columns[i].get('isEditable')) {
+              columns[i]._beginEditing(NO);
+              break;
+            }
+          }
+        }
       });
       return YES; // let the scroll happen then begin editing...
     }
