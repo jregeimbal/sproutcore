@@ -1295,6 +1295,11 @@ SC.CollectionView = SC.View.extend(
         ret = rowViewInstance? rowViewInstance.createChildView(E,attrs):this.createItemView(E, idx, attrs);
         ret.set('owner', this);
         
+        // [MC] Delete these special properties from attr. Specifically, the isSelectedBinding
+        // property is causing havoc if not removed.
+        delete attrs.column;
+        delete attrs.isSelectedBinding;
+        
         if (rowViewInstance){
           rowViewInstance.get('childViews').push(ret);
           ret = null;
