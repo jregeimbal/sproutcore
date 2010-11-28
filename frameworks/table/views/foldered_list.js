@@ -14,6 +14,8 @@ SC.FolderedListView = SC.DataView.extend(SC.FolderedListViewDelegate,
 /** @scope SC.FolderedListView.prototype */ { 
   beginEditingSelection: '',
   
+  scrollToSelection: '',
+  
   /**
     Set to NO if you don't want to allow target/action on a folder.
   */
@@ -54,7 +56,14 @@ SC.FolderedListView = SC.DataView.extend(SC.FolderedListViewDelegate,
             break;
           }
         }
-        
+      }
+      
+      var scrollToSelection = this.get('scrollToSelection');
+
+      if (scrollToSelection) {
+        var item = this.itemViewForContentObject(selectedObject);
+        item.scrollToVisible();
+        this.set('scrollToSelection', NO);
       }
     }
     

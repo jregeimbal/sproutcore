@@ -72,6 +72,14 @@ SC.TableView = SC.View.extend({
   exampleScrollView: SC.ScrollView,
   
   /**
+    Binding path to allow for scrolling to a new selection in the foldered list view.
+    
+    @property {String}
+  */
+  
+  scrollToSelectionPath: null,
+  
+  /**
     An example ListView that will be used to paint the foldered list view of the tableView.
     This is useful to add customization to your listview.
     
@@ -195,8 +203,8 @@ SC.TableView = SC.View.extend({
           allowActionOnFolder: this.get('allowActionOnFolder'),
           needsContextMenuBinding: SC.Binding.from('.needsContextMenu',this),
           allowDeselectAllBinding: SC.Binding.from('allowDeselectAll', this),
-          columnsBinding: SC.Binding.from('.columns',this).oneWay()
-          
+          columnsBinding: SC.Binding.from('.columns',this).oneWay(),
+          scrollToSelectionBinding: this.get('scrollToSelectionPath') || SC.binding('.scrollToSelection',this.get('delegate'))
         })
       }));
     }
