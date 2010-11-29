@@ -515,7 +515,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         sourceKeys = SC.IndexSet.create();
         recordType.forEach(function(cur) { 
           // HACK: [BB] Temporary folderId index to prevent long runners until we move to inch worm view.
-          if (query.folderId) { 
+          if (query.folderId && store.folderIdsFor) { 
             sourceKeys.addEach(store.folderIdsFor(query.folderId));
           }
           else sourceKeys.addEach(store.storeKeysFor(recordType));
