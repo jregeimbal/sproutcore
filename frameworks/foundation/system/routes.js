@@ -60,6 +60,15 @@ SC.routes = SC.Object.create({
   */
   _location: null,
   
+  
+  /** @private
+    Internal flag whether or not to actually trigger a route
+  
+    @property
+    @type {Bool}
+  */
+  _skipRoute: NO,
+  
   /** @private
     Routes are stored in a tree structure, this is the root node.
   
@@ -166,6 +175,22 @@ SC.routes = SC.Object.create({
     @type {String}
   */
   location: function(key, value) {
+    this._skipRoute = NO;
+    return this._extractLocation(key, value);
+  }.property(),
+  
+  /*
+    Use this property only when you want to just change the location w/ triggering the routes
+  */
+  informLocation: function(key, value){
+    this._skipRoute = YES;
+    return this._extractLocation(key, value);
+  }.property(),
+  
+  /*
+    private location parsing function
+  */
+  _extractLocation: function(key, value){
     var crumbs;
     
     if (value !== undefined) {
@@ -184,7 +209,7 @@ SC.routes = SC.Object.create({
       return this;
     }
     return this._location;
-  }.property(),
+  },
   
   /**
     You usually don't need to call this method. It is done automatically after
@@ -245,12 +270,12 @@ SC.routes = SC.Object.create({
       // because of bug https://bugzilla.mozilla.org/show_bug.cgi?id=483304
       loc = decodeURI(loc);
     }
-    
-    if (this.get('location') !== loc) {
+    if (this.get('location') !== loc && !this._skipRoute) {
       SC.RunLoop.begin();
       this.set('location', loc);
       SC.RunLoop.end();
     }
+    this._skipRoute = NO;
   },
   
   /**
