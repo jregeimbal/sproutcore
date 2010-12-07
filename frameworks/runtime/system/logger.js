@@ -142,10 +142,10 @@ SC.Logger = SC.Object.create({
       // include support for overriding the alert through the reporter
       // if it has come this far, it's likely this will fail
       if (this.get('exists') && typeof(reporter.alert) === "function") {
-        reporter.alert(s);
+        reporter.alert("SC.Logger#log(): "+s);
       }
       else {
-        alert(s);
+        alert("SC.Logger#log(): "+s);
       }
       return true;
     }
