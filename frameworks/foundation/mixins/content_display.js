@@ -34,6 +34,13 @@ SC.ContentDisplay = {
   /** @private */
   displayProperties: ['content'],
   
+  /** @private
+    Setup observers on the content object when initializing the mixin.
+  */
+  initMixin: function() {
+    this._display_contentDidChange();
+  },
+  
   /** 
     Add an array with the names of any property on the content object that
     should trigger an update of the display for your view.  Changes to the
