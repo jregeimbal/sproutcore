@@ -184,7 +184,7 @@ SC.TableView = SC.View.extend({
           exampleView: this.get('exampleView'),
           rowHeight: this.get('rowHeight'),
           table: this,
-          contentBinding: SC.Binding.from('.content.arrangedObjects',this),
+          contentBinding: SC.Binding.from('*content.arrangedObjects',this),
           selectionBinding: SC.Binding.from('.selection',this),
           targetBinding: SC.Binding.from('.target',this),
           actionBinding: SC.Binding.from('.action',this),
