@@ -223,8 +223,8 @@ SC.Record = SC.Object.extend(
     
     @returns {SC.Record} receiver
   */
-  refresh: function() { 
-    this.get('store').refreshRecord(null, null, this.get('storeKey'));
+  refresh: function(params) { 
+    this.get('store').refreshRecord(null, null, this.get('storeKey'), params);
     return this ;
   },
   

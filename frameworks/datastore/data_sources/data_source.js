@@ -103,8 +103,8 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
     @param {Array} ids - optional
     @returns {Boolean} YES if handled, NO otherwise
   */
-  retrieveRecords: function(store, storeKeys, ids) {
-    return this._handleEach(store, storeKeys, this.retrieveRecord, ids);  
+  retrieveRecords: function(store, storeKeys, ids, params) {
+    return this._handleEach(store, storeKeys, this.retrieveRecord, ids, params);  
   },
   
   /**
