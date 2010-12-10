@@ -1423,7 +1423,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Boolean} isRefresh
     @returns {Array} storeKeys to be retrieved
   */
-  retrieveRecords: function(recordTypes, ids, storeKeys, isRefresh) {
+  retrieveRecords: function(recordTypes, ids, storeKeys, isRefresh, params) {
     
     var source  = this._getDataSource(),
         isArray = SC.typeOf(recordTypes) === SC.T_ARRAY,
@@ -1479,7 +1479,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // now retrieve storekeys from dataSource.  if there is no dataSource,
     // then act as if we couldn't retrieve.
     ok = NO;
-    if (source) ok = source.retrieveRecords.call(source, this, ret, ids);
+    if (source) ok = source.retrieveRecords.call(source, this, ret, ids, params);
 
     // if the data source could not retrieve or if there is no source, then
     // simulate the data source calling dataSourceDidError on those we are 
@@ -1523,7 +1523,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Boolean} isRefresh
     @returns {Number} storeKey that was retrieved 
   */
-  retrieveRecord: function(recordType, id, storeKey, isRefresh) {
+  retrieveRecord: function(recordType, id, storeKey, isRefresh, params) {
     var array = this._TMP_RETRIEVE_ARRAY,
         ret;
     
@@ -1536,7 +1536,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       id = array;
     }
     
-    ret = this.retrieveRecords(recordType, id, storeKey, isRefresh);
+    ret = this.retrieveRecords(recordType, id, storeKey, isRefresh, params);
     array.length = 0 ;
     return ret[0];
   },
@@ -1551,8 +1551,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Number} storeKey (optional) optional store key
     @returns {Boolean} YES if the retrieval was a success.
   */
-  refreshRecord: function(recordType, id, storeKey) {
-    return !!this.retrieveRecord(recordType, id, storeKey, YES);
+  refreshRecord: function(recordType, id, storeKey, params) {
+    return !!this.retrieveRecord(recordType, id, storeKey, YES, params);
   },
 
   /**
@@ -1565,8 +1565,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Array} storeKeys (optional) store keys to destroy
     @returns {Boolean} YES if the retrieval was a success.
   */
-  refreshRecords: function(recordTypes, ids, storeKeys) {
-    var ret = this.retrieveRecords(recordTypes, ids, storeKeys, YES);
+  refreshRecords: function(recordTypes, ids, storeKeys, params) {
+    var ret = this.retrieveRecords(recordTypes, ids, storeKeys, YES, params);
     return ret && ret.length>0;
   },
     
