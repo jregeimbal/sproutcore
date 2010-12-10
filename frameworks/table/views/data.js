@@ -55,22 +55,10 @@ SC.DataView = SC.ListView.extend({
      }
      var columns = this.get('columns');
      return {
-       top: 0,
-       bottom: 0,
-       left: this._leftLayoutForColumnIndex(i), 
-       width: columns.objectAt(i).get('width')
+       top:0,
+       bottom:0,
+       width:columns.objectAt(i).get('width')
      };
-   },
-   
-   _leftLayoutForColumnIndex: function(i) {
-     var ret = 0;
-     
-     if (i > 0) {
-       var columns = this.get('columns');
-       ret = this._leftLayoutForColumnIndex(i-1) + columns.objectAt(i-1).get('width');
-     }
-     
-     return ret;
    },
   
    /**
