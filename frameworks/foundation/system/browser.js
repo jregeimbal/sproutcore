@@ -18,6 +18,7 @@ SC.mixin(SC.browser, (function() {
     isIe: !!browser.msie,
     isIE: !!browser.msie,
     isSafari: !!browser.safari,
+    isChrome: !!browser.chrome && !!!browser.safari,
     isMobileSafari: (!!browser.mobileSafari || !!browser.standalone),
     isMozilla: !!browser.mozilla,
     isWindows: !!browser.windows,
@@ -26,7 +27,7 @@ SC.mixin(SC.browser, (function() {
 
     /**
       The current browser name.  This is useful for switch statements. */
-    current: browser.msie ? 'msie' : browser.mozilla ? 'mozilla' : browser.safari ? 'safari' : browser.opera ? 'opera' : 'unknown',
+    current: browser.msie ? 'msie' : browser.mozilla ? 'mozilla' : browser.chrome ? 'chrome' : browser.safari ? 'safari' : browser.opera ? 'opera' : 'unknown',
     
     /**
       Pass any number of arguments, and this will check them against the browser
