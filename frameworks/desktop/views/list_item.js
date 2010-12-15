@@ -794,6 +794,13 @@ SC.ListItemView = SC.View.extend(
       return YES; // let the scroll happen then begin editing...
     }
     
+    // HACK: [BB] For some reason adding a new item to a foldered list in a table only scrolls to the line before the actual item the FIRST TIME only.
+    // I'm unable to locate the root cause of this bug as it seems to be buried deep in the scroll code.  So I'm simply scrolling to the item again
+    // a second time as a stopgap solution with minimal peformance impact.
+    SC.RunLoop.begin();
+    this.scrollToVisible();
+    SC.RunLoop.end();
+    
     // nothing to do...    
     if (!parent || !el || el.get('length')===0) return NO ;
     v = (labelKey && content && content.get) ? content.get(labelKey) : content ;
