@@ -799,13 +799,6 @@ SC.ListItemView = SC.View.extend(
    this._oldOpacity = el.css('opacity');
    el.css('opacity', 0.0) ;
   },
-  
-  /** @private
-   Could check with a validator someday...
-  */
-  inlineEditorShouldBeginEditing: function(inlineEditor) {
-   return YES ;
-  },
 
   /** @private
    Could check with a validator someday...
