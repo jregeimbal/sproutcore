@@ -354,7 +354,6 @@ SC.Drag = SC.Object.extend(
     var last = this._lastTarget ;
     var target = this._findDropTarget(evt) ; // deepest drop target
     var op = SC.DRAG_NONE ;
-    
     while (target && (target !== last) && (op === SC.DRAG_NONE)) {
       // make sure the drag source will permit a drop operation on the named 
       // target
@@ -372,7 +371,6 @@ SC.Drag = SC.Object.extend(
       // if DRAG_NONE, then look for the next parent that is a drop zone
       if (op === SC.DRAG_NONE) target = this._findNextDropTarget(target) ;
     }
-    
     // STEP 2: Refocus the drop target if needed
     if (target !== last) {
       if (last && last.dragExited) last.dragExited(this, evt) ;
@@ -601,33 +599,25 @@ SC.Drag = SC.Object.extend(
     area.
   */
   _findDropTarget: function(evt) {
-    var loc = { x: evt.pageX, y: evt.pageY } ;
-    
-    if(this.iframeTargetOffset){
-      loc.x = loc.x - this.iframeTargetOffset.x;
-      loc.y = loc.y - this.iframeTargetOffset.y;
-    }
+    var loc = { x: evt.pageX, y: evt.pageY }, iframeLoc = this.iframeTargetOffset ;
     
     var target, frame ;
     var ary = this._dropTargets() ;
     for (var idx=0, len=ary.length; idx<len; idx++) {
       target = ary[idx] ;
-      //Because the items in the targets array could come from the
-      //innerIframe (which no longer exists) try and remove them...
-      //TODO: [MB] got to be a better way...
-      try{
-        // If the target is not visible, it is not valid.
-        if (!target.get('isVisibleInWindow')) continue ;
+      // If the target is not visible, it is not valid.
+      if (!target.get('isVisibleInWindow')) continue ;
 
-        // get clippingFrame, converted to the pane.
-        frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
-        
-        // check to see if loc is inside.  If so, then make this the drop target
-        // unless there is a drop target and the current one is not deeper.
-        if (SC.pointInRect(loc, frame)) return target;
-      }catch(e){
-        SC.Drag.removeDropTarget(target);
+      // get clippingFrame, converted to the pane.
+      frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
+      //convert to iframe pane if it is in the winodw
+      if(iframeLoc && target.targetIsInIFrame){
+        frame.x += iframeLoc.x;
+        frame.y += iframeLoc.y;
       }
+      // check to see if loc is inside.  If so, then make this the drop target
+      // unless there is a drop target and the current one is not deeper.
+      if(SC.pointInRect(loc, frame)) return target;
 
     } 
     return null ;
