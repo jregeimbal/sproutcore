@@ -497,7 +497,9 @@ SC.Object.prototype = {
   */
   init: function() {
     this.initObservable();
-    if( SC.Benchmark )  SC.Benchmark.start('Generating Display Names');
+
+    if (SC.BENCHMARK_OBJECTS && SC.Benchmark)  SC.Benchmark.start('Generating Display Names');
+
     // Add Nice DisplayNames for Profiling 
     for (var key in this) {
       var value = this[key];
@@ -515,7 +517,9 @@ SC.Object.prototype = {
         }
       }
     }
-    if( SC.Benchmark ) SC.Benchmark.end('Generating Display Names');
+
+    if (SC.BENCHMARK_OBJECTS && SC.Benchmark) SC.Benchmark.end('Generating Display Names');
+
     return this ;
   },
 
