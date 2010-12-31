@@ -57,7 +57,17 @@ SC.ScrollView = SC.View.extend(SC.Border, {
           maxOffset = this.get('maximumHorizontalScrollOffset');
       this._scroll_horizontalScrollOffset = Math.max(minOffset,Math.min(maxOffset, value)) ;
     }
-
+    
+    if (this.get('isVerticalScrollerVisible')) {
+      var v = this.get('verticalScrollerView');
+      if (v) {
+        var w = v.layout.width + value;
+        if (maxOffset === (w) ) {
+          value = w;
+        }
+      }
+    }
+    
     return this._scroll_horizontalScrollOffset||0;
   }.property().cacheable(),
   
@@ -68,9 +78,20 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     if (value !== undefined) {
       var minOffset = this.get('minimumVerticalScrollOffset'),
           maxOffset = this.get('maximumVerticalScrollOffset');
+      
+      if (this.get('isHorizontalScrollerVisible')) {
+        var v = this.get('horizontalScrollerView');
+        if (v) {
+          var h = v.layout.height + value;
+          if (maxOffset === (h) ) {
+            value = h;
+          }
+        }
+      }
+
       this._scroll_verticalScrollOffset = Math.max(minOffset,Math.min(maxOffset, value)) ;
     }
-
+    
     return this._scroll_verticalScrollOffset||0;
   }.property().cacheable(),
   
@@ -1463,7 +1484,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
       view.setIfChanged('maximum', width-dim.width) ;
       view.setIfChanged('proportion', dim.width/width);
     }
-    
+
     if (this.get('hasVerticalScroller') && (view = this.get('verticalScrollerView'))) {
       // decide if it should be visible or not
       if (this.get('autohidesVerticalScroller')) {
