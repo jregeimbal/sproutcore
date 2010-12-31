@@ -1564,9 +1564,12 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     // This gives views that use incremental rendering a chance to render
     // newly-appearing elements before they come into view.
     if (content) {
-      SC.RunLoop.begin();
+      /**
+        Removed the run loop around the notifyPropertyChange
+        here because it causes havoc on HUGE lists.
+        Blank views, really choppy... very strange.
+      */
       content.notifyPropertyChange('frame');
-      SC.RunLoop.end();
 
       // Use accelerated drawing if the browser supports it
       if (SC.browser.touch) {
