@@ -196,7 +196,7 @@ Greenhouse.mixin( /** @scope Greenhouse */{
           frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
 
           //if this is in the iframe adjust the frame accordingly
-          if(target.get('targetIsInIFrame')){
+          if(target.get('inGlobalOffset')){
              frame.x = frame.x + webViewFrame.x;
              frame.y = frame.y + webViewFrame.y;
            }

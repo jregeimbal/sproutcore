@@ -599,7 +599,7 @@ SC.Drag = SC.Object.extend(
     area.
   */
   _findDropTarget: function(evt) {
-    var loc = { x: evt.pageX, y: evt.pageY }, iframeLoc = this.iframeTargetOffset ;
+    var loc = { x: evt.pageX, y: evt.pageY }, globalOffset = this.globalTargetOffset ;
     
     var target, frame ;
     var ary = this._dropTargets() ;
@@ -611,9 +611,9 @@ SC.Drag = SC.Object.extend(
       // get clippingFrame, converted to the pane.
       frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
       //convert to iframe pane if it is in the winodw
-      if(iframeLoc && target.targetIsInIFrame){
-        frame.x += iframeLoc.x;
-        frame.y += iframeLoc.y;
+      if(globalOffset && target.inGlobalOffset){
+        frame.x += globalOffset.x;
+        frame.y += globalOffset.y;
       }
       // check to see if loc is inside.  If so, then make this the drop target
       // unless there is a drop target and the current one is not deeper.

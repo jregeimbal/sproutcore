@@ -46,7 +46,7 @@ SC.designPage = SC.Page.create({
         canReorderContent: YES,
         canDeleteContent: YES,
         actOnSelect: YES,
-        targetIsInIFrame: YES,
+        inGlobalOffset: YES,
         target: 'SC.designController',
         action: 'viewSelected'
       })

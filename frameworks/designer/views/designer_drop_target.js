@@ -60,7 +60,7 @@ SC.DesignerDropTarget = SC.ContainerView.extend(
   // 
   isDropTarget: YES,
   
-  targetIsInIFrame: YES,
+  inGlobalOffset: YES,
   
   dragStarted: function(drag, evt) {
   },
