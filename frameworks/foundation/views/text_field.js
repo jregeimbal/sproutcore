@@ -725,10 +725,17 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     //if (this._isFocused) this._isFocused = NO ;
   },
 
+  // [JS] bringing in updated code from sproutcore 1.4.X (well, most recent as of 2011-01-18)
+  // as the inputElem make come up undefined (and willBecomeKeyResponderFrom does check for that, but this method didn't)
+  // --
   // In IE, you can't modify functions on DOM elements so we need to wrap the
   // call to select() like this.
   _selectRootElement: function() {
-    this.$input()[0].select() ;
+    // make sure input element still exists, as a redraw could have remove it
+    // already
+    var inputElem = this.$input()[0];
+    if(inputElem) inputElem.select() ;
+    else this._textField_selectionDidChange();
   },
 
   // when we lose first responder, blur the text field if needed and show
