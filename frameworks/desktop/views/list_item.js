@@ -196,12 +196,15 @@ SC.ListItemView = SC.View.extend(
 		return value;
 	}.property('content', 'localize').cacheable(),
   
-  contentPropertyDidChange: function() {
+  contentPropertyDidChange: function(target, key) {
     //if (this.get('isEditing')) this.discardEditing() ;
     if (this.get('contentIsEditable') !== this.contentIsEditable()) {
       this.notifyPropertyChange('contentIsEditable');
     }
-    
+    if (key === this.getDelegateProperty('contentValueKey', this.displayDelegate)) {
+      this.notifyPropertyChange('displayValue');
+    }
+        
     this.displayDidChange();
   },
   
