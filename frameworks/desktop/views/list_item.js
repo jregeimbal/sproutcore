@@ -830,14 +830,17 @@ SC.ListItemView = SC.View.extend(
         lineHeightShift = (lineHeight - targetLineHeight) / 2; 
       } else oldLineHeight = null ;
     }
-
+    
+    var leftMargin = el.css('margin-left');
+    leftMargin = leftMargin ? parseInt(leftMargin.substring(0,leftMargin.length-2),0) : 0;
+    
     f.x = offset.x;
     f.y = offset.y+top + lineHeightShift ;
     f.height = el[0].offsetHeight ;
-    f.width = el[0].offsetWidth ;
+    f.width = f.width - 2*leftMargin;
 
     escapeHTML = this.get('escapeHTML');
-
+    
     ret = SC.InlineTextFieldView.beginEditing({
       frame: f, 
       exampleElement: el,
