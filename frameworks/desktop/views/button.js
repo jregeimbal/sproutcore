@@ -289,7 +289,7 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
         "px'>");
     
       this.renderTitle(context, firstTime) ; // from button mixin
-      if ( this.get('isSelect') ) { context.push("<div class='sc-button-inner-arrow' style='width: 16px;height: 16px;position: absolute;right: 0;top: 0;'></div>"); }
+      if ( this.get('isSelect') ) { context.push("<div class='sc-button-arrow' style='width: 9px; height: 15px; position: absolute; top: 5px; right: 7px;'></div>"); }
       context.push("</span>") ;
     
       if(this.get('supportFocusRing')) {
