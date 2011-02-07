@@ -37,7 +37,7 @@ SC.BENCHMARK_OBJECTS = NO;
   @returns {Hash} base hash
 */
 SC._object_extend = function _object_extend(base, ext) {
-  if (!ext) throw "SC.Object.extend expects a non-null value.  Did you forget to 'sc_require' something?  Or were you passing a Protocol to extend() as if it were a mixin?";
+  if (!ext) throw "SC.Object.extend on %@ expects a non-null value.  Did you forget to 'sc_require' something?  Or were you passing a Protocol to extend() as if it were a mixin?".fmt(base);
 
   // set _kvo_cloned for later use
   base._kvo_cloned = null;
