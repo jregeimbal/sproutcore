@@ -504,29 +504,6 @@ SC.Object.prototype = {
   */
   init: function() {
     this.initObservable();
-
-    if (SC.BENCHMARK_OBJECTS && SC.Benchmark)  SC.Benchmark.start('Generating Display Names');
-
-    // Add Nice DisplayNames for Profiling 
-    for (var key in this) {
-      var value = this[key];
-      if (value && (value instanceof Function)) {
-        if (!value.displayName) {
-          var klassName;
-          if (klassName = SC._object_className(this.constructor)) {
-            value.displayName = klassName + '.' + key;  
-          } else if (klassName = SC._object_className(this)) {
-            value.displayName = klassName + '.' + key;  
-          }
-          else if (klassName = SC._object_className(this.superclass)) {
-            value.displayName = klassName + '.' + key;  
-          }
-        }
-      }
-    }
-
-    if (SC.BENCHMARK_OBJECTS && SC.Benchmark) SC.Benchmark.end('Generating Display Names');
-
     return this ;
   },
 
@@ -901,10 +878,10 @@ SC._object_className = function(obj) {
   if (!obj._object_className) findClassNames() ;
   if (obj._object_className) return obj._object_className ;
 
-  // if no direct classname was found, walk up class chain looking for a 
+  // if no direct classname was found, walk up class chain looking for a
   // match.
   var ret = obj ;
-  while(ret && !ret._object_className) ret = ret.superclass; 
+  while(ret && !ret._object_className) ret = ret.superclass;
   return (ret && ret._object_className) ? ret._object_className : 'Anonymous';
 } ;
 
