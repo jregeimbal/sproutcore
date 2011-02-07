@@ -11,14 +11,14 @@ test("new SparseArray has expected length", function() {
 });
 
 test("fetching the object at index", function() {
-	var ary = SC.SparseArray.create(10);
+	var ary = SC.SparseArray.array(10);
 	var arr = ["I'll","be","there","4u"];
 	ary = arr;
 	equals(2 ,ary.indexOf('there'), "Index of 'there' is");
 });
 
 test("Update the sparse array using provideObjectAtIndex", function() {
-	var ary = SC.SparseArray.create(2);
+	var ary = SC.SparseArray.array(2);
 	var obj = "not";
 	ary.provideObjectAtIndex(0, obj);
 	equals(obj, ary._sa_content[0],"Content at 0th index");
@@ -28,7 +28,7 @@ test("Update the sparse array using provideObjectAtIndex", function() {
 });
 
 test("objectAt() should get the object at the specified index",function() {
-	var spArray = SC.SparseArray.create(4) ;
+	var spArray = SC.SparseArray.array(4) ;
 	var arr = [SC.Object.create({ dummy: YES }),"Sproutcore",2,true];
 	spArray = arr;
 	equals(4,spArray.length,'the length');
