@@ -198,6 +198,7 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
       store.writeDataHash(storeKey, hash);
       SC.Store.replaceIdFor(storeKey, hash[pk]);
       ret = store.materializeRecord(storeKey);
+      ret._parentRecord = parentRecord;
     } 
     else {
       ret = parentRecord.registerChildRecord(recordType, hash);
