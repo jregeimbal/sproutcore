@@ -844,9 +844,11 @@ SC.Record = SC.Object.extend(
     (may be null)
    */
   createNestedRecord: function(recordType, hash) {
-    var store, id, sk, pk, cr = null;
+    var store, id, sk, pk, cr = null, existingId = null;
     SC.run(function() {
       hash = hash || {}; // init if needed
+      
+      existingId = hash[recordType.prototype.primaryKey];
       
       store = this.get('store');
       if (SC.none(store)) throw 'Error: during the creation of a child record: NO STORE ON PARENT!';
@@ -874,7 +876,7 @@ SC.Record = SC.Object.extend(
       }
       
       // ID processing if necessary
-      if(this.generateIdForChild) this.generateIdForChild(cr);
+      if (SC.none(existingId) && this.generateIdForChild) this.generateIdForChild(cr);
 
     }, this);
     
