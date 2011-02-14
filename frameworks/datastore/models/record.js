@@ -217,7 +217,7 @@ SC.Record = SC.Object.extend(
   isNestedRecord: function(){
     var store = this.get('store'), ret,
         sk = this.get('storeKey'),
-        prKey = store.parentStoreKeyExists();
+        prKey = store.parentStoreKeyExists(sk);
     
     ret = prKey ? YES : NO;
     return ret;
