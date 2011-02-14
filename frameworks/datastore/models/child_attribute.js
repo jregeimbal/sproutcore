@@ -4,7 +4,6 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('models/child_record');
 sc_require('models/record');
 sc_require('models/record_attribute');
 
