@@ -813,26 +813,26 @@ SC.Record = SC.Object.extend(
     */
   _materializeNestedRecordType: function(value, key){
     var childNS, recordType, ret;
-    // If no hash, return null.
-    if (SC.typeOf(value) === SC.T_HASH){
+
+    // Get the record type, first checking the "type" property on the hash.
+    if (SC.typeOf(value) === SC.T_HASH) {
       // Get the record type.
       childNS = this.get('nestedRecordNamespace');
       if (value.type && !SC.none(childNS)) {
         recordType = childNS[value.type];
       }
-      
-      // check to see if we have a record type at this point and call 
-      // for the typeClass if we dont
-      if (!recordType && key && this[key]){
-        recordType = this[key].get('typeClass');
-      }
-      
-      // When all else fails throw and exception
-      if (!recordType || SC.typeOf(recordType) !== SC.T_CLASS) {
-        throw 'SC.Child: Error during transform: Invalid record type.';
-      }
     }
-    
+
+    // Maybe it's not a hash or there was no type property.
+    if (!recordType && key && this[key]) {
+      recordType = this[key].get('typeClass');
+    }
+
+    // When all else fails throw and exception.
+    if (!recordType || !SC.kindOf(recordType, SC.Record)) {
+      throw 'SC.Child: Error during transform: Invalid record type.';
+    }
+
     return recordType;
   },
   
