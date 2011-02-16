@@ -39,6 +39,11 @@ SC.ContainerView = SC.View.extend(
     @property {String, SC.View}
   */
   nowShowing: null,
+  
+  /**
+    Optional target parameter
+  */
+  target: null,
 
   /** 
     The content view to display.  This will become the only child view of
@@ -99,16 +104,24 @@ SC.ContainerView = SC.View.extend(
     // This code turns this.nowShowing into a view object by any means necessary.
     
     var content = this.get('nowShowing') ;
+    var target = this.get('target');
     
+    console.log('hark');
+    console.log(target);
     // If nowShowing was changed because the content was set directly, then do nothing.
     if (content === SC.CONTENT_SET_DIRECTLY) return ;
     
     // If it's a string, try to turn it into the object it references...
     if (SC.typeOf(content) === SC.T_STRING && content.length > 0) {
+      if (target && SC.typeOf(target) === SC.T_STRING) {
+        target = SC.objectForPropertyPath(target);
+      }
       if (content.indexOf('.') > 0) {
         content = SC.objectForPropertyPath(content);
       } else {
-        content = SC.objectForPropertyPath(content, this.get('page'));
+        console.log(target);
+        target = target || this.get('page');
+        content = SC.objectForPropertyPath(content, target);
       }
     }
     
@@ -120,7 +133,7 @@ SC.ContainerView = SC.View.extend(
     } 
     
     // If content has not been turned into a view by now, it's hopeless.
-    if (content && !(content instanceof SC.View)) content = null;
+    if (content && !(content instanceof SC.View)) {content = null;console.log('oh fuck');}
     
     // Sets the content.
     this.set('contentView', content) ;

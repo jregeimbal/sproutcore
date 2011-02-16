@@ -44,7 +44,7 @@ SC.SceneView = SC.ContainerView.extend(
     @property {Array}
   */
   scenes: ['master', 'detail'],
-
+  
   /**
     The currently showing scene.  Changing this property will cause the 
     scene view to transition to the new scene.  If you set this property to 
