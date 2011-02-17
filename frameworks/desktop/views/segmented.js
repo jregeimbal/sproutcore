@@ -581,7 +581,9 @@ SC.SegmentedView = SC.View.extend(SC.Control,
     // get new value... bail if not enabled. Also save original for later.
     sel = item[1];
     value = val = this.get('value') ;
-    if (!SC.isArray(value)) value = [value]; // force to array
+    if (!SC.isArray(value)) {
+      value = (value === null) ? [] : [value];
+    } // force to array
     
     // if we do not allow multiple selection, either replace the current
     // selection or deselect it
@@ -610,7 +612,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
         value = null;
         break;
       case 1:
-        value = value.objectAt(0);
+        if (!mult) { value = value.objectAt(0); }
         break;
       default:
         break;
