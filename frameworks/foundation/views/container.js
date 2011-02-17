@@ -39,6 +39,12 @@ SC.ContainerView = SC.View.extend(
     @property {String, SC.View}
   */
   nowShowing: null,
+  
+  /**
+    Optional target
+  */
+  
+  target: null,
 
   /** 
     The content view to display.  This will become the only child view of
@@ -108,7 +114,10 @@ SC.ContainerView = SC.View.extend(
       if (content.indexOf('.') > 0) {
         content = SC.objectForPropertyPath(content);
       } else {
-        content = SC.objectForPropertyPath(content, this.get('page'));
+        var target = this.get('target');
+        if (SC.typeOf(target) === SC.T_STRING) { target = SC.objectForPropertyPath(target); }
+        target = target || this.get('page');
+        content = SC.objectForPropertyPath(content, target);
       }
     }
     
