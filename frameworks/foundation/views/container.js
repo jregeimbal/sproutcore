@@ -50,6 +50,8 @@ SC.ContainerView = SC.View.extend(
   */
   contentView: null,
   
+  target: null,
+  
   /** @private */
   contentViewBindingDefault: SC.Binding.single(),
   
@@ -108,7 +110,10 @@ SC.ContainerView = SC.View.extend(
       if (content.indexOf('.') > 0) {
         content = SC.objectForPropertyPath(content);
       } else {
-        content = SC.objectForPropertyPath(content, this.get('page'));
+        var target = this.get('target');
+        if (SC.typeOf(target) === SC.T_STRING) {SC.objectForPropertyPath(target);}
+        target = target || this.get('page');
+        content = SC.objectForPropertyPath(content, target);
       }
     }
     
