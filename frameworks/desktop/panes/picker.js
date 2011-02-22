@@ -205,7 +205,6 @@ SC.PickerPane = SC.PalettePane.extend({
     this.endPropertyChanges();
     this.positionPane();
     return this.append();
-    return this;
   },
 
   /** @private
@@ -698,6 +697,8 @@ SC.PickerPane = SC.PalettePane.extend({
   },
   
   _hideOverflow: function(){
+    // HACK [JS] the body.css call really screws up with content editable in firefox and ends up used in almost every popup component we have
+    /*
     var body = SC.$(document.body),
         main = SC.$('.sc-main'),
         minWidth = parseInt(main.css('minWidth'),0),
@@ -706,11 +707,15 @@ SC.PickerPane = SC.PalettePane.extend({
     if(windowSize.width>=minWidth && windowSize.height>=minHeight){
       body.css('overflow', 'hidden');           
     }
+    */
   },
 
   _showOverflow: function(){
+    // HACK [JS] the body.css call really screws up with content editable in firefox and ends up used in almost every popup component we have
+    /*
     var body = SC.$(document.body);
-    body.css('overflow', 'visible');     
+    body.css('overflow', 'visible');
+    */
   }
 });
 
