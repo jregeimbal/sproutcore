@@ -111,7 +111,9 @@ SC.ContainerView = SC.View.extend(
         content = SC.objectForPropertyPath(content);
       } else {
         var target = this.get('target');
-        if (SC.typeOf(target) === SC.T_STRING) {SC.objectForPropertyPath(target);}
+        if (SC.typeOf(target) === SC.T_STRING) {
+          target = SC.objectForPropertyPath(target);
+        }
         target = target || this.get('page');
         content = SC.objectForPropertyPath(content, target);
       }
