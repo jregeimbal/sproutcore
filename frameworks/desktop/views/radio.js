@@ -119,33 +119,16 @@ SC.RadioView = SC.View.extend(SC.Control,
   */
   itemIconKey: null,
 
-  /**
-   If items property is a hash, specify which property will function as
-   the isVisible marker with this itemIsVisibleKey property.
-   */
-  itemIsVisibleKey: null,
-
-  /**
-   If items property is a hash, specify which property will function as
-   the amount of spacing to leave, with this itemSpacingKey property.
-  */
-  itemSpacingKey: null,
   /** 
     If the items array itself changes, add/remove observer on item... 
   */
   itemsDidChange: function() {
-    var self = this ;
     if (this._items) {
       this._items.removeObserver('[]', this, this.itemContentDidChange);
     }
     this._items = this.get('items');
     if (this._items) {
       this._items.addObserver('[]', this, this.itemContentDidChange);
-      this._items.forEach(function(i){
-        if (i && i.addObserver) { // notify radioView when properties on items change.
-          i.addObserver('*', self, self.itemContentDidChange) ;
-        }
-      }) ;
     }
     this.itemContentDidChange();
   }.observes('items'),
@@ -174,7 +157,7 @@ SC.RadioView = SC.View.extend(SC.Control,
         value = this.get('value'),
         isArray = SC.isArray(value),
         item, idx, icon, name, width, itemsLength, url,
-        className, disabled, sel, labelText, spacing, visible,
+        className, disabled, sel, labelText,
         selectionState, selectionStateClassNames;
 
     context.addClass(this.get('layoutDirection'));
@@ -216,19 +199,11 @@ SC.RadioView = SC.View.extend(SC.Control,
         selectionStateClassNames = this._getSelectionStateClassNames(item, sel, value, isArray, false);
 
         labelText = this.escapeHTML ? SC.RenderContext.escapeHTML(item[0]) : item[0];
-
+        
         width = item[4];
         
-        visible = item[5];
-        if(!visible) selectionStateClassNames = selectionStateClassNames+" hidden";
-
-        spacing = item[6];
-        if (spacing) {
-          spacing = 'style="margin-top:'+spacing+'px;"';
-        } else spacing = '';
-        
         context.push('<div class="sc-radio-button ',
-                    selectionStateClassNames, '" ', spacing,
+                    selectionStateClassNames, '" ',
                     width ? 'style="width: ' + width + 'px;" ' : '',
                     'aria-checked="', sel ? 'true':'false','" ',
                     'role="radio"' , ' index="', idx,'">',
@@ -236,7 +211,7 @@ SC.RadioView = SC.View.extend(SC.Control,
                     '<span class="sc-button-label">', 
                     icon, labelText, '</span></div>');
       }
-      this.itemsDidChange(); // setup observers on items.
+
     } else {
       // update the selection state on all of the DOM elements.  The options are
       // sel or mixed.  These are used to display the proper setting...
@@ -274,8 +249,6 @@ SC.RadioView = SC.View.extend(SC.Control,
       [1] => Value
       [2] => Enabled (YES default)
       [3] => Icon (image URL)
-      [4] => Visible (YES default)
-      [5] => Spacing to have above item (auto default)
   */
   _displayItems: function() {
     var items = this.get('items'), 
@@ -286,10 +259,8 @@ SC.RadioView = SC.View.extend(SC.Control,
         isHorizontal = this.get('layoutDirection') === SC.LAYOUT_HORIZONTAL,
         isEnabledKey = this.get('itemIsEnabledKey'), 
         iconKey = this.get('itemIconKey'),
-        isVisibleKey = this.get('itemIsVisibleKey'),
-        spacingKey = this.get('itemSpacingKey'),
         ret = [], max = (items)? items.get('length') : 0,
-        item, title, width, value, isVisible, spacing, idx, isArray, isEnabled, icon;
+        item, title, width, value, idx, isArray, isEnabled, icon;
     
     for(idx=0;idx<max;idx++) {
       item = items.objectAt(idx); 
@@ -298,7 +269,6 @@ SC.RadioView = SC.View.extend(SC.Control,
       if (SC.typeOf(item) === SC.T_ARRAY) {
         title = item[0];
         value = item[1];
-        isVisible = YES ;
 
         // otherwise, possibly use titleKey,etc.
       } else if (item) {
@@ -324,28 +294,19 @@ SC.RadioView = SC.View.extend(SC.Control,
           icon = item.get ? item.get(iconKey) : item[iconKey];
         } else icon = null;
 
-        if (isVisibleKey) {
-          isVisible = item.get ? item.get(isVisibleKey) : item[isVisibleKey] ;
-        } else isVisible = YES ;
-
-        if (spacingKey) {
-          spacing = item.get ? item.get(spacingKey) : item[spacingKey] ;
-        } else spacing = null ;
-        
         // if item is nil, use somedefaults...
       } else {
-        title = value = icon = spacing = null;
+        title = value = icon = null;
         isEnabled = NO;
-        isVisible = YES;
       }
 
       // localize title if needed
       if (loc) title = title.loc();
-      ret.push([title, value, isEnabled, icon, width, isVisible, spacing]);
+      ret.push([title, value, isEnabled, icon, width]);
     }
 
     return ret; // done!
-  }.property('items', 'itemTitleKey', 'itemWidthKey', 'itemValueKey', 'itemIsEnabledKey', 'itemIsVisibleKey', 'itemSpacingKey', 'localize', 'itemIconKey').cacheable(),
+  }.property('items', 'itemTitleKey', 'itemWidthKey', 'itemValueKey', 'itemIsEnabledKey', 'localize', 'itemIconKey').cacheable(),
 
   /** @private - 
     Will figure out what class names to assign each radio button.
@@ -361,8 +322,7 @@ SC.RadioView = SC.View.extend(SC.Control,
     classNames = {
       sel: (sel && !isArray),
       mixed: (sel && isArray),
-      disabled: (!item[2]),
-      hidden: (!item[5])
+      disabled: (!item[2])
     };
 
     if (shouldReturnObject) {
