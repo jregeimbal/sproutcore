@@ -195,6 +195,10 @@ SC.NestedStore = SC.Store.extend(
     this.revisions  = SC.beget(parentStore.revisions);
     this.statuses   = SC.beget(parentStore.statuses);
     
+    // beget nested records references
+    this.childRecords = parentStore.childRecords ? SC.beget(parentStore.childRecords) : {};
+    this.parentRecords = parentStore.parentRecords ? SC.beget(parentStore.parentRecords) : {};
+    
     // also, reset private temporary objects
     this.chainedChanges = this.locks = this.editables = null;
     this.changelog = null ;
