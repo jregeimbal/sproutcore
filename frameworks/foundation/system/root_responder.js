@@ -1659,7 +1659,7 @@ SC.RootResponder = SC.Object.extend({
     // event occurs more than 300 ms later than the mouse up event or more
     // than 8 pixels away from the mouse down event.
     this._clickCount += 1 ;
-    if (!this._lastMouseUpAt || ((Date.now()-this._lastMouseUpAt) > 300)) {
+    if (!this._lastMouseUpAt || ((evt.timeStamp-this._lastMouseUpAt) > 300)) {
       this._clickCount = 1 ;
     } else {
       var deltaX = this._lastMouseDownX - evt.clientX,
@@ -1719,7 +1719,7 @@ SC.RootResponder = SC.Object.extend({
     // pixels away from it AND this._clickCount is 1, then set this._clickCount to 2
     // which will trigger the doubleClick action
     this._mouseUpCount += 1 ;
-    if (!this._lastMouseUpAt || ((Date.now()-this._lastMouseUpAt) > 300)) {
+    if (!this._lastMouseUpAt || ((evt.timeStamp-this._lastMouseUpAt) > 300)) {
       this._mouseUpCount = 1 ;
     } else {
       var deltaX = this._lastMouseUpX - evt.clientX,
@@ -1739,7 +1739,7 @@ SC.RootResponder = SC.Object.extend({
 
     var handler = null, view = this._mouseDownView,
         targetView = this.targetViewForEvent(evt);
-    this._lastMouseUpAt = Date.now() ;
+    this._lastMouseUpAt = evt.timeStamp ;
 
     // record click count.
     evt.clickCount = this._clickCount ;
