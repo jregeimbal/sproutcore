@@ -170,17 +170,6 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     this._field_valueDidChange(); // force initialization of text in $input.
     SC.Event.add(this.$input(), 'change', this, this._field_fieldValueDidChange) ;
   },
-
-  /** @private
-    after the layer is append to the doc, set the field value and observe events
-    only for textarea.
-  */
-  didAppendToDocument: function() {
-    if (this.get('isTextArea')) {
-      this.applyValueToField(this.get('value'), NO);
-      SC.Event.add(this.$input(), 'change', this, this._field_fieldValueDidChange) ;
-    }
-  },
   
   willDestroyLayer: function() {
     SC.Event.remove(this.$input(), 'change', this, this._field_fieldValueDidChange); 
