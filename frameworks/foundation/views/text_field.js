@@ -784,7 +784,10 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   },
   
   willLoseKeyResponderTo: function(responder) {
-    //if (this._isFocused) this._isFocused = NO ;
+    // We always want to ensure that the underlying text input has it's 
+    // focus removed when we navigate away to another responder
+    var input = this.$input();
+    if (input && input[0] && input[0].blur) input[0].blur();
   },
 
   // In IE, you can't modify functions on DOM elements so we need to wrap the
