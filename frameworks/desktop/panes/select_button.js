@@ -209,7 +209,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     @property
     @type{SC.Array}
   */
-  displayProperties: ['icon', 'value','controlSize','objects'],
+  displayProperties: ['icon','value','controlSize','objects','emptyName','canDeleteValue'],
 
   /**
     Prefer matrix to position the select button menu such that the
@@ -311,7 +311,16 @@ SC.SelectButtonView = SC.ButtonView.extend(
   */
   isContextMenuEnabled: NO,
   
-
+  /**
+    set this to non-null to place an empty option at the top of the menu.   if localize is enabled, emptyName will be localized as well.
+  */
+  emptyName: null,
+  
+  /**
+    set this to YES if the user can select the emptyName option and clear the value
+  */
+  canDeleteValue: NO,
+  
   /**
     Left Alignment based on the size of the button
 
@@ -363,7 +372,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     sc_super();
     var layoutWidth, objects, len, nameKey, iconKey, valueKey, checkboxEnabled,
       currentSelectedVal, shouldLocalize, separatorPostion, itemList, isChecked,
-      idx, name, icon, value, item, itemEnabled, isEnabledKey ;
+      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName ;
     layoutWidth = this.layout.width ;
     if(firstTime && layoutWidth) {
       this.adjust({ width: layoutWidth + 2 }) ;
@@ -389,11 +398,47 @@ SC.SelectButtonView = SC.ButtonView.extend(
     //get the separatorPostion
     separatorPostion = this.get('separatorPostion') ;
 
+    // emptyName
+    emptyName = this.get('emptyName');
+
     //itemList array to set the menu items
     itemList = [];
 
     //to set the 'checkbox' property of menu items
     isChecked = YES;
+
+    if (emptyName) {
+      emptyName = SC.typeOf(emptyName) === SC.T_STRING ? emptyName : emptyName.toString();
+      name = shouldLocalize ? emptyName.loc() : emptyName;
+      icon = null;
+      value = "***";
+      itemEnabled = this.get('canDeleteValue');
+      if (SC.none(this.get('value'))) {
+        this.set('itemIdx', idx);
+        this.set('title', name) ;
+        this.set('icon', icon) ;
+        isChecked = !checkboxEnabled ? NO : YES;
+      }
+      
+      this._defaultVal = null;
+      this._defaultTitle = name;
+      this._defaultIcon = icon;
+      this._defaultItemIdx = idx;
+      
+      idx++;
+      item = SC.Object.create({
+        title: name,
+        icon: icon,
+        value: value,
+        isEnabled: itemEnabled,
+        checkbox: isChecked,
+        target: this,
+        action: 'displaySelectedItem'
+      }) ;
+
+      //Set the items in the itemList array
+      itemList.push(item);
+    }
 
     objects.forEach(function(object, idx) {
       if (object) {
@@ -401,7 +446,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
         //Get the name value. If value key is not specified convert obj
         //to string
         name = nameKey ? (object.get ? object.get(nameKey) : object[nameKey]) : object.toString() ;
-
+        
         // localize name if specified.
         name = (shouldLocalize && (SC.typeOf(name) === SC.T_STRING)) ? name.loc() : name ;
 
@@ -434,7 +479,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
         if(NO !== itemEnabled) itemEnabled = YES ;
 
         //Set the first item from the list as default selected item
-        if (idx === 0) {
+        if (idx === 0 && !emptyName) {
           this._defaultVal = value;
           this._defaultTitle = name;
           this._defaultIcon = icon;
@@ -638,7 +683,12 @@ SC.SelectButtonView = SC.ButtonView.extend(
     this.set('title', currentItem.get('title'));
     this.set('icon', currentItem.get('icon'));
     this.set('itemIdx', currentItem.get('contentIndex'));
-    this.set('value', currentItem.get('value'));
+
+    var value = currentItem.get('value');
+    if (value === '***' && this.get('emptyName')) {
+      value = null;
+    }
+    this.set('value', value);
     
     return YES;
   },

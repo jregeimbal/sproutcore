@@ -64,7 +64,22 @@ module("SC.SelectButtonView",{
           objects: ["My","New", "List"],
           customViewClassName: 'custom-menu-item',
           customViewMenuOffsetWidth: 46
-        })
+        }), 
+
+        //view7
+        SC.SelectButtonView.extend({
+          objects: ["Drop","Down", "Menu"],
+          emptyName: 'Fred'
+        }),
+        
+        //view8
+        SC.SelectButtonView.extend({
+          objectsBinding: '*owner.objs',
+          valueBinding: '*owner.selectedValue',
+          emptyName: 'Fred'
+        }),
+
+
       ]
     });
 
@@ -74,6 +89,8 @@ module("SC.SelectButtonView",{
     view4 = pane.childViews[3] ;
     view5 = pane.childViews[4] ;
     view6 = pane.childViews[5] ;
+    view7 = pane.childViews[6] ;
+    view8 = pane.childViews[7] ;
     
     pane.append(); // make sure there is a layer...
     SC.RunLoop.end();
@@ -191,4 +208,29 @@ test("The properties for select button should take the specified values", functi
   var prop2 = view6.get('customViewMenuOffsetWidth');
   equals(prop1,'custom-menu-item','Custom view class name should be custom-menu-item');
   equals(prop2,46,'Custom view menu off set width should be 46');
+});
+
+//test13
+test("The values and title when emptyName are involved, fixed objects", function() {
+  var view = view7;
+
+  equals(view.get('value'), null, 'OOB value should be null');
+  equals(view.get('title'), 'Fred', 'OOB title should be emptyName of "Fred"');
+
+});
+
+//test13
+test("The values and title when emptyName are involved, objects binding and value binding", function() {
+  var view = view8;
+
+  equals(view.get('value'), 'World', 'OOB value should be "World", through valueBinding');
+  equals(view.get('title'), 'World', 'OOB title should be "World", through valueBinding');
+
+  SC.RunLoop.begin() ;
+    pane.set('selectedValue',null) ;
+  SC.RunLoop.end() ;
+  
+  equals(view.get('value'), null, 'After change value should be null');
+  equals(view.get('title'), 'Fred', 'After change title should be emptyName of "Fred"');
+
 });

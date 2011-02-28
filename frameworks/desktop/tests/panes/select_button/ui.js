@@ -83,8 +83,22 @@ var pane = SC.ControlTestPane.design()
       isEnabledKey: 'isEnabled',
       sortKey: 'pos',
       checkboxEnabled: YES
+    }) 
+    
+    //sample11
+    .add("EmptyName", SC.SelectButtonView, {
+      objects: [{ title: "None", pos: 3, isEnabled: YES, value: 10 },
+        { title: "Low", pos: 1, isEnabled: NO, value: 12 },
+        { title: "Medium", pos: 2, isEnabled: YES, value: 14 },
+        { title: "High", pos: 4, isEnabled: NO, value: 16 }],
+      nameKey: 'title',
+      valueKey: 'value',
+      disableSort: NO,
+      isEnabledKey: 'isEnabled',
+      sortKey: 'pos',
+      checkboxEnabled: NO,
+      emptyName: 'Fred'
     }) ;
-
     pane.show();
 
 // ..........................................................
@@ -201,7 +215,7 @@ test("SelectButtonWithIcon", function() {
 //test9
 test("Check if the objects are sorted based on sortKey", function() {
   var view=pane.view('SortKey');
-  equals('None',view.get('objects')[2].title, 'Third object should be "None" ') ;
+  equals(view.get('objects')[2].title, 'None','Third object should be "None" ') ;
 }) ;
 
 //test10
@@ -209,4 +223,15 @@ test("StaticLayout", function() {
   var view = pane.view('StaticLayout');
   ok(!view.$().hasClass('disabled'), 'should not have disabled class');
   ok(!view.$().hasClass('sel'), 'should not have sel class');
+});
+
+//test11
+test("EmptyName", function() {
+  var view = pane.view('EmptyName');
+  // objects list is the same
+  equals(view.get('objects')[0].title, 'Low','First object should be "Low", the emptyName is not in the objects list') ;
+  equals(view.get('objects')[2].title, 'None','Third object should be "None", the emptyName is not in the objects list') ;
+  // itemList has emptyName first regardless of sort
+  equals(view.get('itemList')[0].title, 'Fred','First item in list should be "Fred", the emptyName out of sort') ;
+  equals(view.get('itemList')[3].title, 'None','Fourth item in list should be "None" sorted as before') ;
 });
