@@ -425,7 +425,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     changed.addEach(storeKeys);
     
     this.set('needsFlush', YES);
-    this.enumerableContentDidChange();
+    this.flush();
 
     return this;
   },
@@ -550,6 +550,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       //storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
       if (SC.compare(oldStoreKeys, storeKeys) !== 0){
         this.set('storeKeys', SC.clone(storeKeys)); // replace content
+        this.enumerableContentDidChange();
       }
     }
 
@@ -635,7 +636,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   */
   _storeKeysContentDidChange: function(target, key, value, rev) {
     if (this._scra_records) this._scra_records.length=0 ; // clear cache
-    
+
     this.beginPropertyChanges()
       .notifyPropertyChange('length')
       .enumerableContentDidChange()
