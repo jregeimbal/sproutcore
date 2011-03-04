@@ -41,14 +41,81 @@ SC.TabView = SC.View.extend(
   
   isEnabled: YES,
   
+  /** 
+    The key that contains the title for each item. This will be passed onto the segmented view.
+    
+    @property {String}
+  */
   itemTitleKey: null,
+  
+  /** 
+    The key that contains the value for each item. This will be passed onto the segmented view.
+    
+    @property {String}
+  */
   itemValueKey: null,
+  
+  /** 
+    A key that determines if this item in particular is enabled.This will be passed onto the segmented view.  Note if the
+    control in general is not enabled, no items will be enabled, even if the
+    item's enabled property returns YES. 
+    
+    @property {String}
+  */
   itemIsEnabledKey: null,
+  
+  /** 
+    The key that contains the icon for each item.This will be passed onto the segmented view.  If omitted, no icons will
+    be displayed.
+    
+    @property {String}
+  */
   itemIconKey: null,
+  
+  /** 
+    The key that contains the desired width for each item. This will be passed onto the segmented view.  If omitted, the
+    width will autosize.
+  
+    @property {String}
+  */
   itemWidthKey: null,
+  
+  /**
+    The key that contains the tooltip for each item. This will be passed onto the segmented view. 
+    
+    @property {String}
+  */
   itemToolTipKey: null,
+  
+  /** 
+    The key that contains the action for each item. This will be passed onto the segmented view.  If defined, then 
+    selecting this item will fire the action in addition to changing the 
+    value.  See also itemTargetKey.
+    
+    @property {String}
+  */
+  itemActionKey: null,
+  
+  /** 
+    The key that contains the target for each item. This will be passed onto the segmented view.  If this and itemActionKey
+    are defined, then this will be the target of the action fired. 
+    
+    @property {String}
+  */
+  itemTargetKey: null,
+  
+  /** 
+    The height for the tab buttons.
+    
+    @property {Number}
+  */
   tabHeight: SC.REGULAR_BUTTON_HEIGHT,
   
+  /**
+    The location for the tab buttons.
+    
+    @property {String} One of: SC.TOP_LOCATION, SC.TOP_TOOLBAR_LOCATION, SC.BOTTOM_LOCATION
+   */
   tabLocation: SC.TOP_LOCATION,
   
   /** 
