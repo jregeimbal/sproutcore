@@ -331,7 +331,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       stylesHash = {};
       classArray = [];
 
-      if (this.get('layoutDirection') == SC.LAYOUT_HORIZONTAL) {
+      if (this.get('layoutDirection') === SC.LAYOUT_HORIZONTAL) {
         stylesHash['display'] = 'inline-block' ;
       }
 
@@ -409,7 +409,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       r = segment.getBoundingClientRect();
       
       // based on orientation, check the position left-to-right or up-to-down.
-      if (this.get('layoutDirection') == SC.LAYOUT_VERTICAL) {
+      if (this.get('layoutDirection') === SC.LAYOUT_VERTICAL) {
         // if it fits, return it right away
         if (pageY > r.top && pageY < r.bottom) return idx;
       }
