@@ -140,6 +140,13 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   */
   itemWidthKey: null,
   
+  /**
+    The key that contains the tooltip for each item. 
+    
+    @property {String}
+  */
+  itemToolTipKey: null,
+  
   /** 
     The key that contains the action for this item.  If defined, then 
     selecting this item will fire the action in addition to changing the 
