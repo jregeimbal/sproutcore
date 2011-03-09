@@ -726,7 +726,7 @@ SC.ListItemView = SC.View.extend(
     var content   = this.get('content'),
         del       = this.get('displayDelegate'),
         // following change need if you are trying to edit in SC.TableView and using ListItem as you base class...
-        labelKey  = this.getDelegateProperty('contentValueKey', del) || this.get('contentValueKey') || this.column ? this.column.get('key') : null, 
+        labelKey  = this.getDelegateProperty('contentValueKey', del),
         parent    = this.get('parentView'),
         pf        = parent ? parent.get('frame') : null,
         el        = this.$label(),
@@ -734,7 +734,6 @@ SC.ListItemView = SC.View.extend(
         f, v, offset, oldLineHeight, fontSize, top, lineHeight, escapeHTML,
         lineHeightShift, targetLineHeight, ret ;
     
-    labelKey  = this.getDelegateProperty('contentValueKey', del);
     if(!labelKey) labelKey = this.get('contentValueKey');
     if(!labelKey && this.column) labelKey = this.column.get('key');
     if(!labelKey && !this.column) labelKey = null;
