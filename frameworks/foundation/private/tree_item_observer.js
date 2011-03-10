@@ -624,13 +624,9 @@ SC.TreeItemObserver = SC.Object.extend(SC.Array, SC.CollectionContent, {
   */
   branchObserverAt: function(index) {
     var byIndex = this._branchObserversByIndex,
-        indexes = this._branchObserverIndexes,
         ret, parent, pitem, item, children, guid, del ;
         
     if (!byIndex) byIndex = this._branchObserversByIndex = [];
-    if (!indexes) {
-      indexes = this._branchObserverIndexes = SC.IndexSet.create();
-    }
 
     if (ret = byIndex[index]) return ret ; // use cache
 
@@ -647,7 +643,6 @@ SC.TreeItemObserver = SC.Object.extend(SC.Array, SC.CollectionContent, {
       outlineLevel: this.get('outlineLevel')+1
     });
 
-    indexes.add(index); // save for later invalidation
     return ret ;
   },
   
@@ -655,17 +650,24 @@ SC.TreeItemObserver = SC.Object.extend(SC.Array, SC.CollectionContent, {
     Invalidates any branch observers on or after the specified index range.
   */
   invalidateBranchObserversAt: function(index) {
-    var byIndex = this._branchObserversByIndex,
-        indexes = this._branchObserverIndexes;
+    var byIndex = this._branchObserversByIndex, indexes;
 
     if (!byIndex || byIndex.length<=index) return this ; // nothing to do
     if (index < 0) index = 0 ;
     
-    // destroy any observer on or after the range
-    indexes.forEachIn(index, indexes.get('max')-index, function(i) {
-      var observer = byIndex[i];
-      if (observer) observer.destroy();
-    }, this);
+    // // destroy any observer on or after the range
+    // indexes.forEachIn(index, indexes.get('max')-index, function(i) {
+    //   var observer = byIndex[i];
+    //   if (observer) observer.destroy();
+    // }, this);
+    
+    if (indexes = this.get('branchIndexes')) {
+      indexes.forEach(function(i) {
+        if (i < index) return; // past end - nothing to do
+        var observer = byIndex[i];
+        if (observer) observer.destroy();
+      },this);
+    }
     
     byIndex.length = index; // truncate to dump extra indexes
     
