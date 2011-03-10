@@ -464,7 +464,8 @@ SC.SelectionSet = SC.Object.extend(SC.Enumerable, SC.Freezable, SC.Copyable,
   */
   constrain: function(source) {
     var set, len, max, objects;
-    
+    if (!source) return this;
+
     this.beginPropertyChanges();
     
     // remove sources other than this one
