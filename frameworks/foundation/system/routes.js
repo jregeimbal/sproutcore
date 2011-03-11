@@ -186,6 +186,16 @@ SC.routes = SC.Object.create({
   */
   informLocation: function(key, value){
     this._skipRoute = YES;
+    // This is a very special case where this property
+    // has a very heavy influence on the 'location' property
+    // this is a case where you might want to use idempotent
+    // but you would take a performance hit because it is possible
+    // call set() multiple time and we don't want to take the extra
+    // cost, so we just invalidate the cached set() value ourselves
+    // you shouldn't do this in your own code unless you REALLY
+    // know what you are doing.
+    var lsk = this.location.lastSetValueKey;
+    if (lsk && this._kvo_cache) this._kvo_cache[lsk] = value;
     return this._extractLocation(key, value);
   }.property(),
   
