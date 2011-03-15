@@ -390,93 +390,86 @@ SC.SelectButtonView = SC.ButtonView.extend(
     separatorPostion = this.get('separatorPostion') ;
 
     //itemList array to set the menu items
-    itemList = [] ;
+    itemList = [];
 
     //to set the 'checkbox' property of menu items
-    isChecked = YES ;
+    isChecked = YES;
 
-    //index for finding the first item in the list
-    idx = 0 ;
+    objects.forEach(function(object, idx) {
+      if (object) {
 
-    objects.forEach(function(object) {
-    if (object) {
+        //Get the name value. If value key is not specified convert obj
+        //to string
+        name = nameKey ? (object.get ?
+          object.get(nameKey) : object[nameKey]) : object.toString() ;
 
-      //Get the name value. If value key is not specified convert obj
-      //to string
-      name = nameKey ? (object.get ?
-        object.get(nameKey) : object[nameKey]) : object.toString() ;
+        // localize name if specified.
+        name = (shouldLocalize && (SC.typeOf(name) === SC.T_STRING)) ? name.loc() : name ;
 
-      // localize name if specified.
-      name = (shouldLocalize && (SC.typeOf(name) === SC.T_STRING)) ? name.loc() : name ;
+        //Get the icon value
+        icon = iconKey ? (object.get ?
+          object.get(iconKey) : object[iconKey]) : null ;
+        if (SC.none(object[iconKey])) icon = null ;
 
-      //Get the icon value
-      icon = iconKey ? (object.get ?
-        object.get(iconKey) : object[iconKey]) : null ;
-      if (SC.none(object[iconKey])) icon = null ;
+        // get the value using the valueKey or the object
+          value = (valueKey) ? (object.get ?
+          object.get(valueKey) : object[valueKey]) : object ;
 
-      // get the value using the valueKey or the object
-        value = (valueKey) ? (object.get ?
-        object.get(valueKey) : object[valueKey]) : object ;
-
-      if (!SC.none(currentSelectedVal) && !SC.none(value)){
-        if( currentSelectedVal === value ) {
-          this.set('title', name) ;
-          this.set('icon', icon) ;
+        if (!SC.none(currentSelectedVal) && !SC.none(value)){
+          if( currentSelectedVal === value ) {
+            this.set('title', name) ;
+            this.set('icon', icon) ;
+          }
         }
+
+        //Check if the item is currentSelectedItem or not
+        if(value === this.get('value')) {
+
+          //set the itemIdx - To change the prefMatrix accordingly.
+          this.set('itemIdx', idx) ;
+          isChecked = !checkboxEnabled ? NO : YES ;
+        }
+        else {
+          isChecked = NO ;
+        }
+
+        //Check if item is enabled
+        itemEnabled = (isEnabledKey) ? (object.get ?
+        object.get(isEnabledKey) : object[isEnabledKey]) : object ;
+
+        if(NO !== itemEnabled) itemEnabled = YES ;
+
+        //Set the first item from the list as default selected item
+        if (idx === 0) {
+          this._defaultVal = value ;
+          this._defaultTitle = name ;
+          this._defaultIcon = icon ;
+        }
+
+        var item = SC.Object.create({
+          title: name,
+          icon: icon,
+          value: value,
+          isEnabled: itemEnabled,
+          checkbox: isChecked,
+          target: this,
+          action: 'displaySelectedItem'
+        }) ;
+
+        //Set the items in the itemList array
+        itemList.push(item);
       }
-
-      //Check if the item is currentSelectedItem or not
-      if(value === this.get('value')) {
-
-        //set the itemIdx - To change the prefMatrix accordingly.
-        this.set('itemIdx', idx) ;
-        isChecked = !checkboxEnabled ? NO : YES ;
+  
+      // display the separator if specified by the user
+      if (separatorPostion && idx === (len-separatorPostion)) {
+        var separator = SC.Object.create({
+          separator: YES
+        }) ;
+        itemList.push(separator);
       }
-      else {
-        isChecked = NO ;
-      }
-
-      //Check if item is enabled
-      itemEnabled = (isEnabledKey) ? (object.get ?
-      object.get(isEnabledKey) : object[isEnabledKey]) : object ;
-      
-      if(NO !== itemEnabled) itemEnabled = YES ;
-
-      //Set the first item from the list as default selected item
-      if (idx === 0) {
-        this._defaultVal = value ;
-        this._defaultTitle = name ;
-        this._defaultIcon = icon ;
-      }
-
-      var item = SC.Object.create({
-        title: name,
-        icon: icon,
-        value: value,
-        isEnabled: itemEnabled,
-        checkbox: isChecked,
-        target: this,
-        action: 'displaySelectedItem'
-      }) ;
-
-      //Set the items in the itemList array
-      itemList.push(item);
-    }
-
-    idx += 1 ;
-
-    // display the separator if specified by the user
-    if (separatorPostion && idx === (len-separatorPostion)) {
-      var separator = SC.Object.create({
-        separator: YES
-      }) ;
-      itemList.push(separator);
-    }
-
-    this.set('itemList', itemList) ;
-    }, this ) ;
-
-    if(firstTime && this.get('autoSelectValueFirstTime')) {
+  
+    }, this); // end foreach
+    if((firstTime && this.get('autoSelectValueFirstTime'))) {
       this.invokeLast(function() {
         var value = this.get('value') ;
         if(SC.none(value)) {
@@ -486,6 +479,8 @@ SC.SelectButtonView = SC.ButtonView.extend(
         }
       });
     }
+    
+    this.set('itemList', itemList);
 
     //Set the preference matrix for the menu pane
     this.changeSelectButtonPreferMatrix(this.itemIdx) ;
@@ -552,7 +547,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
 
     dummyMenuItemView = (this.get('customView') || SC.MenuItemView).create(); 
     menuItemViewEscapeHTML = dummyMenuItemView.get('escapeHTML') ;
-    var body = document.body;
+    body = document.body;
     for (idx = 0, itemsLength = items.length; idx < itemsLength; ++idx) {
       //getting the width of largest menu item
       item = items.objectAt(idx) ;
