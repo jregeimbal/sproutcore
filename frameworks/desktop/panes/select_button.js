@@ -400,31 +400,25 @@ SC.SelectButtonView = SC.ButtonView.extend(
 
         //Get the name value. If value key is not specified convert obj
         //to string
-        name = nameKey ? (object.get ?
-          object.get(nameKey) : object[nameKey]) : object.toString() ;
+        name = nameKey ? (object.get ? object.get(nameKey) : object[nameKey]) : object.toString() ;
 
         // localize name if specified.
         name = (shouldLocalize && (SC.typeOf(name) === SC.T_STRING)) ? name.loc() : name ;
 
         //Get the icon value
-        icon = iconKey ? (object.get ?
-          object.get(iconKey) : object[iconKey]) : null ;
+        icon = iconKey ? (object.get ? object.get(iconKey) : object[iconKey]) : null ;
         if (SC.none(object[iconKey])) icon = null ;
 
         // get the value using the valueKey or the object
-          value = (valueKey) ? (object.get ?
-          object.get(valueKey) : object[valueKey]) : object ;
+        value = (valueKey) ? (object.get ? object.get(valueKey) : object[valueKey]) : object ;
 
-        if (!SC.none(currentSelectedVal) && !SC.none(value)){
-          if( currentSelectedVal === value ) {
-            this.set('title', name) ;
-            this.set('icon', icon) ;
-          }
+        if (!SC.none(currentSelectedVal) && !SC.none(value) && currentSelectedVal === value ) {
+          this.set('title', name) ;
+          this.set('icon', icon) ;
         }
 
         //Check if the item is currentSelectedItem or not
         if(value === this.get('value')) {
-
           //set the itemIdx - To change the prefMatrix accordingly.
           this.set('itemIdx', idx) ;
           isChecked = !checkboxEnabled ? NO : YES ;
