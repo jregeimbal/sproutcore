@@ -501,7 +501,8 @@ SC.RootResponder = SC.Object.extend({
 
     // 3. an explicit pane was passed...
     if (pane) {
-      return this._responderFor(pane, methodName) ;
+      target = this._responderFor(pane, methodName); 
+      if (target) return target;
     }
 
     // 4. no target or pane passed... try to find target in the active panes
@@ -1074,7 +1075,7 @@ SC.RootResponder = SC.Object.extend({
     // work down the chain
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response...'.fmt(view.toString()));
+      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
@@ -1594,14 +1595,7 @@ SC.RootResponder = SC.Object.extend({
           charCode           = evt.charCode;
       if ((charCode !== undefined && charCode === 0) && !isFirefoxArrowKeys) return YES;
       if (isFirefoxArrowKeys) evt.which = keyCode;
-      
-      // Without this, 'enter' will be handled by keyDown twice causing unexpected behaviour
-      if (keyCode !== 13 || !SC.browser.msie) {
-        return this.sendEvent('keyDown', evt) ? evt.hasCustomEventHandling:YES;
-      } else {
-        return YES;
-      }
-      
+      return this.sendEvent('keyDown', evt) ? evt.hasCustomEventHandling:YES;
     }
   },
 
@@ -1634,7 +1628,7 @@ SC.RootResponder = SC.Object.extend({
   */
   beforedeactivate: function(evt) {
     var toElement = evt.toElement;
-    if (toElement && toElement.tagName && toElement.tagName!=="IFRAME" && toElement.tagName!=="DIV" && toElement.tagName!=="SELECT" && !(toElement.type && toElement.type==='file' && toElement.tagName==='INPUT')) {
+    if (toElement && toElement.tagName && toElement.tagName!=="IFRAME") {
       var view = SC.$(toElement).view()[0];
       //The following line is neccesary to allow/block text selection for IE,
       // in combination with the selectstart event.
@@ -1711,31 +1705,6 @@ SC.RootResponder = SC.Object.extend({
       this._drag.tryToPerform('mouseUp', evt) ;
       this._drag = null ;
     }
-      
-    // START HACK: [MT] - In IE7, when double clicking on an unselected item in a 
-    // list, the browser skips the second mousedown event and the dblclick
-    // event so I'm counting the mouseups instead.... If the second mouseup event 
-    // occurs less than 300 ms after the first mouse up event AND less than 8 
-    // pixels away from it AND this._clickCount is 1, then set this._clickCount to 2
-    // which will trigger the doubleClick action
-    this._mouseUpCount += 1 ;
-    if (!this._lastMouseUpAt || ((evt.timeStamp-this._lastMouseUpAt) > 300)) {
-      this._mouseUpCount = 1 ;
-    } else {
-      var deltaX = this._lastMouseUpX - evt.clientX,
-          deltaY = this._lastMouseUpY - evt.clientY,
-          distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY) ;
-
-      if (distance > 8.0) this._mouseUpCount = 1 ;
-    }
-    
-    this._lastMouseUpX = evt.clientX ;
-    this._lastMouseUpY = evt.clientY ;
-    
-    if (SC.browser.msie === '7.0' && this._mouseUpCount === 2 && this._clickCount === 1) {
-      this._clickCount = 2;
-    }      
-    // END HACK
 
     var handler = null, view = this._mouseDownView,
         targetView = this.targetViewForEvent(evt);
@@ -1743,11 +1712,6 @@ SC.RootResponder = SC.Object.extend({
 
     // record click count.
     evt.clickCount = this._clickCount ;
-      
-      // HACK: [MT] - This is needed to get double click to work for lists
-      if (SC.browser.msie  && SC.none(view) && this._clickCount === 2) {
-        view = targetView;
-      }
 
     // attempt the mouseup call only if there's a target.
     // don't want a mouseup going to anyone unless they handled the mousedown...
