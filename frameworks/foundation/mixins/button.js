@@ -292,7 +292,7 @@ SC.Button = {
     new value.  This takes into account the toggleOnValue/toggleOffValue 
     properties, among other things.  It may return YES, NO, or SC.MIXED_STATE.
     
-    @param {Object} value
+    @param {Object} value 
     @returns {Boolean} return state
   */
   computeIsSelectedForValue: function(value) {
