@@ -208,18 +208,33 @@ SC.Query = SC.Object.extend(SC.Copyable, SC.Freezable,
   recordTypes: null,
   
   /**
-    Returns the complete set of recordTypes matched by this query.  Includes
-    any named recordTypes plus their subclasses.
+    Returns the complete set of recordTypes matched by this query, including
+    subclasses.
     
     @property {SC.Enumerable}
   */
   expandedRecordTypes: function() {
+    return this._scq_getExpandedRecordTypes(YES);
+  }.property('recordType', 'recordTypes').cacheable(),
+
+  /**
+    Returns the complete set of recordTypes matched by this query WITHOUT
+    subclasses.
+
+    @property {SC.Enumerable}
+  */
+  expandedRecordTypesWithoutSubclasses: function() {
+    return this._scq_getExpandedRecordTypes(NO);
+  }.property('recordType', 'recordTypes').cacheable(),
+
+  /** @private */
+  _scq_getExpandedRecordTypes: function(includeSubclasses) {
     var ret = SC.CoreSet.create(), rt, q  ;
     
-    if (rt = this.get('recordType')) this._scq_expandRecordType(rt, ret);      
+    if (rt = this.get('recordType')) this._scq_expandRecordType(rt, ret, includeSubclasses);
     else if (rt = this.get('recordTypes')) {
       rt.forEach(function(t) { this._scq_expandRecordType(t, ret); }, this);
-    } else this._scq_expandRecordType(SC.Record, ret);
+    } else this._scq_expandRecordType(SC.Record, ret, includeSubclasses);
 
     // save in queue.  if a new recordtype is defined, we will be notified.
     q = SC.Query._scq_queriesWithExpandedRecordTypes;
@@ -229,22 +244,24 @@ SC.Query = SC.Object.extend(SC.Copyable, SC.Freezable,
     q.add(this);
     
     return ret.freeze() ;
-  }.property('recordType', 'recordTypes').cacheable(),
+  },
 
   /** @private 
     expands a single record type into the set. called recursively
   */
-  _scq_expandRecordType: function(recordType, set) {
+  _scq_expandRecordType: function(recordType, set, includeSubclasses) {
     if (set.contains(recordType)) return; // nothing to do
     set.add(recordType);
     
     if (SC.typeOf(recordType)===SC.T_STRING) {
       recordType = SC.objectForPropertyPath(recordType);
     }
-    
-    recordType.subclasses.forEach(function(t) { 
-      this._scq_expandRecordType(t, set);
-    }, this);  
+
+    if (includeSubclasses === YES) {
+      recordType.subclasses.forEach(function(t) {
+        this._scq_expandRecordType(t, set, YES);
+      }, this);
+    }
   },
   
   /**
