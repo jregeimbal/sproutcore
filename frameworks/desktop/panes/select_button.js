@@ -441,9 +441,10 @@ SC.SelectButtonView = SC.ButtonView.extend(
 
         //Set the first item from the list as default selected item
         if (idx === 0) {
-          this._defaultVal = value ;
-          this._defaultTitle = name ;
-          this._defaultIcon = icon ;
+          this._defaultVal = value;
+          this._defaultTitle = name;
+          this._defaultIcon = icon;
+          this._defaultItemIdx = idx;
         }
 
         var item = SC.Object.create({
@@ -473,9 +474,10 @@ SC.SelectButtonView = SC.ButtonView.extend(
       this.invokeLast(function() {
         var value = this.get('value') ;
         if(SC.none(value)) {
-          this.set('value', this._defaultVal) ;
-          this.set('title', this._defaultTitle) ;
-          this.set('icon', this._defaultIcon) ;
+          this.set('title', this._defaultTitle);
+          this.set('icon', this._defaultIcon);
+          this.set('itemIdx', this._defaultItemIdx);
+          this.set('value', this._defaultVal);
         }
       });
     }
@@ -639,10 +641,11 @@ SC.SelectButtonView = SC.ButtonView.extend(
     var currentItem = this.getPath('menu.selectedItem');
     if (!currentItem) return NO;
 
-    this.set('value', currentItem.get('value')) ;
-    this.set('title', currentItem.get('title')) ;
-    this.set('itemIdx', currentItem.get('contentIndex')) ;
-
+    this.set('title', currentItem.get('title'));
+    this.set('icon', currentItem.get('icon'));
+    this.set('itemIdx', currentItem.get('contentIndex'));
+    this.set('value', currentItem.get('value'));
+    
     return YES;
   },
 
