@@ -30,7 +30,7 @@ config :bootstrap,  :required => [], :use_modules => false
 config :runtime,    :required => []
 config :foundation, :required => [:runtime]
 config :datastore,  :required => [:foundation]
-config :statechart, :required => [:core_foundation], :test_required => [:core_foundation, :desktop]
+config :statechart, :required => [:foundation], :test_required => [:foundation, :desktop]
 config :desktop,    :required => [:foundation]
 config :media,      :required => [:desktop]
 
