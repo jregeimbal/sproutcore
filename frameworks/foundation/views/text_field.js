@@ -928,13 +928,13 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     implementation.
   */
   keyDown: function(evt) {
-    var value, view;
+    var which = evt.which, maxLengthReached = false, value, view;
     // Handle return and escape.  this way they can be passed on to the
     // responder chain.
     // If the event is triggered by a return while entering IME input,
     // don't got through this path.
 
-    if ((evt.which === 13 && !evt.isIMEInput) && !this.get('isTextArea')) {
+    if ((which === 13 && !evt.isIMEInput) && !this.get('isTextArea')) {
 
       // If we're not continuously updating 'value' as we type, force an update
       // if return is pressed.
@@ -950,10 +950,10 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       return NO;
     }
 
-    if (evt.which === 27) return NO ;
+    if (which === 27) return NO ;
 
     // handle tab key
-    if (evt.which === 9) {
+    if (which === 9) {
       view = evt.shiftKey ? this.get('previousValidKeyView') : this.get('nextValidKeyView');
       if (view) view.becomeFirstResponder();
       else evt.allowDefault();
@@ -962,7 +962,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     // maxlength for textareas
     if(!SC.browser.safari && this.get('isTextArea')){
       var val = this.get('value');
-      if(val && evt.which>47 && (val.length >= this.get('maxLength'))) {
+      if(val && which>47 && (val.length >= this.get('maxLength'))) {
         maxLengthReached = true;
       }
     }
