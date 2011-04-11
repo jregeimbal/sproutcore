@@ -1654,7 +1654,7 @@ SC.RootResponder = SC.Object.extend({
     // than 8 pixels away from the mouse down event.
     this._clickCount += 1 ;
     if (!this._lastMouseUpAt || ((evt.timeStamp-this._lastMouseUpAt) > 300)) {
-      this._clickCount = 1 ;
+      this._clickCount = evt.detail ? evt.detail : 1 ; // HACK: [JS] if browser considers it a double-click, keep it (supported in all but IE 5-8)
     } else {
       var deltaX = this._lastMouseDownX - evt.clientX,
           deltaY = this._lastMouseDownY - evt.clientY,
