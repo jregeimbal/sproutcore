@@ -439,6 +439,45 @@ SC.Enumerable = {
     context = SC.Enumerator._pushContext(context);
     return ret ;
   },
+  
+  /**
+    Returns an array of the first items that match the values in an array.
+    If you don't pass in the array, the function defaults to findProperty().
+    
+    @params key {String} the property to test
+    @param value {Array} optional value to test against.
+    @returns {Array} found items or null
+  */
+  findPropertyInArray: function(key, ary) {
+    if (ary===undefined) {
+      return this.findProperty(key);
+    }
+    var len = this.get ? this.get('length') : this.length ;
+    var found = NO, ret = [], last = null, next, cur ;
+    var context = SC.Enumerator._popContext();
+    var iAry = ary ? ary.copy() : [];
+    var iLen = ary ? ary.length : 0;
+    
+    for(var idx=0;idx<len && iLen > 0;idx++) {
+      next = this.nextObject(idx, last, context) ;
+      cur = next ? (next.get ? next.get(key) : next[key]) : null;
+      
+      var pos = iAry.indexOf(cur);
+      if (pos !== -1) {
+        found = YES;
+        iAry.removeAt(pos);
+        iLen--;
+      } else {
+        found = NO;
+      }
+      
+      if (found) ret.push(next) ;
+      last = next ;
+    }
+    last = next = null ;
+    context = SC.Enumerator._pushContext(context);
+    return ret.length === 0 ? null : ret ;
+  },
       
   /**
     Returns YES if the passed function returns YES for every item in the
@@ -750,12 +789,12 @@ SC.Enumerable = {
   */        
   groupBy: function(key){
     var len = this.get ? this.get('length') : this.length,
-        ret = [],
+        ret = [], idx, len2,
         last = null,
         context = SC.Enumerator._popContext(),
         grouped = [], 
         keyValues = [];          
-    for(var idx=0;idx<len;idx++) {
+    for(idx=0;idx<len;idx++) {
       var next = this.nextObject(idx, last, context) ;
       var cur = next ? (next.get ? next.get(key) : next[key]) : null;
       if(SC.none(grouped[cur])){ grouped[cur] = []; keyValues.push(cur); }
@@ -765,7 +804,7 @@ SC.Enumerable = {
     last = null;
     context = SC.Enumerator._pushContext(context);
     
-    for(var idx=0,len2=keyValues.length; idx < len2; idx++){
+    for(idx=0,len2=keyValues.length; idx < len2; idx++){
       ret.push(grouped[keyValues[idx]]);        
     }
     return ret ;
@@ -1032,16 +1071,16 @@ Array.prototype.isEnumerable = YES ;
     //returns a matrix
     groupBy: function(key) {
       var len = this.length,
-          ret = [],
+          ret = [], idx, len2,
           grouped = [], 
           keyValues = [];          
-      for(var idx=0;idx<len;idx++) {
+      for(idx=0;idx<len;idx++) {
         var next = this[idx] ;
         var cur = next ? (next.get ? next.get(key) : next[key]) : null;
         if(SC.none(grouped[cur])){ grouped[cur] = []; keyValues.push(cur); }
         grouped[cur].push(next);
       }
-      for(var idx=0,len2=keyValues.length; idx < len2; idx++){
+      for(idx=0,len2=keyValues.length; idx < len2; idx++){
         ret.push(grouped[keyValues[idx]]);        
       }
       return ret ;
