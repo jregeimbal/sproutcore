@@ -82,7 +82,7 @@ SC.Validator.Number = SC.Validator.extend(
   /** 
     Allow only numbers, dashes, period, and commas
   */
-  validateKeyDown: function(form, field, charStr) {
+  validateKeyDown: function(charStr, field) {
     if(!charStr) charStr = "";
     var text = field.$input().val();
     if (!text) text='';

@@ -54,7 +54,7 @@ SC.Validator.CreditCard = SC.Validator.extend(
   /** 
     Allow only numbers, dashes, and spaces 
   */
-  validateKeyDown: function(form, field, charStr) {
+  validateKeyDown: function(charStr, field) {
     return !!charStr.match(/[0-9\- ]/);
   },
   

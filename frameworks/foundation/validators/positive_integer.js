@@ -73,7 +73,7 @@ SC.Validator.PositiveInteger = SC.Validator.extend(
   /** 
     Allow only numbers
   */
-  validateKeyDown: function(form, field, charStr) {
+  validateKeyDown: function(charStr, field) {
     var text = field.$input().val();
     if (!text) text='';
     text+=charStr;
