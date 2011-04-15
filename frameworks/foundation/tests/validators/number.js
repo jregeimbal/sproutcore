@@ -24,6 +24,10 @@ test("Checking fieldValueForObject" ,function(){
  equals('',value,'for null');
  value = SC.Validator.Number.fieldValueForObject(undefined,'','');
  equals('',value,'for undefined');
+ value = SC.Validator.Number.fieldValueForObject("5354534545313",'','');
+ equals(5354534545313,value,'for numerical string');
+ value = SC.Validator.Number.fieldValueForObject("alphabetic characters",'','');
+ equals('',value,'for alphabetic characters');
 });
 
 test("Checking objectForFieldValue" ,function(){

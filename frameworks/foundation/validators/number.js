@@ -31,6 +31,11 @@ SC.Validator.Number = SC.Validator.extend(
       case SC.T_NUMBER:
         object = object.toFixed(this.get('places')) ;
         break ;
+      // prevent the return of NaN when inputing an alphabetic character
+      case SC.T_STRING:
+        object = parseInt(object, 0) ;
+        if(isNaN(object)) object = '';
+        break ;
       case SC.T_NULL:
       case SC.T_UNDEFINED:
         object = '';
