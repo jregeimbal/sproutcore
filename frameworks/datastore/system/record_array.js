@@ -204,17 +204,6 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     return this; 
   },
   
-  /**
-    Returns YES if the passed can be found in the record array.  This is 
-    provided for compatibility with SC.Set.
-    
-    @param {SC.Record} record the record
-    @returns {Boolean}
-  */
-  contains: function(record) {
-    return this.indexOf(record)>=0;
-  },
-  
   /** @private
     Returns the first index where the specified record is found.
     

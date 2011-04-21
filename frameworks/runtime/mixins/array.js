@@ -346,6 +346,16 @@ SC.Array = {
     return Math.min.apply(Math, this);
   },
   
+  /**
+    Returns YES if object is in the array
+
+    @param {Object} object to look for
+    @returns {Boolean}
+  */
+  contains: function(obj){
+    return this.indexOf(obj) >= 0;
+  },
+    
   rangeObserverClass: SC.RangeObserver,
   
   /**
