@@ -462,28 +462,20 @@ SC.ListView = SC.CollectionView.extend(
     }
     
     if (SC.none(level)) level = -1;
-    
-    if (dropOperation & SC.DROP_ON) {
-      this.hideInsertionPoint();
-      itemView.set('isSelected', YES);
-      this._lastDropOnView = itemView;
-    } else {
-
-      if (this._lastDropOnView) {
-        this._lastDropOnView.set('isSelected', NO);
-        this._lastDropOnView = null;
-      }
-      
-      if (dropOperation & SC.DROP_AFTER) layout.top += layout.height;
-      
-      layout.height = 2;
-      layout.right  = 0;
-      layout.left   = ((level+1) * indent) + 12;
-      delete layout.width;
-
-      view.set('layout', layout);
-      this.appendChild(view);
+    if (this._lastDropOnView) {
+      this._lastDropOnView.set('isSelected', NO);
+      this._lastDropOnView = null;
     }
+      
+    if (dropOperation & SC.DROP_AFTER) layout.top += layout.height;
+      
+    layout.height = 2;
+    layout.right  = 0;
+    layout.left   = ((level+1) * indent) + 12;
+    delete layout.width;
+
+    view.set('layout', layout);
+    this.appendChild(view);
   },
   
   hideInsertionPoint: function() {
