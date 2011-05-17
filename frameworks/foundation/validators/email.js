@@ -17,7 +17,7 @@ sc_require('validators/validator') ;
 SC.Validator.Email = SC.Validator.extend(
 /** @scope SC.Validator.Email.prototype */ {
   
-  regex: /.+@.+\...+/,
+  regex: /^([a-z0-9]+\w*-*\.?)+@([a-z0-9]+-*\.?)+([a-z]{2,6})$/i,
   
   /*
     runs the validation
