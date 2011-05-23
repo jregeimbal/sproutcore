@@ -846,38 +846,24 @@ SC.Record = SC.Object.extend(
     (may be null)
    */
   createNestedRecord: function(recordType, hash) {
-    var store, id, sk, pk, cr = null, existingId = null;
+    var sk, id, cr = null, existingId = null,
+      store = this.get('store'), pk = recordType.prototype.primaryKey;
+
+    if (SC.none(store)) throw 'Error during child record creation: No store on parent.';
+    if (SC.empty(pk))  throw 'Error during child record creation: No primary key on child.';
+
     SC.run(function() {
-      hash = hash || {}; // init if needed
-      
-      existingId = hash[recordType.prototype.primaryKey];
-      
-      store = this.get('store');
-      if (SC.none(store)) throw 'Error: during the creation of a child record: NO STORE ON PARENT!';
-      
-      if (!id && (pk = recordType.prototype.primaryKey)) {
-        id = hash[pk];
-        // In case there isnt a primary key supplied then we create on
-        // on the fly
-        sk = id ? store.storeKeyExists(recordType, id) : null;
-        if (sk){
-          store.writeDataHash(sk, hash);
-          cr = store.materializeRecord(sk);
-        } else {
-          cr = store.createRecord(recordType, hash) ;
-          if (SC.none(id)){
-            sk = cr.get('storeKey');
-            id = 'cr'+sk;
-            SC.Store.replaceIdFor(sk, id);
-            hash = store.readEditableDataHash(sk);
-            hash[pk] = id;
-          }
-        }
-        
+      hash = hash || {};
+      id = hash[pk];
+      sk = id ? store.storeKeyExists(recordType, id) : null;
+
+      if (sk) {
+        store.writeDataHash(sk, hash);
+        cr = store.materializeRecord(sk);
+      } else {
+        cr = store.createRecord(recordType, hash);
+        if (SC.empty(id)) this.generateIdForChild(cr);
       }
-      
-      // ID processing if necessary
-      if (SC.none(existingId) && this.generateIdForChild) this.generateIdForChild(cr);
 
     }, this);
     
@@ -890,8 +876,20 @@ SC.Record = SC.Object.extend(
    * Override this function if you want to have a special way of creating 
    * ids for your child records
    */
-  generateIdForChild: function(childRecord){}
-}) ;
+  generateIdForChild: function(childRecord) { 
+    var id, hash, sk = childRecord ? childRecord.storeKey : null,
+      pk = childRecord ? childRecord.primaryKey : null;
+
+    if (SC.none(sk)) throw 'Error generating ID for child record: No store key.';
+    if (SC.none(pk)) throw 'Error generating ID for child record: No primary key.';
+
+    id = 'cr' + sk;
+    SC.Store.replaceIdFor(sk, id);
+    hash = store.readEditableDataHash(sk);
+    hash[pk] = id;
+  }
+
+});
 
 // Class Methods
 SC.Record.mixin( /** @scope SC.Record */ {
