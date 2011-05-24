@@ -267,6 +267,37 @@ SC.Array = {
     this.endPropertyChanges();
     return this;
   },
+
+  /**
+    Treats the array like a queue; adds the given object to the back of the queue.
+
+    Does NOT modify the length of the array. The object at the front of the queue is kicked out.
+
+    @param {Object} obj The object to enqueue.
+   */
+  enqueueObject: function(obj) {
+    var len = this.get('length');
+    this.unshiftObject(obj);
+    this.set('length', len);
+  },
+
+  /**
+    Treats the array like a queue; removes the object at the front of the queue.
+
+    Does NOT modify the length of the array.
+
+    @returns {Object}
+  */
+  dequeueObject: function() {
+    var len = this.get('length'), obj;
+
+    do {
+      obj = this.popObject();
+    } while (!obj && this.get('length') > 0);
+
+    this.set('length', len);
+    return obj;
+  },
   
   /**  
     Compares each item in the array.  Returns true if they are equal.
@@ -585,7 +616,7 @@ if (!Array.prototype.lastIndexOf) {
 // because working with arrays are so common.
 (function() {
   SC.mixin(Array.prototype, {
-    
+
     // primitive for array support.
     replace: function(idx, amt, objects) {
       if (this.isFrozen) throw SC.FROZEN_ERROR ;
