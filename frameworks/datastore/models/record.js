@@ -314,7 +314,7 @@ SC.Record = SC.Object.extend(
     
     // If we have a parent, they changed too!
     var p = this.get('parentRecord');
-    if (p) p.recordDidChange();
+    if (p) p.recordDidChange(this._parentKey);
     
     this.get('store').recordDidChange(null, null, this.get('storeKey'), key);
     this.notifyPropertyChange('status');
@@ -777,7 +777,7 @@ SC.Record = SC.Object.extend(
     record cache.
 
     @param {Hash} value The hash of attributes to apply to the child record.
-    @param {Integer} key The store key that we are asking for
+    @param {String} key The attribute on the parent record which contains the nested record
    */
   registerNestedRecord: function(value, key) {
     var store, psk, csk, childRecord, recordType;
@@ -796,6 +796,7 @@ SC.Record = SC.Object.extend(
       store = this.get('store');
       psk = this.get('storeKey');
       csk = childRecord.get('storeKey');
+      childRecord._parentKey = key;
       store.registerChildToParent(psk, csk);
     }
       
