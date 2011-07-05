@@ -378,7 +378,6 @@ SC.SplitView = SC.View.extend(
       }
       else if(this._recalculateDivider) this._recalculateDivider=NO;
       
-      
       if(elemRendered[0]) {
         splitViewThickness = (layoutDirection === SC.LAYOUT_HORIZONTAL) ? 
               elemRendered[0].offsetWidth : elemRendered[0].offsetHeight ;
@@ -763,7 +762,7 @@ SC.SplitView = SC.View.extend(
   /* Force to rendering once the pane is attached */
   _forceSplitCalculation: function(){
     var isPaneAttached = this.getPath('pane.isPaneAttached');
-    if (isPaneAttached) this.updateLayout(); 
+    if (isPaneAttached) this.invokeOnce('updateLayout'); 
   }.observes('*pane.isPaneAttached'),
 
   /**
