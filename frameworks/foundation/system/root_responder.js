@@ -1075,7 +1075,7 @@ SC.RootResponder = SC.Object.extend({
     // work down the chain
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
+      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response...'.fmt(view.toString()));
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
@@ -1694,20 +1694,20 @@ SC.RootResponder = SC.Object.extend({
     sent.
   */
   mouseup: function(evt) {
+    var handler = null, view = this._mouseDownView,
+        targetView = this.targetViewForEvent(evt);
+        
     if (SC.platform.touch) {
       evt.allowDefault();
       return YES;
     }
     
-    this.targetViewForEvent(evt);
-    
     if (this._drag) {
-      this._drag.tryToPerform('mouseUp', evt) ;
+      handler = this._drag.tryToPerform('mouseUp', evt) ;
       this._drag = null ;
     }
 
-    var handler = null, view = this._mouseDownView,
-        targetView = this.targetViewForEvent(evt);
+    
     this._lastMouseUpAt = evt.timeStamp ;
 
     // record click count.
@@ -1715,7 +1715,7 @@ SC.RootResponder = SC.Object.extend({
 
     // attempt the mouseup call only if there's a target.
     // don't want a mouseup going to anyone unless they handled the mousedown...
-    if (view) {
+    if (!handler && view) {
       handler = this.sendEvent('mouseUp', evt, view) ;
 
       // try doubleClick
