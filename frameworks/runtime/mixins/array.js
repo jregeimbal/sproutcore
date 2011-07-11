@@ -585,6 +585,35 @@ SC.Array.indexOf = function(object, startAt) {
 if (!Array.prototype.indexOf) Array.prototype.indexOf = SC.Array.indexOf;
 
 /**
+  Returns the indexs for an array of objects in the index.
+  
+  @param {Object} objects the item to search for
+  @param {NUmber} startAt optional starting location to search, default 0
+  @returns {Array} index of -1 if not found
+*/
+SC.Array.indexesOf = function(objects, startAt) {
+  if (SC.typeOf(objects) !== 'array') { return -1; }
+  var idx, len = this.get('length');
+  
+  if (startAt === undefined) startAt = 0;
+  else startAt = (startAt < 0) ? Math.ceil(startAt) : Math.floor(startAt);
+  if (startAt < 0) startAt += len;
+  
+  var matches = [];
+  var length = objects.length;
+  for(idx = 0;idx<length;idx++) {
+    var match = this.indexOf(objects.objectAt(idx),startAt);
+    if (match !== -1) { matches.push(match); }
+  }
+
+  return matches.length > 0 ? matches : -1;
+};
+
+if (!Array.prototype.indexesOf) {
+  Array.prototype.indexesOf = SC.Array.indexesOf;
+}
+
+/**
   Returns the last index for a particular object in the index.
   
   @param {Object} object the item to search for
