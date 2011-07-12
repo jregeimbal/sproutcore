@@ -961,8 +961,9 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     }
     // maxlength for textareas
     if(!SC.browser.safari && this.get('isTextArea')){
-      var val = this.get('value');
-      if(val && which>47 && (val.length >= this.get('maxLength'))) {
+      var val = this.get('value'),
+          maxLength = this.get('maxLength');
+      if(val && which>47 && maxLength && (val.length >= maxLength)) {
         maxLengthReached = true;
       }
     }
