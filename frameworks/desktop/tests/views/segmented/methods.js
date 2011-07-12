@@ -18,10 +18,14 @@ module("SC.SegmentedView", {
           items: [
           { value: "Item1", icon: iconURL },
           { value: "Item2", icon: iconURL },
-          { value: "Item3", icon: iconURL }],
+          { value: "Item3", icon: iconURL },
+          { value: "Item4", icon: iconURL, alwaysSetValue: YES, action: 'test'},
+          { value: "Item5", icon: iconURL, action: 'test'}],
           itemTitleKey: 'value',
           itemValueKey: 'value',
           itemIconKey: 'icon',
+          itemActionKey: 'action',
+          itemAlwaysSetValueKey: 'alwaysSetValue',
           value: "Item1 Item3".w(),
           allowsEmptySelection: NO,
           layout: { height: 25 } 
@@ -38,11 +42,15 @@ module("SC.SegmentedView", {
     rect2 = elem.getBoundingClientRect();
     elem = view.get('layer').childNodes[2];
     rect3 = elem.getBoundingClientRect();
+    elem = view.get('layer').childNodes[3];
+    rect4 = elem.getBoundingClientRect();
+    elem = view.get('layer').childNodes[4];
+    rect5 = elem.getBoundingClientRect();
   }, 
   
   teardown: function() {
     pane.remove();
-    pane = view = elem = rect1 = rect2 = rect3 = null ;
+    pane = view = elem = rect1 = rect2 = rect3 = rect4 = null ;
   }
 });
 
@@ -94,7 +102,7 @@ test("Check that properties are mapped correctly", function() {
    // Test third item
    elem = view.get('layer').childNodes[2];
    var thirdItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect3.left + 1, pageY: rect3.top + 1 });
-   
+
    // mouse down and move
    view.mouseDown(thirdItemEvent);
    view.mouseMoved(thirdItemEvent);
@@ -113,7 +121,25 @@ test("Check that properties are mapped correctly", function() {
    view.mouseExited(noItemEvent);
    equals(view._isMouseDown, YES, 'Mouse down flag on mouseout should still be ');
    equals(view.get('activeIndex'), -1, 'The active item is no longer specified.');
-   
-  });
+
+   // Test fourth item
+   elem = view.get('layer').childNodes[3];
+   var fourthItemEvent = SC.Event.simulateEvent(elem, 'mouseDown', { pageX: rect4.left + 1, pageY: rect4.top + 1 });
+
+   // mouse click
+   view.mouseDown(fourthItemEvent);
+   view.mouseUp(fourthItemEvent);
+   equals(view.get('value'), 'Item4', 'Click Item4 with an action and alwaysSetValue is YES: The value should be');
+
+   //Test fifth item
+   elem = view.get('layer').childNodes[4];
+   var fifthItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect5.left + 1, pageY: rect5.top + 1 });
+
+   // mouse down and move has action
+   view.mouseDown(fifthItemEvent);
+   view.mouseUp(fifthItemEvent);
+   equals(view.get('value'), 'Item4', 'Click Item5 with an action and alwaysSetValue is undefined: The value should be');
+
+});
 
 

@@ -173,6 +173,14 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   itemKeyEquivalentKey: null,
 
   /**
+    The key that contains the boolean that a value should always be set
+    even if it does have an action, but not if there is no value.
+
+    @property {Boolean}
+  */
+  itemAlwaysSetValueKey: null,
+
+  /**
     The array of itemKeys that will be searched to build the displayItems
     array.  This is used internally by the class.  You will not generally
     need to access or edit this array.
@@ -628,6 +636,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
     // also, trigger target if needed.
     var actionKey = this.get('itemActionKey'),
         targetKey = this.get('itemTargetKey'),
+        alwaysSetValueKey = this.get('itemAlwaysSetValueKey'),
         action, target = null,
         resp = this.getPath('pane.rootResponder');
 
@@ -640,8 +649,10 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       if (resp) resp.sendAction(action, target, this, this.get('pane'));
     }
 
-    // Only set value if there is no action and a value is defined.
-    if(!action && val !== undefined) {
+    var alwaysSetValue = item.get ? item.get(alwaysSetValueKey) : item[alwaysSetValueKey];
+
+    // Set value if there is no item action or if alwaysSetValue is true AND if there is a value
+    if((!action || alwaysSetValue) && val !== undefined) {
       this.set('value', value);
     }
     
