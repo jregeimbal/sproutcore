@@ -662,7 +662,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     SC.Event.remove(input, 'focus',  this, this._textField_fieldDidFocus);
     SC.Event.remove(input, 'blur',   this, this._textField_fieldDidBlur);
     SC.Event.remove(input, 'select', this, this._textField_selectionDidChange);
-    SC.Event.remove(input, 'focus',  this, this._firefox_dispatch_keypress);
+    SC.Event.remove(input, 'keypress',  this, this._firefox_dispatch_keypress);
   },
   
   /**
