@@ -115,7 +115,8 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
   objectAt: function(idx) {
     var content = this._sa_content, ret ;
     if (!content) content = this._sa_content = [] ;
-    if ((ret = content[idx]) === undefined) {
+    ret = content[idx]; 
+    if (ret === undefined) {
       this.requestIndex(idx);
       ret = content[idx]; // just in case the delegate provided immediately
     }
@@ -173,7 +174,6 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     var len = this.get('rangeWindowSize'), start = idx;
     if (len > 1) start = start - Math.floor(start % len);
     if (len < 1) len = 1 ;
-    
     // invoke appropriate callback
     this._requestingIndex++;
     if (del.sparseArrayDidRequestRange) {

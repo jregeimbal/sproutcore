@@ -897,11 +897,9 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     If the view supports it, this 
   */
   _touchScrollDidChange: function() {
-    if (this.get("contentView").touchScrollDidChange) {
-      this.get("contentView").touchScrollDidChange(
-        this._scroll_horizontalScrollOffset,
-        this._scroll_verticalScrollOffset
-      );
+    var cv = this.get("contentView"); 
+    if (cv && cv.touchScrollDidChange) {
+      cv.touchScrollDidChange( this._scroll_horizontalScrollOffset, this._scroll_verticalScrollOffset);
     }
     
     // tell scrollers
