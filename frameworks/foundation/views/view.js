@@ -599,7 +599,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     
     for (idx=0; idx<len; ++idx) {
       childView = childViews[idx];
-      if (childView._invalidatePaneCacheForSelfAndAllChildViews) {
+      if (childView && childView._invalidatePaneCacheForSelfAndAllChildViews) {
         childView._invalidatePaneCacheForSelfAndAllChildViews();
       } 
     }
