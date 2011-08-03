@@ -68,6 +68,14 @@ SC.Logger = SC.Object.create({
     @property: {Boolean}
   */
   debugEnabled: NO,
+  
+  /**
+    Whether or not to enable debug logEnabled.
+
+    @property: {Boolean}
+  */
+  logEnabled: YES,
+  
 
   /**
     Computed property that checks for the existence of the reporter object.
@@ -123,6 +131,9 @@ SC.Logger = SC.Object.create({
     @returns {Boolean} true if reporter.log exists, false otherwise
   */
   log: function() {
+    if(this.get('logEnabled') !== YES){
+      return false;
+    }
     var reporter = this.get('reporter');
 
     // log through the reporter
