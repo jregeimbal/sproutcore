@@ -476,7 +476,6 @@ SC.SplitView = SC.View.extend(
     	this._thumbView = null ; // avoid memory leaks
     	this._inLiveResize = NO ;
     	this.endLiveResize() ;
-    	return YES ;
 		}
 		
 		return NO ;
