@@ -1142,7 +1142,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var i=0, child, childLen, children = this.get('childViews');
     for(i=0, childLen=children.length; i<childLen; i++) {
       child = children[i];
-      if(child._notifyDidAppendToDocument){
+      if(child && child._notifyDidAppendToDocument){
         child._notifyDidAppendToDocument();
       }
     }
@@ -1152,7 +1152,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
     var childViews = this.get('childViews'), i, iLen, child;
     for(i=0, iLen = childViews.length; i<iLen; i++){
       child = childViews[i];
-      if(child._notifyDidAppendToDocument){
+      if(child && child._notifyDidAppendToDocument){
         child._notifyDidAppendToDocument();
       }
     }    

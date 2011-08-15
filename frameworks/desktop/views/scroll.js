@@ -35,6 +35,12 @@ SC.ScrollView = SC.View.extend(SC.Border, {
   // 
   
   isScrollable: YES,
+
+  /** 
+    Allows you to use the mousewheel to scroll horizontally instead of vertically
+  */
+
+  mouseWheelScrollsVertically: YES,
   
   /** 
     The content view you want the scroll view to manage. This will be assigned to the contentView of the clipView also.
@@ -792,9 +798,9 @@ SC.ScrollView = SC.View.extend(SC.Border, {
   // keep the view feeling smooth.
   mouseWheel: function(evt) {
     var deltaAdjust = (SC.browser.safari && SC.browser.version > 533.0) ? 120 : 1;
-    
-    this._scroll_wheelDeltaX += evt.wheelDeltaX / deltaAdjust;
-    this._scroll_wheelDeltaY += evt.wheelDeltaY / deltaAdjust;
+    var scrollVertically = this.get('mouseWheelScrollsVertically');
+    this._scroll_wheelDeltaX += (scrollVertically ? evt.wheelDeltaX : evt.wheelDeltaY ) / deltaAdjust ;
+    this._scroll_wheelDeltaY += scrollVertically ? evt.wheelDeltaY / deltaAdjust : 0;
     this.invokeLater(this._scroll_mouseWheel, 10) ;
     return this.get('canScrollHorizontal') || this.get('canScrollVertical') ;  
   },
