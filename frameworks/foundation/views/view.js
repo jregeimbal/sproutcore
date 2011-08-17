@@ -320,6 +320,13 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
 
       var childViews = this.get('childViews'), len = childViews.length, idx;
       for(idx=0;idx<len;idx++) {
+        // [JS] In CollectionViews, there might be a race condition between the view clearing and
+        // resetting its children based on content and this method being called, causing this array
+        // to be wiped out while this loop progresses.  In this instance, just return, as this method will
+        // be called again when the new childViews have been created.
+        if (!childViews[idx]) {
+          return this;
+        }
         childViews[idx].recomputeIsVisibleInWindow(current);
       }
 
