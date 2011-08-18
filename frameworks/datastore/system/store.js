@@ -1439,7 +1439,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     oldPk = crs[childStoreKey];
     if (oldPk){
       oldChildren = prs[oldPk];
-      delete oldChildren[childStoreKey];
+      if (oldChildren && oldChildren[childStoreKey]) {delete oldChildren[childStoreKey];}
       // this.recordDidChange(null, null, oldPk, key);
     }
     pkRef = prs[parentStoreKey] || {};
