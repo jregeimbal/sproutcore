@@ -2103,7 +2103,7 @@ SC.CollectionView = SC.View.extend(
         content       = this.get('content'),
         contentIndex  = itemView ? itemView.get('contentIndex') : -1, 
         info, anchor, sel, isSelected, modifierKeyPressed,
-        allowsMultipleSel = content.get('allowsMultipleSelection');
+        allowsMultipleSel = content ? content.get('allowsMultipleSelection') : NO;
         
     info = this.mouseDownInfo = {
       event:        ev,  
@@ -2197,7 +2197,7 @@ SC.CollectionView = SC.View.extend(
         info   = this.mouseDownInfo,
         content       = this.get('content'),
         contentIndex, sel, isSelected, canEdit, itemView, idx,
-        allowsMultipleSel = content.get('allowsMultipleSelection');
+        allowsMultipleSel = content ? content.get('allowsMultipleSelection') : NO;
         
     if (this.get('useToggleSelection')) {
       // Return if clicked outside of elements or if toggle was handled by mouseDown

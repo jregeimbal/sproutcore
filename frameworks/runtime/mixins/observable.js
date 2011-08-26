@@ -985,7 +985,7 @@ SC.Observable = {
           membersLength = members.length ;
           for(memberLoc=0;memberLoc < membersLength; memberLoc++) {
             member = members[memberLoc] ;
-            if (member[3] === rev) continue ; // skip notified items.
+            if (!member || (member && member[3] === rev)) continue ; // skip notified items.
 
             target = member[0] || this; 
             method = member[1] ; 
