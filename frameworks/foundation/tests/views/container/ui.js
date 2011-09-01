@@ -13,7 +13,8 @@
   var pane = SC.ControlTestPane.design({ height: 100 });
   
   pane.add("basic", SC.ContainerView, {
-      isEnabled: YES
+      isEnabled: YES,
+      label: SC.LabelView.design({value: 'Label view.'})
     });
     
   pane.add("disabled", SC.ContainerView, {
@@ -104,6 +105,11 @@
     viewToAdd = 'NonexistentNamespace.NonexistentViewClass';
     view.set('nowShowing', viewToAdd);
     equals(view.get('contentView'), null, 'contentView changes to null when nowShowing is set to a string pointing at nothing');
+    
+    // Set nowShowing to local object shorthand path.
+    viewToAdd = '.label';
+    view.set('nowShowing', viewToAdd);
+    ok(view.get('contentView') instanceof SC.View, 'contentView changes as intended when a local shorthand object path is passed to nowShowing');
     
     // Set nowShowing to null.
     viewToAdd = null;

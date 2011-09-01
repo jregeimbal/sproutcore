@@ -105,7 +105,14 @@ SC.ContainerView = SC.View.extend(
     
     // If it's a string, try to turn it into the object it references...
     if (SC.typeOf(content) === SC.T_STRING && content.length > 0) {
-      if (content.indexOf('.') > 0) {
+      // if the first character is a '.', this is a static path. This allows 
+      // for support for the SC.Object shorthand: ".owner.value"
+      //
+      if (content.indexOf('.') === 0) {
+        content = content.slice(1);
+        content = this.getPath(content);
+      }
+      else if (content.indexOf('.') > 0) {
         content = SC.objectForPropertyPath(content);
       } else {
         var target = this.get('target');
