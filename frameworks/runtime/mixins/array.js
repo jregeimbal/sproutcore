@@ -145,9 +145,7 @@ SC.Array = {
     
     if (typeof start === SC.T_NUMBER) {
       
-      if ((start < 0) || (start >= this.get('length'))) {
-        throw SC.OUT_OF_RANGE_EXCEPTION;
-      }
+      if ( (start < 0) || (start >= this.get('length')) ) return this;
       
       // fast case
       if (length === undefined) {
@@ -177,7 +175,7 @@ SC.Array = {
     var loc = this.get('length') || 0;
     while(--loc >= 0) {
       var curObject = this.objectAt(loc) ;
-      if (curObject == obj) this.removeAt(loc) ;
+      if (curObject === obj) this.removeAt(loc) ;
     }
     return this ;
   },
@@ -304,10 +302,10 @@ SC.Array = {
   */
   isEqual: function(ary) {
     if (!ary) return false ;
-    if (ary == this) return true;
+    if (ary === this) return true;
     
     var loc = ary.get('length') ;
-    if (loc != this.get('length')) return false ;
+    if (loc !== this.get('length')) return false ;
 
     while(--loc >= 0) {
       if (!SC.isEqual(ary.objectAt(loc), this.objectAt(loc))) return false ;
