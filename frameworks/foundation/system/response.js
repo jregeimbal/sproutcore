@@ -462,9 +462,11 @@ SC.XHRResponse = SC.Response.extend({
       }
     }
     
-    // initiate request.  
-    rawRequest.open(this.get('type'), this.get('address'), async ) ;
-    
+    // Open the XHR and invoke the callback.
+    var req = this.get('request'), source = req ? req.get('source') : null;
+    rawRequest.open(this.get('type'), this.get('address'), async);
+    if (source && source.didOpen) source.didOpen(req, this, rawRequest);
+
     // headers need to be set *after* the open call.
     headers = this.getPath('request.headers') ;
     for (var headerKey in headers) {

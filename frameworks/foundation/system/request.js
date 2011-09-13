@@ -149,6 +149,16 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
   // ..........................................................
   // CALLBACKS
   // 
+
+  /**
+    Invoked on the original request object just after send() is invoked on
+    the raw XHR in the copied request.
+
+    @param {SC.Request} request a copy of the request, frozen
+    @param {SC.Response} response the response
+    @Param {XMLHttpRequest} xhr the raw request object
+  */
+  didOpen: function(request, response, xhr) {},
   
   /**
     Invoked on the original request object just before a copied request is 
@@ -211,7 +221,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
   // HELPER METHODS
   // 
 
-  COPY_KEYS: 'isAsynchronous isJSON isXML address type timeout body responseClass willSend didSend willReceive didReceive'.w(),
+  COPY_KEYS: 'isAsynchronous isJSON isXML address type timeout body responseClass didOpen willSend didSend willReceive didReceive'.w(),
   
   /**
     Returns a copy of the current request.  This will only copy certain
