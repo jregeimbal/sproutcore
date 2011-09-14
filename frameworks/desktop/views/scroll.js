@@ -561,6 +561,7 @@ SC.ScrollView = SC.View.extend(SC.Border, {
     @returns {Boolean} YES if scroll position was changed
   */
   scrollToVisible: function(view) {
+    if (!view) {return NO;}
     
     // if no view is passed, do default
     if (arguments.length === 0) return sc_super(); 
