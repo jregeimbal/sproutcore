@@ -218,7 +218,7 @@ test("Test Commit to server and new member addition",function() {
   family = store.materializeRecord(storeKeys[0]);
   familyHash = store.readDataHash(storeKeys[0]);
   secondMembers = family.get('members');
-  //debugger;
+  
   secondMembers._childrenContentDidChange();
   second = secondMembers.objectAt(0);
   secondHash = second.get('attributes');
