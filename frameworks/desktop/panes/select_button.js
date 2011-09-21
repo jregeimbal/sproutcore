@@ -98,6 +98,11 @@ SC.SelectButtonView = SC.ButtonView.extend(
   isEnabledKey: "isEnabled",
 
   /**
+ *  Key used to fire an individual item action
+ */
+  itemActionKey: 'itemAction',
+
+  /**
     If true, the empty name will be localized.
 
     @property
@@ -372,7 +377,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     sc_super();
     var layoutWidth, objects, len, nameKey, iconKey, valueKey, checkboxEnabled,
       currentSelectedVal, shouldLocalize, separatorPostion, itemList, isChecked,
-      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName ;
+      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName,itemAction,itemActionKey ;
     layoutWidth = this.layout.width ;
     if(firstTime && layoutWidth) {
       this.adjust({ width: layoutWidth + 2 }) ;
@@ -383,6 +388,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     len = objects.length ;
 
     //Get the namekey, iconKey and valueKey set by the user
+    itemActionKey = this.get('itemActionKey');
     nameKey = this.get('nameKey') ;
     iconKey = this.get('iconKey') ;
     valueKey = this.get('valueKey') ;
@@ -424,7 +430,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
       this._defaultTitle = name;
       this._defaultIcon = icon;
       this._defaultItemIdx = idx;
-      
+
       idx++;
       item = SC.Object.create({
         title: name,
@@ -462,6 +468,10 @@ SC.SelectButtonView = SC.ButtonView.extend(
           this.set('icon', icon) ;
         }
 
+        if (itemActionKey) {
+          itemAction = object.get ? object.get(itemActionKey) : object[itemActionKey];
+        }
+
         //Check if the item is currentSelectedItem or not
         if(value === this.get('value')) {
           //set the itemIdx - To change the prefMatrix accordingly.
@@ -493,8 +503,11 @@ SC.SelectButtonView = SC.ButtonView.extend(
           isEnabled: itemEnabled,
           checkbox: isChecked,
           target: this,
-          action: 'displaySelectedItem'
+          action: 'displaySelectedItem',
+          itemAction: itemAction
         }) ;
+
+        
 
         //Set the items in the itemList array
         itemList.push(item);
@@ -689,6 +702,14 @@ SC.SelectButtonView = SC.ButtonView.extend(
       value = null;
     }
     this.set('value', value);
+    var itemAction = currentItem.get('itemAction');
+
+    if (itemAction) {
+      var target = this.get('target');
+      var responder = this.getPath('pane.rootResponder');
+
+      if (responder) {responder.sendAction(itemAction,target,this,this.get('pane'));}
+    }
     
     return YES;
   },
