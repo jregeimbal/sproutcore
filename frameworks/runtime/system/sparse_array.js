@@ -311,6 +311,17 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     return ret;
   },  
   
+  /**
+    Returns an the first item with a property matching the passed value.  You
+    can pass an optional second argument with the target value.  Otherwise
+    this will match any property that evaluates to true.
+  
+    This method works much like the more generic find() method.
+  
+    @params key {String} the property to test
+    @param value {String} optional value to test against.
+    @returns {Object} found item or null
+  */
   findProperty: function(key, value){
     var ret, del = this.delegate, found = false, last = null, cur, next, len, idx ;
     if (del && del.sparseArrayDidRequestFindProperty) {
@@ -319,8 +330,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     
     if (SC.none(ret)) {
       var content = this._sa_content ;
-      if (!content) content = this._sa_content = [] ;
-      
+      if (!content) content = this._sa_content = [] ;      
       for (idx = 0, len = content.length; idx < len && !found; idx++){
         next = content[idx];
         cur = next ? (next.get ? next.get(key) : next[key]) : null;

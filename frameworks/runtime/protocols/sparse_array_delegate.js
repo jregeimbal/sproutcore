@@ -114,7 +114,7 @@ SC.SparseArrayDelegate = {
     @returns {void}
   */  
   sparseArrayDidRequestFindProperty: function(sparseArray, key, value){},
-  
+
   /**
     Optional delegate method invoked whenever the sparse array attempts to 
     changes its contents.  If you do not implement this method or if you 
