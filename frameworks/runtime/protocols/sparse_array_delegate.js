@@ -99,9 +99,21 @@ SC.SparseArrayDelegate = {
     @return {Number} the index or -1
     @returns {void}
   */
-  sparseArrayDidRequestIndexOf: function(sparseArray, object) {
+  sparseArrayDidRequestIndexOf: function(sparseArray, object) {},
+  
+  /**
+    Optional delegate method you can use to return the first item in the 
+    array that matches that has a value in the key property. You can add 
+    the optional second parameter that will match on a specific property
+    If you do not implement this method, then the sparse array will just 
+    search the objects it has loaded already.
     
-  },
+    @param {SC.SparseArray} sparseArray the sparse array
+    @param {String} key the property on the objects to search on
+    @return {Object} value the value to match
+    @returns {void}
+  */  
+  sparseArrayDidRequestFindProperty: function(sparseArray, key, value){},
   
   /**
     Optional delegate method invoked whenever the sparse array attempts to 

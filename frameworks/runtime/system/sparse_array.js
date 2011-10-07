@@ -311,6 +311,26 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     return ret;
   },  
   
+  findProperty: function(key, value){
+    var ret, del = this.delegate, found = false, last = null, cur, next, len, idx ;
+    if (del && del.sparseArrayDidRequestFindProperty) {
+      ret = del.sparseArrayDidRequestFindProperty(this, key, value);
+    } 
+    
+    if (SC.none(ret)) {
+      var content = this._sa_content ;
+      if (!content) content = this._sa_content = [] ;
+      
+      for (idx = 0, len = content.length; idx < len && !found; idx++){
+        next = content[idx];
+        cur = next ? (next.get ? next.get(key) : next[key]) : null;
+        found = (value === undefined) ? !!cur : SC.isEqual(cur, value);
+        if (found) ret = next ;
+      }
+    }
+    return ret;
+  },
+  
   // ..........................................................
   // EDITING
   // 
