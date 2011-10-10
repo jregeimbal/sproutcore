@@ -62,6 +62,7 @@ SC.WebView = SC.View.extend(SC.Control, {
   @returns {void}
   */
   iframeDidLoad: function() {
+    this.set('iframeLoaded', YES);
     //fit the iframe to size of the contents.
     if (this.get('shouldAutoResize') === YES){
       var contentWindow;
