@@ -192,7 +192,7 @@ SC.mixin(/** @scope SC */ {
     if (item === undefined) return SC.T_UNDEFINED ;
     if (item === null) return SC.T_NULL ; 
     var ret = typeof(item) ;
-    if (ret == "object") {
+    if (ret === "object") {
       if (item instanceof Array) {
         ret = SC.T_ARRAY ;
       } else if (item instanceof Function) {
@@ -209,6 +209,19 @@ SC.mixin(/** @scope SC */ {
       } else ret = SC.T_HASH ;
     } else if (ret === SC.T_FUNCTION) ret = (item.isClass) ? SC.T_CLASS : SC.T_FUNCTION;
     return ret ;
+  },
+  
+  /**
+    In a world where you can have SC.Object and POJSO, this
+    is the one function that will get the value from the obj
+    
+    @param {Object | SC.Object} item the item to get the value from
+    @param {String} key the key that holds the value you want to get
+    @param {Object} defaultVal *optional, default value if you want one
+    @returns {Object} the value that is in the property
+  */
+  valueOf: function(item, key, defaultVal){
+    return (item ? (item.get ? item.get(key) : (key ? item[key] : defaultVal)) : defaultVal);
   },
 
   /**
