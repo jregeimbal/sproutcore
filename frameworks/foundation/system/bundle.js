@@ -10,6 +10,38 @@
 */
 SC.mixin(/** @scope SC */ {
   
+  /*
+  
+    This will load all lazily insantiated frameworks in one shot
+    
+  */
+  instantiateAll: function(){
+    var lazyItems = SC.LAZY_INSTANTIATION, item, idx, len;
+    
+    if(lazyItems){
+      for(var itemKey in lazyItems){
+        if(lazyItems.hasOwnProperty(itemKey)){
+          item = lazyItems[itemKey];
+          
+          if(item && item.length){
+            len = item.length;
+            for (idx = 0; idx < len; idx++) {
+              // Iterate through each function associated with this module, and attempt to execute it.
+              try {
+                item[idx]();
+              } catch(e) {
+                SC.Logger.error("Failed to lazily instatiate entry for  '%@'".fmt(itemKey));
+              }
+            }
+            // Free up memory containing the functions once they have been executed.
+            delete lazyItems[itemKey];
+          }
+        } 
+      }
+    }
+  },
+  
+  
   
   /**
     @property
@@ -125,132 +157,8 @@ SC.mixin(/** @scope SC */ {
     @param target {Function} 
     @param method {Function}
   */
-  loadBundle: function(bundleName, target, method) {
-    var idx, len;
-    if(method === undefined && SC.typeOf(target) === SC.T_FUNCTION) {
-      method = target;
-      target = null;
-    }
+  loadBundle: function(bundleName, cb) {
 
-    var bundleInfo = SC.BUNDLE_INFO[bundleName], callbacks, targets,
-        args       = SC.A(arguments).slice(3),
-        log        = SC.logBundleLoading;
-
-    if (log) {
-      console.log("SC.loadBundle(): Attempting to load '%@'".fmt(bundleName));
-    }
-    
-    if (!bundleInfo) {
-      if (log) console.log("SC.loadBundle(): Attemping to load %@ without SC.BUNDLE_INFO entry… could be loaded through other means.".fmt(bundleName));
-      bundleInfo = this.tryToLoadBundle(bundleName, target, method, args);
-    }
-    
-
-    if (!bundleInfo) {        
-      throw "SC.loadBundle(): could not find bundle '%@'".fmt(bundleName) ;
-    } else if (bundleInfo.loaded) {
-
-      if (log) console.log("SC.loadBundle(): Bundle '%@' already loaded, skipping.".fmt(bundleName));
-
-      if(method) {
-        // call callback immediately if we're already loaded and SC.isReady
-        if (SC.isReady) {
-          SC._scb_bundleDidLoad(bundleName, target, method, args);
-        } else {
-          // queue callback for when SC is ready
-          SC.ready(SC, function() {
-            SC._scb_bundleDidLoad(bundleName, target, method, args);        
-          });
-        }
-      }
-    } else {
-
-      if (log) console.log("SC.loadBundle(): Bundle '%@' is not loaded, loading now.".fmt(bundleName));
-
-      // queue callback for later
-      callbacks = bundleInfo.callbacks || [] ;
-
-      if (method) {
-        callbacks.push(function() {
-          SC._scb_bundleDidLoad(bundleName, target, method, args);        
-        });
-        bundleInfo.callbacks = callbacks ;
-      }
-
-      if (!bundleInfo.loading) {
-        // load bundle's dependencies first
-        var requires = bundleInfo.requires || [] ;
-        var dependenciesMet = YES ;
-        for (idx=0, len=requires.length; idx<len; ++idx) {
-          var targetName = requires[idx] ;
-          var targetInfo = SC.BUNDLE_INFO[targetName] ;
-          if (!targetInfo) {
-            throw "SC.loadBundle(): could not find required bundle '%@' for bundle '%@'".fmt(targetName, bundleName) ;
-          } else {
-            if (targetInfo.loading) {
-              dependenciesMet = NO ;
-              break ;
-            } else if (targetInfo.loaded) {
-              continue ;
-            } else {
-              dependenciesMet = NO ;
-              
-              // register ourself as a dependent bundle (used by 
-              // SC.bundleDidLoad()...)
-              var dependents = targetInfo.dependents;
-              if(!dependents) targetInfo.dependents = dependents = [];
-
-              dependents.push(bundleName) ;
-
-              if (log) console.log("SC.loadBundle(): '%@' depends on '%@', loading dependency…".fmt(bundleName, targetName));
-              
-              // recursively load targetName so it's own dependencies are
-              // loaded first.
-              SC.loadBundle(targetName) ;
-              break ;
-            }
-          }
-        }
-        
-        if (dependenciesMet) {
-          // add <script> and <link> tags to DOM for bundle's resources
-          var styles, scripts, url, el, head, body;
-          head = document.getElementsByTagName('head')[0] ;
-          if (!head) head = document.documentElement ; // fix for Opera
-          styles = bundleInfo.styles || [] ;
-          for (idx=0, len=styles.length; idx<len; ++idx) {
-            url = styles[idx] ;
-            if (url.length > 0) {
-              el = document.createElement('link') ;
-              el.setAttribute('href', url) ;
-              el.setAttribute('rel', "stylesheet") ;
-              el.setAttribute('type', "text/css") ;
-              head.appendChild(el) ;
-            }
-          }
-
-          // Push the URLs on the the queue and then start the loading.
-          var jsBundleLoadQueue = this._jsBundleLoadQueue;
-          if(!jsBundleLoadQueue) this._jsBundleLoadQueue = jsBundleLoadQueue = {};
-          jsBundleLoadQueue[bundleName] = [];
-          var q = jsBundleLoadQueue[bundleName] ;
-          scripts = bundleInfo.scripts || [] ;
-          
-          for (idx=0, len=scripts.length; idx<len; ++idx) {
-            url = scripts[idx] ;
-            if (url.length > 0) {
-              q.push(url);
-            }
-          }
-          
-          // and remember that we're loading
-          bundleInfo.loading = YES ;
-          
-          // Start the load process.
-          this.scriptDidLoad(bundleName);
-        }
-      }
-    }
   },
 
   /**
