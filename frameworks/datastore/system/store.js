@@ -966,9 +966,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     @param {SC.Record|String} recordType the expected record type
     @param {String} id the id to load
+    @param {Hash} params (optional) set of parameters to send through to the data source
     @returns {SC.Record} record instance or null
   */
-  find: function(recordType, id) {
+  find: function(recordType, id, params) {
     
     // if recordType is passed as string, find object
     if (SC.typeOf(recordType)===SC.T_STRING) {
@@ -985,7 +986,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       
     // handle finding a single record
     } else {
-      return this._findRecord(recordType, id);
+      return this._findRecord(recordType, id, params);
     }
   },
 
@@ -1037,7 +1038,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     return ret ;
   },
   
-  _findRecord: function(recordType, id) {
+  _findRecord: function(recordType, id, params) {
 
     var storeKey ; 
     
@@ -1052,7 +1053,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     } else storeKey = id ? recordType.storeKeyFor(id) : null;
     
     if (storeKey && (this.readStatus(storeKey) === SC.Record.EMPTY)) {
-      storeKey = this.retrieveRecord(recordType, id);
+      storeKey = this.retrieveRecord(recordType, id, null, null, null, params);
     }
     
     // now we have the storeKey, materialize the record and return it.
@@ -1744,9 +1745,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Array} storeKeys (optional) store keys to retrieve
     @param {Boolean} isRefresh
     @param {Function|Array} callback function or array of functions
+    @param {Hash} params (optional) set of parameters to send through to the data source
     @returns {Array} storeKeys to be retrieved
   */
-  retrieveRecords: function(recordTypes, ids, storeKeys, isRefresh, callbacks) {
+  retrieveRecords: function(recordTypes, ids, storeKeys, isRefresh, callbacks, params) {
     
     var source  = this._getDataSource(),
         isArray = SC.typeOf(recordTypes) === SC.T_ARRAY,
@@ -1805,7 +1807,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // now retrieve storekeys from dataSource.  if there is no dataSource,
     // then act as if we couldn't retrieve.
     ok = NO;
-    if (source) ok = source.retrieveRecords.call(source, this, ret, ids);
+    if (source) ok = source.retrieveRecords.call(source, this, ret, ids, params);
 
     // if the data source could not retrieve or if there is no source, then
     // simulate the data source calling dataSourceDidError on those we are 
@@ -1904,9 +1906,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Number} storeKey (optional) store key
     @param {Boolean} isRefresh
     @param {Function} callback (optional)
+    @param {Hash} params (optional, see #find())
     @returns {Number} storeKey that was retrieved 
   */
-  retrieveRecord: function(recordType, id, storeKey, isRefresh, callback) {
+  retrieveRecord: function(recordType, id, storeKey, isRefresh, callback, params) {
     var array = this._TMP_RETRIEVE_ARRAY,
         ret;
     
@@ -1919,7 +1922,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       id = array;
     }
     
-    ret = this.retrieveRecords(recordType, id, storeKey, isRefresh, callback);
+    ret = this.retrieveRecords(recordType, id, storeKey, isRefresh, callback, params);
     array.length = 0 ;
     return ret[0];
   },

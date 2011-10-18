@@ -101,10 +101,11 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
     @param {SC.Store} store the requesting store
     @param {Array} storeKeys
     @param {Array} ids - optional
+    @param {Hash} params (optional) set of parameters sent through the store
     @returns {Boolean} YES if handled, NO otherwise
   */
-  retrieveRecords: function(store, storeKeys, ids) {
-    return this._handleEach(store, storeKeys, this.retrieveRecord, ids);  
+  retrieveRecords: function(store, storeKeys, ids, params) {
+    return this._handleEach(store, storeKeys, this.retrieveRecord, ids, params);
   },
   
   /**
@@ -297,9 +298,11 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
     @param {SC.Store} store the requesting store
     @param {Array} storeKey key to retrieve
     @param {String} id the id to retrieve
+    @param {Hash} params to be passed down to data source. originated
+      from the commitRecords() call on the store
     @returns {Boolean} YES if handled
   */
-  retrieveRecord: function(store, storeKey, id) {
+  retrieveRecord: function(store, storeKey, id, params) {
     return NO ;
   },
 
