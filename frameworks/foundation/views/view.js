@@ -1487,14 +1487,21 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
   nextValidKeyView: function() {
     var seen = [], 
         rootView = this.get('pane'), ret = this.get('nextKeyView');
+
+    // NOTE: [SE] There have been cases reported in which rootView is
+    // inexplicably null, and thus causes a null reference exception.
+    if (rootView) {
+      if (!ret) ret = rootView._computeNextValidKeyView(this, seen);
     
-    if(!ret) ret = rootView._computeNextValidKeyView(this, seen);
-    
-    if(SC.TABBING_ONLY_INSIDE_DOCUMENT && !ret) {
-      ret = rootView._computeNextValidKeyView(rootView, seen);
+      if (SC.TABBING_ONLY_INSIDE_DOCUMENT && !ret) {
+        ret = rootView._computeNextValidKeyView(rootView, seen);
+      }
+
+    } else {
+      SC.Logger.warn('Unable to retrieve next key view; root view (pane) is null.');
     }
     
-    return ret ;
+    return ret;
   }.property('nextKeyView'),
   
   _computeNextValidKeyView: function(currentView, seen) {
