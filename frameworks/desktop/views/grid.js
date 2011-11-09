@@ -32,6 +32,7 @@ SC.GridView = SC.ListView.extend(
   */
   columnWidth: 64,
 
+  columnSpacing: 0,
   /**
     The default example item view will render text-based items.
     
@@ -44,10 +45,11 @@ SC.GridView = SC.ListView.extend(
   /** @private */
   itemsPerRow: function() {
     var f = this.get('frame'),
-        columnWidth = this.get('columnWidth') || 0 ;
+        columnWidth = this.get('columnWidth') || 0,
+        columnSpacing = this.get('columnSpacing') || 0;
 
-    return (columnWidth <= 0) ? 1 : Math.floor(f.width / columnWidth) ;
-  }.property('clippingFrame', 'columnWidth').cacheable(),
+    return (columnWidth <= 0) ? 1 : Math.floor(f.width / (columnWidth + columnSpacing*2)) ;
+  }.property('clippingFrame', 'columnWidth','columnSpacing').cacheable(),
   
   /** @private
     Find the contentIndexes to display in the passed rect. Note that we 
@@ -67,11 +69,12 @@ SC.GridView = SC.ListView.extend(
     var rowHeight = this.get('rowHeight') || 48,
         frameWidth = this.get('clippingFrame').width,
         itemsPerRow = this.get('itemsPerRow'),
-        columnWidth = Math.floor(frameWidth/itemsPerRow),
+        columnSpacing = this.get('columnSpacing') || 0;
+        columnWidth = Math.floor(frameWidth/itemsPerRow) - columnSpacing*2,
         row = Math.floor(contentIndex / itemsPerRow),
         col = contentIndex - (itemsPerRow*row) ;
     return { 
-      left: col * columnWidth,
+      left: (col * columnWidth) + columnSpacing,
       top: row * rowHeight,
       height: rowHeight,
       width: columnWidth
@@ -205,3 +208,4 @@ SC.GridView = SC.ListView.extend(
     }
   }.observes('clippingFrame')
 }) ;
+
