@@ -63,7 +63,8 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
       del.sparseArrayDidRequestLength(this);
       this._requestingLength-- ;
     }
-    return this._length || 0 ;
+    this._length = this._length || 0;
+    return this._length;
   }.property().cacheable(),
 
   /**
