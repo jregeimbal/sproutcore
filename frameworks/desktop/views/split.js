@@ -414,8 +414,11 @@ SC.SplitView = SC.View.extend(
       // update the cursor used by thumb views
       this._setCursorStyle() ;
       
+      // HACK: [BB] OR-14281
+      SC.RunLoop.begin();
       // actually set layout for our child views
       this.updateChildLayout() ;
+      SC.RunLoop.end();
     }
     sc_super() ;
   },
