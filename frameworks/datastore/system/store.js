@@ -1704,10 +1704,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         allFinished, keys;
     if(callback){
       if(SC.typeOf(callback) === SC.T_FUNCTION){
+        delete queue[storeKey];
         callback.call(); //args?
-        delete queue[storeKey]; //cleanup
       }
       else if(SC.typeOf(callback) == SC.T_HASH){
+        // TODO: [JH2] This doesn't seem like it would work. Do we use it?
         callback.completed = YES;
         keys = callback.storeKeys;
         keys.forEach(function(key){
