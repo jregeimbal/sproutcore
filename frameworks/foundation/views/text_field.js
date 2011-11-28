@@ -1009,6 +1009,11 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   },
 
   mouseDown: function(evt) {
+    var pane = this.get('pane');
+    if (pane) {
+      pane.becomeKeyPane();
+    }
+    
     var fieldValue = this.get('fieldValue'); // use 'fieldValue' since we want actual text
     this._txtFieldMouseDown=YES;
     if (!this.get('isEnabled')) {
