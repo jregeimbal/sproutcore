@@ -997,10 +997,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     
     // HACK [jcd] FF3 does not work the same way with keyUp/Down as higher ones
     // when you paste text in. This is until we stop caring about FF3
-    var value = this.get('value');
-    if (value && parseInt(SC.browser.mozilla) < 4) {
-      var maxLength = this.get('maxLength');
-
+    var value = this.get('value'), maxLength = this.get('maxLength');
+    if (maxLength && value && parseInt(SC.browser.mozilla) < 4) {
       if (value && value.length > maxLength ) {
         this.set('value', value.substr(0,maxLength-1));
       }
