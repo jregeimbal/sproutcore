@@ -612,7 +612,11 @@ SC.SplitView = SC.View.extend(
       topLeftView.set('isCollapsed', thickness === 0) ;
       bottomRightView.set('isCollapsed', thickness >= maxAvailable) ;
       
+      // HACK: [BB] OR-14281
+      SC.RunLoop.begin();
       this.updateChildLayout(); // updates child layouts
+      SC.RunLoop.end();
+      
       this.displayDidChange(); // updates cursor
     }
   },
@@ -686,7 +690,11 @@ SC.SplitView = SC.View.extend(
       topLeftView.set('isCollapsed', thickness === 0) ;
       bottomRightView.set('isCollapsed', thickness >= maxAvailable) ;
       
+      // HACK: [BB] OR-14281
+      SC.RunLoop.begin();
       this.updateChildLayout(); // updates child layouts
+      SC.RunLoop.end();
+      
       this.displayDidChange(); // updates cursor
     }
   },
