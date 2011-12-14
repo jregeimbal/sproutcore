@@ -54,6 +54,18 @@
     value: 'John Doe',
     isTextArea: YES,
     isEnabled: NO
+  })
+  
+  .add("readonly - empty", SC.TextFieldView, { 
+    hint: "Full Name", 
+    value: '',
+    isEditable: NO
+  })
+  
+  .add("readonly - with value", SC.TextFieldView, { 
+    hint: "Full Name", 
+    value: 'John Doe',
+    isEditable: NO
   });
   
   
@@ -66,7 +78,6 @@ pane.show(); // add a test to show the test pane
 pane.verifyEmpty = function verifyEmpty(view, expectedHint) {
   var input = view.$('input');
   var layer = view.$();
-  
   ok(!layer.hasClass('not-empty'), 'layer should not have not-empty class');
   if(SC.browser.safari) equals(input.val(), '', 'input should have empty value');
   else equals(input.val(), expectedHint, 'input should have empty value');
@@ -111,6 +122,19 @@ pane.verifyDisabled = function verifyDisabled(view, isDisabled) {
   } else {
     ok(!layer.hasClass('disabled'), 'layer should not have disabled class');
     ok(!input.attr('disabled'), 'input should not have disabled attr');
+  }
+};
+
+pane.verifyEditable = function verifyDisabled(view, isEditable) {
+  var layer = view.$();
+  var input = view.$('input');
+  
+  if (!isEditable) {
+    ok(layer.hasClass('readonly'), 'layer should have readonly class');
+    ok(input.attr('readonly'), 'input should have readonly attr');
+  } else {
+    ok(!layer.hasClass('readonly'), 'layer should not have readonly class');
+    ok(!input.attr('readonly'), 'input should not have readonly attr');
   }
 };
 
@@ -167,6 +191,18 @@ test("textarea - disabled - with value", function() {
   var view = pane.view('disabled - with value');
   pane.verifyNotEmpty(view, 'John Doe', 'Full Name');
   pane.verifyDisabled(view, YES);
+});
+
+test("readonly - empty", function() {
+  var view = pane.view('readonly - empty');
+  pane.verifyEmpty(view, 'Full Name');
+  pane.verifyEditable(view, NO);
+});
+
+test("readonly - with value", function() {
+  var view = pane.view('readonly - with value');
+  pane.verifyNotEmpty(view, 'John Doe', 'Full Name');
+  pane.verifyEditable(view, NO);
 });
 
 // ..........................................................

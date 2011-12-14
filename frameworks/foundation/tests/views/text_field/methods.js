@@ -11,7 +11,7 @@
 // note: need to test interaction with Validators here
 // possibly move Validator support to TextFieldView specifically.
 
-var pane, view, view1, view2;
+var pane, view, view1, view2, view3;
 
 module("SC.TextFieldView",{
   setup: function() {
@@ -30,6 +30,11 @@ module("SC.TextFieldView",{
           }),
           SC.TextFieldView.extend({
             layerId: 'fieldWithCustomId'
+          }),
+          SC.TextFieldView.extend({
+            hint:'Name2',
+            value:'SproutCore2',
+            isEditable: NO
           })
         ]
     });
@@ -39,6 +44,7 @@ module("SC.TextFieldView",{
     view  = pane.childViews[0];
     view1 = pane.childViews[1];
     view2 = pane.childViews[2];
+    view3 = pane.childViews[3];
   },
   
   teardown: function() {
@@ -52,6 +58,8 @@ test("renders an text field input tag with appropriate attributes", function() {
   equals(view1.get('value'), 'SproutCore', 'value should not be empty ');
   equals(view.get('isEnabled'),YES,'field enabled' );
   equals(view1.get('isEnabled'),NO,'field not enabled' );
+  equals(view.get('isEditable'),YES,'field editable' );
+  equals(view3.get('isEditable'),NO,'field not editable' );
   var q = Q$('input', view.get('layer'));
   equals(q.attr('type'), 'text', 'should have type as text');
   equals(q.attr('name'), view.get('layerId'), 'should have name as view_layerid');
@@ -78,10 +86,11 @@ test("isEnabled=NO should add disabled class", function() {
 //   ok(view1.get('value') === 'SproutCore', 'value cannot be changed');
 //   });
 
-test("isEnabled and isEditable mapping", function() {
-  var obj= SC.TextFieldView.create();
-  obj.set('isEnabled',false);
-  equals(obj.get('isEditable'),false);
-  obj.set('isEnabled',true);
-  equals(obj.get('isEditable'),true);
-});
+// removed [JS] - isEditable can be handled independent of isEnabled, forward port from 1.7
+// test("isEnabled and isEditable mapping", function() {
+//   var obj= SC.TextFieldView.create();
+//   obj.set('isEnabled',false);
+//   equals(obj.get('isEditable'),false);
+//   obj.set('isEnabled',true);
+//   equals(obj.get('isEditable'),true);
+// });

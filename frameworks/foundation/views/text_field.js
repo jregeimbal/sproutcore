@@ -150,17 +150,19 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     return sc_super();
   },
 
-  /** isEditable maps to isEnabled with a TextField. */
-  isEditable: function() {
-    return this.get('isEnabled') ;
-  }.property('isEnabled').cacheable(),
+  /** [JS] isEditable is distinct from isEnabled (forward port from sproutcore 1.7) */
+  isEditable: YES,
+
+  isActionable: function() {
+    return this.get('isEditable') && this.get('isEnabled');
+  }.property('isEditable','isEnabled').cacheable(),
 
   /**
     Override SC.Editable.beginEditing() here so we have a chance
     to preserve the original 'value' before we edit it.
   */
   beginEditing: function() {
-    if (!this.get('isEditable')) return NO ;
+    if (!this.get('isActionable')) return NO ;
   
     if (!this.get('isEditing')) {
       this._originalValue = this.get('value'); // save our last value
@@ -305,7 +307,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   // INTERNAL SUPPORT
   //
 
-  displayProperties: 'hint fieldValue editingValue isEditing leftAccessoryView rightAccessoryView isTextArea'.w(),
+  displayProperties: 'hint fieldValue editingValue isEditing leftAccessoryView rightAccessoryView isTextArea isEditable'.w(),
 
   createChildViews: function() {
     sc_super();
@@ -406,9 +408,18 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     v = this.get('fieldValue');
     if (SC.none(v)) v = '';
     v = String(v);
-
     // update layer classes always
-    context.setClass('not-empty', v.length > 0);
+    if (v.length > 0) {
+      context.setClass('not-empty', YES);
+    } else {
+      context.removeClass('not-empty');
+    }
+    
+    if (this.get('isEditable')) {
+      context.removeClass('readonly');
+    } else {
+      context.setClass('readonly', YES);
+    }
 
     // If we have accessory views, we'll want to update the padding on the
     // hint to compensate for the width of the accessory view.  (It'd be nice
@@ -441,8 +452,9 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     // TODO:  The cleanest thing might be to create a sub- rendering context
     //        here, but currently SC.RenderContext will render sibling
     //        contexts as parent/child.
+    // NOTE:[JS] forward-pulled isEditable changes from 1.7
 
-    var hint = this.get('hint'), disabled, name, adjustmentStyle, type, 
+    var hint = this.get('hint'), activeState, name, adjustmentStyle, type, 
         hintElements, element, paddingElementStyle, fieldClassNames,
         spellCheckEnabled=this.get('spellCheckEnabled'), spellCheckString,
         maxLength = this.get('maxLength'), isOldSafari;
@@ -457,7 +469,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     spellCheckString = spellCheckEnabled ? ' spellcheck="true"' : ' spellcheck="false"';
     if (firstTime || this._forceRenderFirstTime) {
       this._forceRenderFirstTime = NO;
-      disabled = this.get('isEnabled') ? '' : 'disabled="disabled"' ;
+      activeState = this.get('isEnabled') ? (this.get('isEditable') ? '' : 'readonly="readonly"') : 'disabled="disabled"' ;
       name = this.get('layerId');
       
       context.push('<span class="border"></span>');
@@ -489,14 +501,14 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       // Render the input/textarea field itself, and close off the padding.
       if (this.get('isTextArea')) {
         context.push('<textarea class="',fieldClassNames,'" name="', name, 
-                      '" ', disabled, ' placeholder="',hint, '"',
+                      '" ', activeState, ' placeholder="',hint, '"',
                       spellCheckString,' maxlength="', maxLength, '">', 
                       value, '</textarea></span>') ;
       }
       else {
         type = this.get('isPassword') ? 'password' : 'text' ;
         context.push('<input class="',fieldClassNames,'" type="', type,
-                      '" name="', name, '" ', disabled, ' value="', value,
+                      '" name="', name, '" ', activeState, ' value="', value,
                       '" placeholder="',hint,'"', spellCheckString, 
                       ' maxlength="', maxLength, '" /></span>') ;
       }
@@ -526,9 +538,13 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       if (element) {
         if (!this.get('isEnabled')) {
           element.disabled = 'true' ;
-        }
-        else {
+          element.readOnly = null ;
+        } else if(!this.get('isEditable')) {
           element.disabled = null ;
+          element.readOnly = 'true' ;
+        } else {
+          element.disabled = null ;
+          element.readOnly = null ;
         }
 
         // Adjust the padding element to accommodate any accessory views.
