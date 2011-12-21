@@ -1111,7 +1111,37 @@ Array.prototype.isEnumerable = YES ;
       }
       next=null;
       return ret ;
-    },    
+    }, 
+
+    findPropertyInArray: function(key,valueArray) {
+      if (valueArray===undefined || SC.typeOf(valueArray) === 'string') {
+        return this.findProperty(key,valueArray);
+      }
+      var len = this.length;
+      var found = NO, ret = [], last = null, next, cur ;
+      var iAry = valueArray ? valueArray.copy() : [];
+      var iLen = valueArray ? valueArray.length : 0;
+      
+      for(var idx=0;idx<len && iLen > 0;idx++) {
+        next = this[idx] ;
+        cur = next ? SC.valueOf(next,key) : null;
+        
+        var pos = iAry.indexOf(cur);
+        if (pos !== -1) {
+          found = YES;
+          iAry.removeAt(pos);
+          iLen--;
+        } else {
+          found = NO;
+        }
+        
+        if (found) ret.push(next) ;
+        last = next ;
+      }
+      last = next = null ;
+      return ret.length === 0 ? null : ret ;
+      
+    },
 
     everyProperty: function(key, value) {
       var len = this.length ;
