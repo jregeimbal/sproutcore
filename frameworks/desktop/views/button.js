@@ -263,6 +263,9 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
       if (this.get('localize')) toolTip = toolTip.loc() ;
       context.attr('title', toolTip) ;
       context.attr('alt', toolTip) ;
+    } else {
+      context.attr('title', '') ;
+      context.attr('alt', '') ;
     }
     
     // add some standard attributes & classes.
