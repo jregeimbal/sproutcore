@@ -1083,7 +1083,7 @@ SC.CollectionView = SC.View.extend(
       viewPoolKey = '_GROUP_VIEW_POOL';
     } else {
       key  = this.get('contentExampleViewKey');
-      if (key && item) E = item.get(key);
+      if (key && item) E = SC.valueOf(item, key);
       if (!E) E = this.get('exampleView');
       viewPoolKey = '_VIEW_POOL';
     }
