@@ -1912,11 +1912,12 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   _retreiveCallbackForStoreKey: function(storeKey){
     var queue = this._callback_queue,
         callback = queue[storeKey],
-        allFinished, keys;
+        allFinished, keys,
+        status = this.readStatus(storeKey);
     if(callback){
       if(SC.typeOf(callback) === SC.T_FUNCTION){
         delete queue[storeKey];
-        callback.call(); //args?
+        callback.call(null, status); //args?
       }
       else if(SC.typeOf(callback) == SC.T_HASH){
         // TODO: [JH2] This doesn't seem like it would work. Do we use it?
@@ -1926,7 +1927,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
           if(!queue[key].completed) allFinished = YES;
         });
         if(allFinished){
-          callback.callback.call(); // args?
+          callback.callback.call(null, status); // args?
           //cleanup
           keys.forEach(function(key){
             delete queue[key];
@@ -2513,7 +2514,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     this.writeStatus(storeKey, status) ;
     this.dataHashDidChange(storeKey, null, YES);
 
-    this._retreiveCallbackForStoreKey(storeKey);
+    this._retreiveCallbackForStoreKey(storeKey, status);
     return this ;
   },
 
