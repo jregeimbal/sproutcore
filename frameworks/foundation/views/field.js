@@ -76,6 +76,8 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     @returns {SC.FieldView} receiver
   */
   setFieldValue: function(newValue) {
+    console.log('setFieldValue ' + newValue);
+//    if (newValue == null) debugger;
     if (SC.none(newValue)) newValue = '' ;
     var input = this.$input();
 
@@ -84,7 +86,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     if (input.val() !== newValue) {
       input.val(newValue);
     }
-
+    console.log('now fire fieldvaluedidchange again?');
     this.notifyPropertyChange('fieldValue'); // invalidate 'fieldValue' cache
 
     return this ;
@@ -99,6 +101,7 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
     @returns {String} value
   */
   getFieldValue: function() {
+    console.log('getFieldValue ' + this.$input().val());
     return this.$input().val();
   },
   
@@ -108,7 +111,9 @@ SC.FieldView = SC.View.extend(SC.Control, SC.Validatable,
   */
   getValidatedValueFromFieldValue: function(isPartial) {
     var fieldValue = this.getFieldValue(); // get raw text
+console.warn("fieldValue is " + fieldValue);
     var value = this.objectForFieldValue(fieldValue); // optionally transform to value object
+console.log("value is (before validate) " + value);
     return this.performValidate(value, isPartial); // validate the transformed value
   },
   

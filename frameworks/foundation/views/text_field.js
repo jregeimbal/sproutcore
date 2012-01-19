@@ -186,7 +186,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     if (this.get('isEditing')) {
       this.beginPropertyChanges();
       value = this.getValidatedValueFromFieldValue(NO); // transform raw text into validated value
-      
+      console.warn("commitEditing " + value);
+      console.log(this.get('value'));
       // optionally revert to previous value if SC.Error is not allowed as 'value'
       value = ((SC.typeOf(value) !== SC.T_ERROR) || this.get('allowsErrorAsValue')) ? value : this._originalValue;
 
@@ -694,7 +695,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   */
   fieldValueDidChange: function() {
     var value = this.getValidatedValueFromFieldValue(YES);
-    
+    console.warn("fieldValueDidChange validated value " + value);
+    console.log(SC.typeOf(value) === SC.T_ERROR ? 'value was error' : 'value was fine');
     this.beginPropertyChanges();
     
     // keep track of our edited value even if we aren't changing 'value'    
@@ -702,6 +704,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
 
     // update value if desired and possible
     if (this.get('continuouslyUpdatesValue') && ((SC.typeOf(value) !== SC.T_ERROR) || this.get('allowsErrorAsValue'))) {
+      console.log('updating value?');
       this.setIfChanged('value', value);
     }
     
@@ -958,7 +961,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       // if return is pressed.
       if (!this.get('continuouslyUpdatesValue')) {
         value = this.getValidatedValueFromFieldValue(NO);
-        
+        console.warn("keyDown validated value " + value);
         if ((SC.typeOf(value) !== SC.T_ERROR) || this.get('allowsErrorAsValue')) {
           this.setIfChanged('value', value);
           this.applyValueToField(value); // sync text in the text field
