@@ -2251,7 +2251,7 @@ SC.CollectionView = SC.View.extend(
         if (canEdit) {
           itemView = this.itemViewForContentIndex(idx) ;
           canEdit = itemView && (!itemView.contentHitTest || itemView.contentHitTest(ev)) ;
-          canEdit = (canEdit && itemView.beginEditing) ? itemView.beginEditing() : NO ;
+          canEdit = (canEdit && itemView.beginEditing) ? itemView.beginEditing(ev) : NO ;
         }
         
         // if cannot edit, schedule a reselect (but give doubleClick a chance)
