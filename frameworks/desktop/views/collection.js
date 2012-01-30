@@ -2064,7 +2064,7 @@ SC.CollectionView = SC.View.extend(
     if (canEdit) {
       this.scrollToContentIndex(idx);
       itemView = this.itemViewForContentIndex(idx); // just in case
-      itemView.beginEditing();
+      itemView.beginEditing(evt);
       
     // invoke action 
     } else {
