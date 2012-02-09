@@ -105,6 +105,13 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
   */
   requestedRangeIndex: [],
   
+  /*
+    This is the threshold that needs to cross to *hungrily* fetch the next set
+    This is a number less than 1. ie 0.75 will fetch the next0.25 will fetch the next range when you
+    % of the end of the range.  Defaults to 1 (no prefetch trigger)
+  */
+  prefetchThreshold: 1,
+  
   /** 
     Returns the object at the specified index.  If the value for the index
     is currently undefined, invokes the didRequestIndex() method to notify
@@ -114,13 +121,28 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     @return {Object} the object
   */
   objectAt: function(idx) {
-    var content = this._sa_content, ret ;
+    var content = this._sa_content, ret, currWin,
+        prefetchTrigger, len, mod, nextIdx;
     if (!content) content = this._sa_content = [] ;
     ret = content[idx]; 
     if (ret === undefined) {
       this.requestIndex(idx);
       ret = content[idx]; // just in case the delegate provided immediately
     }
+    
+    // Trigger a hungry fetch if we have a threshold
+    len = this.get('rangeWindowSize') || 1;
+    prefetchTrigger = this._precalc_pft || (this.get('prefetchThreshold') || 1)*len;
+    if (prefetchTrigger < len){
+      this._precalc_pft = prefetchTrigger;
+      mod = Math.floor(idx % len);
+      if (mod > prefetchTrigger) {
+        currWin = Math.floor(idx/len);
+        nextIdx = ((currWin+1)*len)+1;
+        if (content[nextIdx] === undefined) this.requestIndex(nextIdx);
+      }
+    }    
+    
     return ret ;
   },
 
