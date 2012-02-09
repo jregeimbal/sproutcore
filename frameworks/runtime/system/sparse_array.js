@@ -110,7 +110,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     This is a number less than 1. ie 0.75 will fetch the next0.25 will fetch the next range when you
     % of the end of the range.  Defaults to 1 (no prefetch trigger)
   */
-  prefetchThreshold: 1,
+  rangePercentToBeginNextFetch: 1,
   
   /** 
     Returns the object at the specified index.  If the value for the index
@@ -132,14 +132,14 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     
     // Trigger a hungry fetch if we have a threshold
     len = this.get('rangeWindowSize') || 1;
-    prefetchTrigger = this._precalc_pft || (this.get('prefetchThreshold') || 1)*len;
+    prefetchTrigger = this._precalc_pft || (this.get('rangePercentToBeginNextFetch') || 1)*len;
     if (prefetchTrigger < len){
       this._precalc_pft = prefetchTrigger;
       mod = Math.floor(idx % len);
       if (mod > prefetchTrigger) {
         currWin = Math.floor(idx/len);
         nextIdx = ((currWin+1)*len)+1;
-        if (content[nextIdx] === undefined) this.requestIndex(nextIdx);
+        if (nextIdx < this._length && content[nextIdx] === undefined) this.requestIndex(nextIdx);
       }
     }    
     
