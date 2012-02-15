@@ -2189,6 +2189,20 @@ SC.CollectionView = SC.View.extend(
     
     return YES;
   },
+  /**
+    Triggers editing within a delayed click range
+    Default is between 750 and 2000 milliseconds.
+  
+    Any lower than 750 and you risk running into doubleClick range.
+  */
+  editOnDelayedClick: NO,
+  
+  /* Click delay range to rename elements in milliseconds */
+  delayMin: 750,
+  delayMax: 2000,
+  
+  /** @private **/
+  _startEditDelay: null,
   
   /** @private */
   mouseUp: function(ev) {
@@ -2197,6 +2211,7 @@ SC.CollectionView = SC.View.extend(
         info   = this.mouseDownInfo,
         content       = this.get('content'),
         contentIndex, sel, isSelected, canEdit, itemView, idx,
+        editOnDelayedClick = this.get('editOnDelayedClick'),
         allowsMultipleSel = content ? content.get('allowsMultipleSelection') : NO;
         
     if (this.get('useToggleSelection')) {
@@ -2220,6 +2235,11 @@ SC.CollectionView = SC.View.extend(
       idx = info.contentIndex;
       contentIndex = (view) ? view.get('contentIndex') : -1 ;
       
+      if (editOnDelayedClick) {
+        var delayedClickStart = this._startEditDelay;
+        if (!delayedClickStart) this._startEditDelay = new Date().getTime();
+      }
+      
       // this will be set if the user simply clicked on an unselected item and 
       // selectOnMouseDown was NO.
       if (info.shouldSelect) this.select(idx, info.modifierKeyPressed);
@@ -2235,7 +2255,7 @@ SC.CollectionView = SC.View.extend(
       if (info.shouldReselect) {
         
         // - contentValueIsEditable is true
-        canEdit = this.get('isEditable') && this.get('canEditContent') ;
+        canEdit = this.get('isEditable') && this.get('canEditContent');
         
         // - the user clicked on an item that was already selected
         //   ^ this is the only way shouldReset is set to YES
@@ -2244,6 +2264,19 @@ SC.CollectionView = SC.View.extend(
         if (canEdit) {
           sel = this.get('selection') ;
           canEdit = sel && (sel.get('length') === 1);
+          if (canEdit && editOnDelayedClick) {
+            var nowClick = new Date().getTime();
+          
+            var delayedClickDifference = nowClick - delayedClickStart,
+                delayMin = this.delayMin,
+                delayMax = this.delayMax;
+          
+            var delayedClickIsValid = delayedClickDifference <= delayMax && delayedClickDifference >= delayMin;
+          
+            if (!delayedClickIsValid && delayedClickDifference > delayMax) { this._startEditDelay = new Date().getTime(); }
+          
+            canEdit = canEdit && delayedClickIsValid;
+          }
         }
         
         // - the item view responds to contentHitTest() and returns YES.
