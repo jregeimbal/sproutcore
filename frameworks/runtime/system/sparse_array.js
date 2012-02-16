@@ -356,7 +356,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
       if (!content) content = this._sa_content = [] ;      
       for (idx = 0, len = content.length; idx < len && !found; idx++){
         next = content[idx];
-        cur = next ? (next.get ? next.get(key) : next[key]) : null;
+        cur = SC.valueOf(next, key);
         found = (value === undefined) ? !!cur : SC.isEqual(cur, value);
         if (found) ret = next ;
       }
