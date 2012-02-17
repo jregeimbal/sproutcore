@@ -2727,7 +2727,6 @@ SC.CollectionView = SC.View.extend(
     // then it will return DRAG_NONE, in which case we will try again with
     // drop before.
     if (dropOp === SC.DROP_ON) {
-      
       // Now save the insertion index and the dropOp.  This may be changed by
       // the collection delegate.
       this.set('proposedInsertionIndex', idx) ;
@@ -3065,6 +3064,7 @@ SC.CollectionView = SC.View.extend(
       sel = this.get('selection');
       sel = sel ? sel.toArray() : [];
       if (this._cv_actionTimer) this._cv_actionTimer.invalidate();
+      if(view && view.get('isEditing') && view.commitEditing) {view.commitEditing();}
       this._cv_actionTimer = this.invokeLater(this._cv_action, delay, view, ev, sel) ;
     }
   },
