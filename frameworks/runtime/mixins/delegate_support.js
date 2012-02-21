@@ -77,6 +77,7 @@ SC.DelegateSupport = {
   */
   invokeDelegateMethod: function(delegate, methodName, args) {
     args = SC.A(arguments); args = args.slice(2, args.length) ;
+    if (SC.typeOf(delegate) === SC.T_STRING) delegate = SC.objectForPropertyPath(delegate);
     if (!delegate || !delegate[methodName]) delegate = this ;
     
     var method = delegate[methodName];
