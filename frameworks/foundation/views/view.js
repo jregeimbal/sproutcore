@@ -1642,11 +1642,10 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
   */
   destroy: function() {
     if (this.get('isDestroyed')) return this; // nothing to do
-    
-    this._destroy(); // core destroy method
-    
     // remove from parent if found
     this.removeFromParent() ;
+    
+    this._destroy(); // core destroy method
     
     // unregister for drags
     if (this.get('isDropTarget')) SC.Drag.removeDropTarget(this) ;
