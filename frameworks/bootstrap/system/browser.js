@@ -18,7 +18,7 @@ SC._detectBrowser = function(rawUserAgent, language) {
 
   var browser = {
     version:      version,
-    safari:       /webkit/.test(userAgent) ? webkitVersion : 0,
+    safari:       (/safari/.test(userAgent) && !/chrome/.test(userAgent))? webkitVersion : 0,
     opera:        /opera/.test(userAgent) ? version : 0,
     msie:         /msie/.test(userAgent) && !/opera/.test(userAgent) ? version : 0,
     mozilla:      /mozilla/.test( userAgent ) && !/(compatible|webkit)/.test(userAgent) ? version : 0,
