@@ -26,7 +26,7 @@ end
 
 # CORE FRAMEWORKS
 config :bootstrap,  :required => [], :use_modules => false
-
+config :jquery,     :required => []
 config :runtime,    :required => []
 config :foundation, :required => [:runtime]
 config :datastore,  :required => [:foundation]
@@ -45,7 +45,7 @@ config :mobile,
 
 # WRAPPER FRAMEWORKS
 config :designer, :required => [:runtime, :foundation]
-config :sproutcore, :required => [:desktop, :datastore]
+config :sproutcore, :required => [:jquery, :desktop, :datastore]
 config :mini, :required => [:runtime, :datastore]
 
 
