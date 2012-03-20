@@ -140,12 +140,10 @@
 	top: 50%;
 	right: 1px;
 	margin-top: -8px;
-  background: sc_static('icons/mini_454545') -32px 0;
 }
 
 .sc-theme .sc-list-item-view.sel .branch,
 .sc-theme .sc-list-item-view.active .branch {
-  background: sc_static('icons/mini_ffffff');
 }
 
 
