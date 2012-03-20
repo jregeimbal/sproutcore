@@ -75,16 +75,13 @@
   top: 5px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
-  background-image: sc_static('icons/mini_454545'); 
   background-position: -66px -147px;
 }
 
 .sc-theme .sc-menu-item.focus div.checkbox {
-  background-image: sc_static('icons/mini_ffffff'); 
 }
 
 .sc-theme .sc-menu-item.disabled.focus div.checkbox {
-  background-image: sc_static('icons/mini_454545'); 
 }
 
 .sc-theme .sc-menu-item.disabled div.checkbox,
