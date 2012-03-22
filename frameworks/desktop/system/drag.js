@@ -640,7 +640,7 @@ SC.Drag = SC.Object.extend(
       if (!target.get('isVisibleInWindow')) continue ;
 
       // get clippingFrame, converted to the pane.
-      frame = target.convertFrameToView(target.get('clippingFrame'), null) ;
+      frame = target.convertFrameToView(target.get('frame'), null) ;
       //convert to iframe pane if it is in the winodw
       if(globalOffset && target.inGlobalOffset){
         frame.x += globalOffset.x;
