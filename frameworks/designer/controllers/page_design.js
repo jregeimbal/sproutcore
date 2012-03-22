@@ -41,7 +41,7 @@ SC.PageDesignController = SC.Object.extend({
       base.add(sel);
       this.set('selection', base.freeze()) ;
       //make the designPane the firstResponder
-      SC.designPage.getPath('designMainPane.container').becomeFirstResponder();
+      //SC.designPage.getPath('designMainPane.container').becomeFirstResponder();
     }
     return this ;
   },
