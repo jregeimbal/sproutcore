@@ -30,15 +30,16 @@ SC.ArraySuite.define(function(T) {
     T.validateAfter(obj, [], observer, YES);
   });
   
-  test("[].removeAt(200) => OUT_OF_RANGE_EXCEPTION exception", function() {
-    var didThrow = NO ;
+  test("[].removeAt(200) remove an object out of range, you should get the obj back", function() {
+    var ret, didThrow = NO ;
     try {
-      obj.removeAt(200);
+      ret = obj.removeAt(200);
     } catch (e) {
       equals(e, SC.OUT_OF_RANGE_EXCEPTION, 'should throw SC.OUT_OF_RANGE_EXCEPTION');
       didThrow = YES ;
     }
-    ok(didThrow, 'should raise exception');
+    ok(!didThrow, 'shouldn\'t raise exception');
+    equals(ret, obj, 'return value should be the actual array');
   });
 
   test("[A,B].removeAt(0) => [B] + notify", function() {
