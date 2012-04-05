@@ -1023,6 +1023,15 @@ SC.Record.mixin( /** @scope SC.Record */ {
     @property {Number}
   */
   BUSY:             0x0800, // 2048
+  
+  
+  /** 
+    Useful because you can make changes to records that are commiting/refreshing
+    
+  
+    @property {Number}
+  */  
+  BUSY_DIRTY:             0x0802, // 2050
 
 
   /** 

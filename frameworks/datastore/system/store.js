@@ -1446,7 +1446,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // BUSY_LOADING, BUSY_CREATING, BUSY_COMMITTING, BUSY_REFRESH_CLEAN
     // BUSY_REFRESH_DIRTY, BUSY_DESTROYING
     if (status & K.BUSY) {
-      throw K.BUSY_ERROR ;
+      this.writeStatus(storeKey, K.BUSY_DIRTY);
+      //throw K.BUSY_ERROR ;
       
     // if record is not in ready state, then it is not found.
     // ERROR, EMPTY, DESTROYED_CLEAN, DESTROYED_DIRTY
@@ -2152,16 +2153,33 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     // otherwise, determine proper state transition
     if(status===K.BUSY_DESTROYING) {
-      throw K.BAD_STATE_ERROR ;
-    } else status = K.READY_CLEAN ;
+      throw K.BAD_STATE_ERROR;
+    } 
+    //BUSY DIRTY
+    else if(status === K.BUSY_DIRTY){
+      status = K.READY_DIRTY;
+      this.writeStatus(storeKey, status);
+      
+      if (newId) SC.Store.replaceIdFor(storeKey, newId);
+      
+      statusOnly = newId ? NO : YES;
+      this.dataHashDidChange(storeKey, null, statusOnly);
+      
+      
+    }
+    //NORMAL
+    else {
+      status = K.READY_CLEAN;
+      this.writeStatus(storeKey, status);
+      
+      if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
 
-    this.writeStatus(storeKey, status) ;
-    if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
-    if (newId) SC.Store.replaceIdFor(storeKey, newId);
-    
-    statusOnly = dataHash || newId ? NO : YES;
-    this.dataHashDidChange(storeKey, null, statusOnly);
+      if (newId) SC.Store.replaceIdFor(storeKey, newId);
 
+      statusOnly = dataHash || newId ? NO : YES;
+      this.dataHashDidChange(storeKey, null, statusOnly);
+      
+    }
     //update callbacks
     this._retreiveCallbackForStoreKey(storeKey);
     
