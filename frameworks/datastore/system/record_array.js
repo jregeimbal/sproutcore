@@ -549,7 +549,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       // HACK: [MT] - Dont' sort records in IE. This causes a lot of
       // js timeouts especially when dealing with large data sets
       if (!SC.browser.msie) {
-        // storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
+        storeKeys = SC.Query.orderStoreKeys(storeKeys, query, store);
       }
       
       if (SC.compare(oldStoreKeys, storeKeys) !== 0){
