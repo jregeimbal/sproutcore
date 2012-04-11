@@ -1065,6 +1065,21 @@ String.prototype.w = function() {
   return ary ;
 };
 
+/**
+  Checks if a string is in another string in a standard pattern.
+  Optional strict matching for case
+
+  @returns {Boolean} true
+**/
+String.prototype.containsString = function (needle,strictMatch) {
+  var haystack = this, needle = String(needle);
+  if (!strictMatch) {
+    needle = needle.toLowerCase();
+    haystack = haystack.toLowerCase();
+  }
+  return haystack.indexOf(needle) >= 0;
+};
+
 //
 // DATE ENHANCEMENT
 //
