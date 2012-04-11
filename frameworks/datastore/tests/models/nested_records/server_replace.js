@@ -18,14 +18,14 @@ var initModels = function(){
     members: SC.Record.toMany('SC.Record', { nested: true })
   });
   
-  NestedRecord.Person = SC.ChildRecord.extend({
+  NestedRecord.Person = SC.Record.extend({
     childRecordNamespace: NestedRecord,
     primaryKey: 'id',
     name: SC.Record.attr(String),
     relationships: SC.Record.toMany('SC.Record', { nested: true })
   });
   
-  NestedRecord.Relationship = SC.ChildRecord.extend({
+  NestedRecord.Relationship = SC.Record.extend({
     primaryKey: 'id',
     name: SC.Record.attr(String),
     connectedId: SC.Record.attr(String)
