@@ -878,7 +878,9 @@ SC.Record = SC.Object.extend(
    * ids for your child records
    */
   generateIdForChild: function(childRecord) { 
-    var id, hash, sk = childRecord ? childRecord.storeKey : null,
+    var id, hash, 
+      store = this.get('store'),
+      sk = childRecord ? childRecord.storeKey : null,
       pk = childRecord ? childRecord.primaryKey : null;
 
     if (SC.none(sk)) throw 'Error generating ID for child record: No store key.';
