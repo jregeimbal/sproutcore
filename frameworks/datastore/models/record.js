@@ -400,6 +400,9 @@ SC.Record = SC.Object.extend(
     attrs = store.readEditableDataHash(storeKey);
     if (!attrs) {
       SC.Logger.debug('%@.writeAttribute(key: %@, value: %@, ignoreDidChange: %@) Error: No editable data hash.'.fmt(this, key, value, ignoreDidChange));
+      SC._bad_state_target = this;
+      SC._bad_state_key = key;
+      SC._bad_state_value = value;
       throw SC.Record.BAD_STATE_ERROR;
     }
     
@@ -1172,7 +1175,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
     
     @property {SC.Error}
   */
-  BAD_STATE_ERROR:     SC.$error("Internal barf Inconsistency"),
+  BAD_STATE_ERROR:     SC.$error("Bad State Error"),
 
   /**
     Error for when you try to create a new record that already exists.
@@ -1186,7 +1189,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
     
     @property {SC.Error}
   */
-  NOT_FOUND_ERROR:     SC.$error("Not found "),
+  NOT_FOUND_ERROR:     SC.$error("Not found"),
 
   /**
     Error for when you try to modify a record that is currently busy

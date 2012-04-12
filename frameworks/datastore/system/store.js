@@ -1297,10 +1297,14 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if ((status & K.BUSY)  || 
         (status & K.READY) || 
         (status === K.DESTROYED_DIRTY)) { 
+      SC._bad_state_key = recordType;
+      SC._bad_state_value = status;
       throw id ? K.RECORD_EXISTS_ERROR : K.BAD_STATE_ERROR;
       
     // allow error or destroyed state only with id
     } else if (!id && (status===SC.DESTROYED_CLEAN || status===SC.ERROR)) {
+      SC._bad_state_key = recordType;
+      SC._bad_state_value = status;
       throw K.BAD_STATE_ERROR;
     }
     
