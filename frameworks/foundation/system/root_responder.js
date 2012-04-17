@@ -1647,6 +1647,7 @@ SC.RootResponder = SC.Object.extend({
       return YES;
     }
     
+    this._mousedown = true;
     if(!SC.browser.msie) window.focus();
     
     // First, save the click count. The click count resets if the mouse down
@@ -1745,6 +1746,7 @@ SC.RootResponder = SC.Object.extend({
 
     // cleanup
     this._mouseCanDrag = NO; this._mouseDownView = null ;
+    this._mousedown = false;
   
     return (handler) ? evt.hasCustomEventHandling : YES ;
   },
@@ -1776,6 +1778,8 @@ SC.RootResponder = SC.Object.extend({
    trigger calls to mouseDragged.
   */
   mousemove: function(evt) {
+    if (!this._mousedown) return;
+
     if (SC.platform.touch) {
       evt.allowDefault();
       return YES;
