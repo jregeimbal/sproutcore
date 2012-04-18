@@ -412,6 +412,13 @@ SC.CollectionView = SC.View.extend(
   */
   calculatedWidth: 0,
   
+  /**
+    This property allows you to disable the insertionPointView from rendering
+
+    @type Boolean
+  */
+  shouldShowInsertionPoint: YES,
+  
   
   // ..........................................................
   // SUBCLASS METHODS
@@ -2821,13 +2828,13 @@ SC.CollectionView = SC.View.extend(
     if (dragOp !== SC.DRAG_NONE) {
       if ((this._lastInsertionIndex !== idx) || (this._lastDropOperation !== dropOp)) {
         var itemView = this.itemViewForContentIndex(idx) ;
-        this.showInsertionPoint(itemView, dropOp) ;
+        if (this.shouldShowInsertionPoint) this.showInsertionPoint(itemView, dropOp) ;
       }
       
       this._lastInsertionIndex = idx ;
       this._lastDropOperation = dropOp ;
     } else {
-      this.hideInsertionPoint() ;
+      if ( this.shouldShowInsertionPoint) this.hideInsertionPoint() ;
       this._lastInsertionIndex = this._lastDropOperation = null ;
     }
     
