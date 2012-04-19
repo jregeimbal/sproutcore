@@ -117,6 +117,15 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
     @property {String}
   */
   href: '',
+  
+  /**
+    The href's target value.  This can be used to set the localized button 
+    href target.  Setting a null hrefTarget will force the target property 
+    to be skipped in the a tag.
+    
+    @property {String}
+  */
+  hrefTarget: null,
 
   /**
     The name of the action you want triggered when the button is pressed.  
@@ -237,7 +246,7 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
   // display properties that should automatically cause a refresh.
   // isCancel and isDefault also cause a refresh but this is implemented as 
   // a separate observer (see below)
-  displayProperties: ['href', 'icon', 'title', 'value', 'toolTip'],
+  displayProperties: ['href', 'hrefTarget', 'icon', 'title', 'value', 'toolTip'],
   
   
   /**
@@ -250,11 +259,14 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
 
   render: function(context, firstTime) {
     // add href attr if tagName is anchor...
-    var href, toolTip, classes, theme;
+    var href, hrefTarget, toolTip, classes, theme;
     if (this.get('tagName') === 'a') {
       href = this.get('href');
       if (!href || (href.length === 0)) href = "javascript:;";
       context.attr('href', href);
+      
+      hrefTarget = this.get('hrefTarget');
+      if (hrefTarget) context.attr('target', hrefTarget);
     }
 
     // If there is a toolTip set, grab it and localize if necessary.
