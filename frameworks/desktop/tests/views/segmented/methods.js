@@ -69,7 +69,7 @@ test("Check that properties are mapped correctly", function() {
     equals(items[0][5], null, 'Computed properties should match');
     equals(items[0][6], 0, 'Computed properties should match');
     
-    var firstItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect1.left + 1, pageY: rect1.top + 1 });
+    var firstItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect1.left + 2, pageY: rect1.top + 2 });
     view.mouseDown(firstItemEvent);
     equals(view._isMouseDown, YES, 'mousedown');
     equals(view.get('activeIndex'), 0, '');
@@ -86,7 +86,7 @@ test("Check that properties are mapped correctly", function() {
    
    // Test Mouse Down
    // it now gets the item by the position, so we have to pass a position
-   var firstItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect1.left + 1, pageY: rect1.top + 1 });
+   var firstItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect1.left + 2, pageY: rect1.top + 2 });
    view.mouseDown(firstItemEvent);
    
    equals(view._isMouseDown, YES, 'Mouse down flag on mousedown should be ');
@@ -101,7 +101,7 @@ test("Check that properties are mapped correctly", function() {
    
    // Test third item
    elem = view.get('layer').childNodes[2];
-   var thirdItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect3.left + 1, pageY: rect3.top + 1 });
+   var thirdItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect3.left + 2, pageY: rect3.top + 2 });
 
    // mouse down and move
    view.mouseDown(thirdItemEvent);
@@ -124,7 +124,7 @@ test("Check that properties are mapped correctly", function() {
 
    // Test fourth item
    elem = view.get('layer').childNodes[3];
-   var fourthItemEvent = SC.Event.simulateEvent(elem, 'mouseDown', { pageX: rect4.left + 1, pageY: rect4.top + 1 });
+   var fourthItemEvent = SC.Event.simulateEvent(elem, 'mouseDown', { pageX: rect4.left + 2, pageY: rect4.top + 2 });
 
    // mouse click
    view.mouseDown(fourthItemEvent);
@@ -133,7 +133,7 @@ test("Check that properties are mapped correctly", function() {
 
    //Test fifth item
    elem = view.get('layer').childNodes[4];
-   var fifthItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect5.left + 1, pageY: rect5.top + 1 });
+   var fifthItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect5.left + 2, pageY: rect5.top + 2 });
 
    // mouse down and move has action
    view.mouseDown(fifthItemEvent);
