@@ -2,6 +2,10 @@
 // Project:   SC - designPage
 // Copyright: ©2010 Mike Ball
 // ==========================================================================
+
+//this is disabled for now but me might want it later...
+
+
 /*globals SC */
 // require('views/designer_drop_target');
 // require('views/page_item_view');
