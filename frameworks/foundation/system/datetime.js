@@ -390,7 +390,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     if (timezone === undefined) timezone = 0;
     return this.advance({ timezone: timezone - this.timezone });
   }
-  
+
 });
 
 // Class Methods
@@ -764,12 +764,10 @@ SC.DateTime.mixin(SC.Comparable,
       if ( !SC.none(opts.hour) && SC.none(opts.minute)) {
         opts.minute = 0;
       }
-      if (!(SC.none(opts.hour) && SC.none(opts.minute))
-          && SC.none(opts.second)) {
+      if (!(SC.none(opts.hour) && SC.none(opts.minute)) && SC.none(opts.second)) {
         opts.second = 0;
       }
-      if (!(SC.none(opts.hour) && SC.none(opts.minute) && SC.none(opts.second))
-          && SC.none(opts.millisecond)) {
+      if (!(SC.none(opts.hour) && SC.none(opts.minute) && SC.none(opts.second)) && SC.none(opts.millisecond)) {
         opts.millisecond = 0;
       }
     }
@@ -937,7 +935,7 @@ SC.DateTime.mixin(SC.Comparable,
         }
       }
     } catch (e) {
-      console.log('SC.DateTime.createFromString ' + e.toString());
+      SC.Logger.log('SC.DateTime.createFromString ' + e.toString());
       return null;
     }
     
@@ -1015,10 +1013,10 @@ SC.DateTime.mixin(SC.Comparable,
       case 'Y': return this._get('year');
       case 'Z':
         offset = -1 * timezone;
-        return (offset >= 0 ? '+' : '-')
-               + this._pad(parseInt(Math.abs(offset)/60, 10))
-               + ':'
-               + this._pad(Math.abs(offset)%60);
+        return (offset >= 0 ? '+' : '-') +
+               this._pad(parseInt(Math.abs(offset)/60, 10)) +
+               ':' +
+               this._pad(Math.abs(offset)%60);
       case '%': return '%';
     }
   },
