@@ -91,9 +91,8 @@ CoreTest.Runner = {
   
   planDidFinish: function(plan, r) {
     this.flush();
-    
     var result = this.report.find('.testresult .status');
-    var str = CoreTest.fmt('<span>Completed %@ tests in %@ msec. </span>'
+    var str = CoreTest.fmt('<span id="qunit-testresult">Completed %@ tests in %@ msec. </span>'
               +'<span class="total">%@</span> total assertions: ', r.tests, 
               r.runtime, r.total);
     
@@ -102,11 +101,11 @@ CoreTest.Runner = {
     }
     
     if (r.failed > 0) {
-      str += CoreTest.fmt('&nbsp;<span class="failed">%@ failed</span>', r.failed);
+      str += CoreTest.fmt('&nbsp;<span class="failed"><span id="failed">%@</span> failed</span>', r.failed);
     }
 
     if (r.errors > 0) {
-      str += CoreTest.fmt('&nbsp;<span class="errors">%@ error%@</span>', 
+      str += CoreTest.fmt('&nbsp;<span class="errors"><span id="errors">%@</span> error%@</span>', 
             r.errors, (r.errors !== 1 ? 's' : ''));
     }
 
