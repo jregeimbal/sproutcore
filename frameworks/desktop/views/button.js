@@ -262,9 +262,7 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
     var href, hrefTarget, toolTip, classes, theme;
     if (this.get('tagName') === 'a') {
       href = this.get('href');
-      if (!href || (href.length === 0)) href = "javascript:;";
-      context.attr('href', href);
-      
+      if (href && (href.length !== 0)) context.attr('href', href);
       hrefTarget = this.get('hrefTarget');
       if (hrefTarget) context.attr('target', hrefTarget);
     }
