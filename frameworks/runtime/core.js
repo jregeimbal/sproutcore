@@ -1072,12 +1072,18 @@ String.prototype.w = function() {
   @returns {Boolean} true
 **/
 String.prototype.containsString = function (needle,strictMatch) {
-  var haystack = this, needle = String(needle);
-  if (!strictMatch) {
-    needle = needle.toLowerCase();
-    haystack = haystack.toLowerCase();
+  var haystack = this, needle = String(needle), needles, ret;
+
+  if (strictMatch) return haystack.indexOf(needle) >= 0;
+  
+  needle = needle.toLowerCase();
+  haystack = haystack.toLowerCase();
+  needles = needle.split(' ');
+  for (var i=0,l=needles.length;i<l;i++) {
+    ret = haystack.containsString(needles[i],true);
+    if (!ret) break;
   }
-  return haystack.indexOf(needle) >= 0;
+  return ret;
 };
 
 //
