@@ -1291,10 +1291,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     } else if (status === K.EMPTY) {
       throw K.NOT_FOUND_ERROR ;
       
-    // error out if busy
-    } else if (status & K.BUSY) {
-      throw K.BUSY_ERROR ;
-      
     // if new status, destroy but leave in clean state
     } else if (status === K.READY_NEW) {
       status = K.DESTROYED_CLEAN ;
@@ -1447,7 +1443,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // BUSY_REFRESH_DIRTY, BUSY_DESTROYING
     if (status & K.BUSY) {
       this.writeStatus(storeKey, K.BUSY_DIRTY);
-      //throw K.BUSY_ERROR ;
       
     // if record is not in ready state, then it is not found.
     // ERROR, EMPTY, DESTROYED_CLEAN, DESTROYED_DIRTY
@@ -1582,7 +1577,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
           this._setCallbackForStoreKey(storeKey, callback, hasCallbackArray, storeKeys);
         // K.BUSY_DESTROYING, K.BUSY_COMMITTING, K.BUSY_CREATING
         } else if ((status == K.BUSY_DESTROYING) || (status == K.BUSY_CREATING) || (status == K.BUSY_COMMITTING)) {
-          throw K.BUSY_ERROR ;
+          //no-op
+          //Why throw an exception here, just use the record that come sback from committing or creating
 
         // K.DESTROY_DIRTY, bad state...
         } else if (status == K.DESTROYED_DIRTY) {
