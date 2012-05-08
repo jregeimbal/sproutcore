@@ -90,7 +90,7 @@ test("Check for different states after/before executing destroyRecord", function
   }catch(error2){
     msg=error2.message;
   }
-  equals(msg, "", "destroyRecord should not throw the following error BUSY_ERROR");
+  equals(msg, SC.Record.BUSY_ERROR.message, "destroyRecord should throw the following error");
   
   store.destroyRecord(undefined, undefined, storeKey5);
   status = store.readStatus( storeKey5);
@@ -100,7 +100,7 @@ test("Check for different states after/before executing destroyRecord", function
   status = store.readStatus( storeKey6);
   equals(status, SC.Record.DESTROYED_DIRTY, "the status should have changed to DESTROYED_DIRTY ");
   
-  equals(store.changelog.length, 2, "The changelog has the following number of entries:");
+  equals(store.changelog.length, 1, "The changelog has the following number of entries:");
   
   
 });
