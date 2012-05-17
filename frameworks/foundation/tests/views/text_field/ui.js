@@ -219,6 +219,16 @@ test("changing value from empty -> value", function() {
   pane.verifyNotEmpty(view, 'John Doe', 'Full Name');
 });
 
+test("changing value from empty -> 0 value", function() {
+  var view = pane.view('empty');
+  
+  // test changing value updates like it should
+  SC.RunLoop.begin();
+  view.set('value', 0);
+  SC.RunLoop.end();
+  pane.verifyNotEmpty(view, 0, 'Full Name');
+});
+
 test("disabling view", function() {  
   var view = pane.view('empty');
   
