@@ -779,28 +779,55 @@ SC.Record = SC.Object.extend(
     @param {Hash} value The hash of attributes to apply to the child record.
     @param {String} key The attribute on the parent record which contains the nested record
    */
-  registerNestedRecord: function(value, key) {
-    var store, psk, csk, childRecord, recordType;
-    // if a record instance is passed, simply use the storeKey.  This allows 
+  registerNestedRecord: function(value, key, path) {
+    var store, psk = this.get('storeKey'), csk, childRecord, recordType;
+
+    // If no path is given, it must be the key.
+    if (SC.none(path)) path = key;
+
+    // If a record instance is passed, simply use the storeKey. This allows 
     // you to pass a record from a chained store to get the same record in the
     // current store.
     if (value && value.get && value.get('isRecord')) {
       childRecord = value;
-    } 
-    else {
+    } else {
       recordType = this._materializeNestedRecordType(value, key);
-      childRecord = this.createNestedRecord(recordType, value);
+      childRecord = this.createNestedRecord(recordType, value, psk, path);
     }
-    if (childRecord){
+
+    if (childRecord) {
       this.isParentRecord = YES;
       store = this.get('store');
-      psk = this.get('storeKey');
       csk = childRecord.get('storeKey');
       childRecord._parentKey = key;
-      store.registerChildToParent(psk, csk);
+      store.registerChildToParent(psk, csk, path);
     }
       
     return childRecord;
+  },
+
+  /**
+    Unregisters a child record from its parent record.
+
+    Since accessing a child (nested) record creates a new data hash for the
+    child and caches the child record and its relationship to the parent record,
+    it's important to clear those caches when the child record is overwritten
+    or removed.  This function tells the store to remove the child record from
+    the store's various child record caches.
+
+    You should not need to call this function directly.  Simply setting the
+    child record property on the parent to a different value will cause the
+    previous child record to be unregistered.
+
+    @param {String} path The property path of the child record.
+  */
+  unregisterNestedRecord: function(path) {
+    var childRecord, csk, store;
+
+    store = this.get('store');
+    childRecord = this.getPath(path);
+    csk = childRecord.get('storeKey');
+    store.unregisterChildFromParent(csk);
   },
   
   /**
@@ -838,39 +865,48 @@ SC.Record = SC.Object.extend(
 
     return recordType;
   },
-  
+
   /**
     Creates a new nested record instance.
 
     @param {SC.Record} recordType The type of the nested record to create.
-    @param {Hash} hash The hash of attributes to apply to the child record.
-    (may be null)
+    @param {Hash} hash The hash of attributes to apply to the child record (optional).
+    @param {String|Number} psk The store key of the parent.
+    @param {String} path The attribute path of the nested record.
+
+    @returns {SC.Record} The newly-created nested record.
    */
-  createNestedRecord: function(recordType, hash) {
-    var sk, id, cr = null, existingId = null,
-      store = this.get('store'), pk = recordType.prototype.primaryKey;
+  createNestedRecord: function(recordType, hash, psk, path) {
+    var store = this.get('store'), id, sk, cr;
 
-    if (SC.none(store)) throw 'Error during child record creation: No store on parent.';
-    if (SC.empty(pk))  throw 'Error during child record creation: No primary key on child.';
+    // We can't create a nested record without a store (not having one would be very strange).
+    if (SC.none(store)) throw 'Error: during the creation of a child record: NO STORE ON PARENT!';
 
-    SC.run(function() {
-      hash = hash || {};
-      id = hash[pk];
-      sk = id ? store.storeKeyExists(recordType, id) : null;
+    // Initialize the hash if needed.
+    hash = hash || {};
 
-      if (sk) {
-        store.writeDataHash(sk, hash);
-        cr = store.materializeRecord(sk);
-      } else {
-        cr = store.createRecord(recordType, hash);
-        if (SC.empty(id)) this.generateIdForChild(cr);
-      }
+    // Check for an ID on the hash.
+    id = hash[recordType.prototype.primaryKey];
 
-    }, this);
-    
+    // Check to see if there's already a store key for the child record (by ID).
+    sk = recordType.storeKeyExists(id);
+
+    // If not, check to see if we can get the store key with the path.
+    if (SC.empty(sk)) sk = store.nestedStoreKeyForPath(psk, path);
+
+    if (!SC.empty(sk)) {
+      // If we found a store key, simply replace the data hash and materialize.
+      store.writeDataHash(sk, hash);
+      cr = store.materializeRecord(sk);
+    } else {
+      // If not, create a new nested record and assign an ID if necessary.
+      cr = store.createRecord(recordType, hash);
+      if (SC.empty(id)) this.generateIdForChild(cr);
+    }
+
     return cr;
   },
-  
+ 
   _nestedRecordKey: 0,
     
   /**

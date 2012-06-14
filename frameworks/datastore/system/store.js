@@ -1370,7 +1370,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   /**
     register a Child Record to the parent
   */
-  registerChildToParent: function(parentStoreKey, childStoreKey, key){
+  registerChildToParent: function(parentStoreKey, childStoreKey, path){
     var prs, crs, oldPk, oldChildren, pkRef;
     // Check the child to see if it has a parent
     crs = this.childRecords || {};
@@ -1380,10 +1380,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if (oldPk){
       oldChildren = prs[oldPk];
       if (oldChildren && oldChildren[childStoreKey]) {delete oldChildren[childStoreKey];}
-      // this.recordDidChange(null, null, oldPk, key);
     }
     pkRef = prs[parentStoreKey] || {};
-    pkRef[childStoreKey] = YES;
+    pkRef[childStoreKey] = path || YES;
     prs[parentStoreKey] = pkRef;
     crs[childStoreKey] = parentStoreKey;
     // sync the status of the child
@@ -1391,6 +1390,38 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     this.childRecords = crs;
     this.parentRecords = prs;
   },
+
+  /**
+    Unregister the Child Record from its Parent.  This will cause the Child
+    Record to be removed from the store.
+
+    NOTE: Taken from a commit by Public Keating that didn't apply cleanly to our custom SC branch.
+  */
+  unregisterChildFromParent: function(childStoreKey) {
+    var crs, oldPk;
+
+    // Check the child to see if it has a parent
+    crs = this.childRecords;
+
+    // Remove the parent's connection to the child.  This doesn't remove the
+    // parent store key from the cache of parent store keys if the parent
+    // no longer has any other registered children, because the amount of effort
+    // to determine that would not be worth the miniscule memory savings.
+    oldPk = crs[childStoreKey];
+    if (oldPk) {
+      delete this.parentRecords[oldPk][childStoreKey];
+    }
+
+    // Remove the child.
+    // 1. from the cache of data hashes
+    // 2. from the cache of record objects
+    // 3. from the cache of child record store keys
+    this.removeDataHash(childStoreKey);
+    delete this.records[childStoreKey];
+    delete crs[childStoreKey];
+  },
+
+  /**
   
   /**
     materialize the parent when passing in a store key for the child
@@ -1412,6 +1443,32 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if (SC.none(storeKey)) return ;
     var crs = this.childRecords || {};
     return crs[storeKey];
+  },
+
+  /**
+    Returns the store key of a nested record located by property path relative to the parent record.
+
+    @param {String|Number} parentKey The store key of the parent record.
+    @param {String} propertyPath The property path of the nested record within the parent.
+
+    @returns {String|Number} The store key of the nested record, or null if it doesn't exist.
+  */
+  nestedStoreKeyForPath: function(parentKey, propertyPath) {
+    var parentRecords = this.parentRecords, nestedKey = null;
+
+    if (!SC.none(parentRecords)) {
+      var nestedRecords = parentRecords[parentKey]; 
+
+      if (!SC.none(nestedRecords)) {
+        for (var key in nestedRecords) {
+          if (nestedRecords.hasOwnProperty(key)) {
+            if (nestedRecords[key] === propertyPath) nestedKey = key;
+          }
+        }
+      }
+    }
+
+    return nestedKey;
   },
   
   /**

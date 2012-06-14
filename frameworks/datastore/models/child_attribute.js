@@ -51,6 +51,11 @@ SC.ChildAttribute = SC.RecordAttribute.extend(
     var sk, store, ret;
 
     if (record) {
+      // Unregister the old child (nested) record.
+      if (record.readAttribute(key)) {
+        record.unregisterNestedRecord(key);
+      } 
+
       if (SC.none(value)) {
         // Handle null value.
         record.writeAttribute(key, value);
@@ -82,12 +87,9 @@ SC.ChildAttribute = SC.RecordAttribute.extend(
     @returns {Object} property value
   */
   call: function(record, key, value) {
-    var attrKey = this.get('key') || key, cRef,
-        cacheKey = SC.keyFor('__kid__', SC.guidFor(this));
+    var attrKey = this.get('key') || key;
     if (value !== undefined) {
-      // this.orphan(record, cacheKey, value);
       value = this.fromType(record, key, value) ; // convert to attribute.
-      // record[cacheKey] = value;
     } else {
       value = record.readAttribute(attrKey);
       if (SC.none(value) && (value = this.get('defaultValue'))) {
