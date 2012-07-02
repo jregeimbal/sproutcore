@@ -270,7 +270,7 @@ SC.Locale.locales = {
   es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] })
 } ;
 
-SC.Locale.locales['en-NP'] = SC.Locale.locales['en'].extend({
+SC.Locale.locales['en-np'] = SC.Locale.locales['en'].extend({
   locWithDefault: function(string, def) {
     var ret = this.strings[string];
     
