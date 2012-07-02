@@ -799,8 +799,15 @@ SC.Record = SC.Object.extend(
       this.isParentRecord = YES;
       store = this.get('store');
       csk = childRecord.get('storeKey');
-      childRecord._parentKey = key;
       store.registerChildToParent(psk, csk, path);
+
+      // Set the _parentKey attribute so that we can notify the parent of changes to the property
+      // associated with the nested record. Note that if this is a path to a specific object in a
+      // nested record array (ex. 'children.2'), we only care about the key itself and not the
+      // index.
+      if (SC.typeOf(key) === SC.T_STRING) {
+        childRecord._parentKey = key.split('.')[0];
+      }
     }
       
     return childRecord;
