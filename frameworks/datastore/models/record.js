@@ -807,6 +807,8 @@ SC.Record = SC.Object.extend(
       // index.
       if (SC.typeOf(key) === SC.T_STRING) {
         childRecord._parentKey = key.split('.')[0];
+      } else {
+        throw 'SC.Record: Error associating nested record with parent: Invalid key.';
       }
     }
       
