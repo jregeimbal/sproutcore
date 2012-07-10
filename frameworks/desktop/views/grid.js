@@ -33,6 +33,7 @@ SC.GridView = SC.ListView.extend(
   columnWidth: 64,
 
   columnSpacing: 0,
+
   /**
     The default example item view will render text-based items.
     
@@ -48,7 +49,7 @@ SC.GridView = SC.ListView.extend(
         columnWidth = this.get('columnWidth') || 0,
         columnSpacing = this.get('columnSpacing') || 0;
 
-    return (columnWidth <= 0) ? 1 : Math.floor(f.width / (columnWidth + columnSpacing*2)) ;
+    return (columnWidth <= 0) ? 1 : Math.floor(f.width / (columnWidth + columnSpacing)) ;
   }.property('clippingFrame', 'columnWidth','columnSpacing').cacheable(),
   
   /** @private
@@ -58,24 +59,27 @@ SC.GridView = SC.ListView.extend(
   */
   contentIndexesInRect: function(rect) {
     var rowHeight = this.get('rowHeight') || 48 ,
+        rowSpacing = this.get('rowSpacing') || 0,
         itemsPerRow = this.get('itemsPerRow'),
-        min = Math.floor(SC.minY(rect) / rowHeight) * itemsPerRow,
-        max = Math.ceil(SC.maxY(rect) / rowHeight) * itemsPerRow ;
+        min = Math.floor(SC.minY(rect) / (rowHeight+rowSpacing)) * itemsPerRow,
+        max = Math.ceil(SC.maxY(rect) / (rowHeight+rowSpacing)) * itemsPerRow ;
     return SC.IndexSet.create(min, max-min);
   },
   
   /** @private */
   layoutForContentIndex: function(contentIndex) {
+
     var rowHeight = this.get('rowHeight') || 48,
+        rowSpacing = this.get('rowSpacing') || 0,
         frameWidth = this.get('clippingFrame').width,
         itemsPerRow = this.get('itemsPerRow'),
         columnSpacing = this.get('columnSpacing') || 0;
-        columnWidth = Math.floor(frameWidth/itemsPerRow) - columnSpacing*2,
+        columnWidth = Math.floor(frameWidth/itemsPerRow) - Math.floor(columnSpacing/2),
         row = Math.floor(contentIndex / itemsPerRow),
-        col = contentIndex - (itemsPerRow*row) ;
+        col = contentIndex - (itemsPerRow*row);
     return { 
-      left: (col * columnWidth) + columnSpacing,
-      top: row * rowHeight,
+      left: (col * columnWidth) + (col*(columnSpacing/2)),
+      top: (row * (rowHeight+rowSpacing)),
       height: rowHeight,
       width: columnWidth
     };
@@ -89,6 +93,7 @@ SC.GridView = SC.ListView.extend(
     var content = this.get('content'),
         count = (content) ? content.get('length') : 0,
         rowHeight = this.get('rowHeight') || 48,
+        rowSpacing = this.get('rowSpacing') || 0,
         itemsPerRow = this.get('itemsPerRow'),
         rows = Math.ceil(count / itemsPerRow) ;
   
@@ -97,7 +102,7 @@ SC.GridView = SC.ListView.extend(
     if (!ret) ret = this._cachedLayoutHash = {};
     
     // set minHeight
-    ret.minHeight = rows * rowHeight ;
+    ret.minHeight = (rows * (rowHeight+rowSpacing));
     this.calculatedHeight = ret.minHeight;
     return ret; 
   },
