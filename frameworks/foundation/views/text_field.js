@@ -307,7 +307,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   // INTERNAL SUPPORT
   //
 
-  displayProperties: 'hint fieldValue editingValue isEditing leftAccessoryView rightAccessoryView isTextArea isEditable'.w(),
+  displayProperties: 'hint fieldValue editingValue isEditing leftAccessoryView rightAccessoryView isTextArea isEditable value'.w(),
 
   createChildViews: function() {
     sc_super();
@@ -405,14 +405,14 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
     var v, accessoryViewWidths, leftAdjustment, rightAdjustment;
 
     // always have at least an empty string
-    v = this.get('fieldValue');
+    v = this.get('value');
     if (SC.none(v)) v = '';
     v = String(v);
     // update layer classes always
     if (v.length > 0) {
       context.setClass('not-empty', YES);
     } else {
-      context.removeClass('not-empty');
+      context.setClass('not-empty',NO);
     }
     
     if (this.get('isEditable')) {

@@ -246,7 +246,7 @@ test("changing value to null", function() {
   SC.RunLoop.begin();
   view.set('value', null);
   SC.RunLoop.end();
-  equals(view.get('fieldValue'), '', 'should have empty fieldValue');
+  equals(view.get('value'), null, 'should have empty value');
   pane.verifyEmpty(view, 'Full Name');
 });
 
