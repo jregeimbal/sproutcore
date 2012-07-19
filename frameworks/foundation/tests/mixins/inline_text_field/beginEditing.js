@@ -231,7 +231,7 @@ function() {
   var length = pane._pane.childViews.length,
   editor = pane._pane.childViews[length - 1];
   same(editor.get('value'), 0, "editor should have number 0 as value");
-  editor.blurEditor();
 
-  same(view1.get('value'), 0, "view should still have number 0 as value");
+  editor.blurEditor();
+  same(view1.get('value'), '0', "view should still have number 0 as value"); // input fields always return strings
 });
