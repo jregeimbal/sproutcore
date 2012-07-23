@@ -221,11 +221,20 @@ test("changing value from empty -> value", function() {
 
 test("changing value from empty -> 0 value", function() {
   var view = pane.view('empty');
+  var input = view.$('input');
+  
+  SC.RunLoop.begin();
+  // attempt to focus...
+  SC.Event.trigger(input, 'focus');
+  SC.RunLoop.end();
+  
+  pane.verifyEmpty(view, '');
   
   // test changing value updates like it should
   SC.RunLoop.begin();
   view.set('value', 0);
   SC.RunLoop.end();
+  
   pane.verifyNotEmpty(view, 0, 'Full Name');
 });
 

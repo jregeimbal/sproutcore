@@ -518,7 +518,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       var input= this.$input();
       if(!this.get('_supportsPlaceHolder')){
         var val = this.get('value');
-        if((SC.none(val) || (val && val.length===0))){
+        if((SC.empty(val) || (val && val.length===0))){
           if(this.get('hintON') && !this.get('isFirstResponder')){
             //console.log('hint on render');
             context.setClass('sc-hint', YES);
