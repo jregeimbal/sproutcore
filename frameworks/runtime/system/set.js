@@ -341,7 +341,7 @@ SC.Set = SC.mixin({},
     // faster than calling them "normally" in IE8.
     if (obj === null || obj === undefined) return this ;
 
-    var hashFunc,
+    var hashFunc, tmp,
         guid = (obj && (hashFunc = obj.hash) && (typeof hashFunc === SC.T_FUNCTION)) ? hashFunc.call(obj) : SC.guidFor(obj),
         idx  = this[guid],
         len  = this.length;
