@@ -2218,6 +2218,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
+      if (dataHash) this.replaceNestedIds(storeKey, dataHash);
       
       statusOnly = newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2230,8 +2231,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
-
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
+      if (dataHash) this.replaceNestedIds(storeKey, dataHash);
 
       statusOnly = dataHash || newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2654,6 +2655,57 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   statusString: function(storeKey) {
     var rec = this.materializeRecord(storeKey);
     return rec.statusString();
+  },
+
+  /**
+    Recursively descends into the nested record structure of the data hash and
+    replaces IDs where necessary.
+
+    @param {Number} storeKey The store key of the parent record
+    @param {Hash} dataHash The data hash of the parent record
+  */
+  replaceNestedIds: function(storeKey, dataHash) {
+    var nestedRecs = this.parentRecords ? this.parentRecords[storeKey] : null,
+      nestedKey, path, splitPath, idx, newId, recType, pk;
+
+    // Is this a parent record? If not, don't bother recursing.
+    if (SC.typeOf(nestedRecs) === SC.T_HASH) {
+      for (nestedKey in nestedRecs) {
+        nestedKey *= 1;
+        path = nestedRecs[nestedKey];
+
+        // This would be weird, but just in case.
+        if (SC.typeOf(path) !== SC.T_STRING || SC.empty(path)) continue;
+
+        // Is this a path to an array element?
+        if (path.containsString('.')) {
+          splitPath = path.split('.');
+          idx = splitPath[1] * 1;
+          path = splitPath[0];
+
+          // Again, weird, but just in case.
+          if (SC.typeOf(idx) !== SC.T_NUMBER ||
+            SC.typeOf(path) !== SC.T_STRING || SC.empty(path)) continue;
+
+          // Follow the white rabbit...
+          this.replaceNestedIds(nestedKey, dataHash[path][idx]);
+
+        } else {
+          // ...down the rabbit hole.
+          this.replaceNestedIds(nestedKey, dataHash[path]);
+        }
+      }
+    }
+
+    // Now replace the ID on this record, if necessary.
+    recType = this.recordTypeFor(storeKey);
+    pk = recType ? recType.prototype.primaryKey : null;
+
+    if (SC.typeOf(pk) !== SC.T_STRING || SC.empty(pk)) return;
+
+    newId = dataHash[pk];
+
+    if (!SC.empty(newId)) SC.Store.replaceIdFor(storeKey, newId);
   }
   
 }) ;
