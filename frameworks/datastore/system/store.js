@@ -879,7 +879,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     SproutCore.
   */
   findAll: function(recordType, conditions, params) {
-    SC.Logger.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
+    console.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
     
 
     if (!recordType || !recordType.isQuery) {
@@ -1370,7 +1370,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   /**
     register a Child Record to the parent
   */
-  registerChildToParent: function(parentStoreKey, childStoreKey, path){
+  registerChildToParent: function(parentStoreKey, childStoreKey, key){
     var prs, crs, oldPk, oldChildren, pkRef;
     // Check the child to see if it has a parent
     crs = this.childRecords || {};
@@ -1380,9 +1380,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if (oldPk){
       oldChildren = prs[oldPk];
       if (oldChildren && oldChildren[childStoreKey]) {delete oldChildren[childStoreKey];}
+      // this.recordDidChange(null, null, oldPk, key);
     }
     pkRef = prs[parentStoreKey] || {};
-    pkRef[childStoreKey] = path || YES;
+    pkRef[childStoreKey] = YES;
     prs[parentStoreKey] = pkRef;
     crs[childStoreKey] = parentStoreKey;
     // sync the status of the child
@@ -1390,37 +1391,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     this.childRecords = crs;
     this.parentRecords = prs;
   },
-
-  /**
-    Unregister the Child Record from its Parent.  This will cause the Child
-    Record to be removed from the store.
-
-    NOTE: Taken from a commit by Public Keating that didn't apply cleanly to our custom SC branch.
-  */
-  unregisterChildFromParent: function(childStoreKey) {
-    var crs, oldPk;
-
-    // Check the child to see if it has a parent
-    crs = this.childRecords;
-
-    // Remove the parent's connection to the child.  This doesn't remove the
-    // parent store key from the cache of parent store keys if the parent
-    // no longer has any other registered children, because the amount of effort
-    // to determine that would not be worth the miniscule memory savings.
-    oldPk = crs[childStoreKey];
-    if (oldPk) {
-      delete this.parentRecords[oldPk][childStoreKey];
-    }
-
-    // Remove the child.
-    // 1. from the cache of data hashes
-    // 2. from the cache of record objects
-    // 3. from the cache of child record store keys
-    this.removeDataHash(childStoreKey);
-    delete this.records[childStoreKey];
-    delete crs[childStoreKey];
-  },
-
+  
   /**
     materialize the parent when passing in a store key for the child
   */
@@ -1441,32 +1412,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if (SC.none(storeKey)) return ;
     var crs = this.childRecords || {};
     return crs[storeKey];
-  },
-
-  /**
-    Returns the store key of a nested record located by property path relative to the parent record.
-
-    @param {String|Number} parentKey The store key of the parent record.
-    @param {String} propertyPath The property path of the nested record within the parent.
-
-    @returns {String|Number} The store key of the nested record, or null if it doesn't exist.
-  */
-  nestedStoreKeyForPath: function(parentKey, propertyPath) {
-    var parentRecords = this.parentRecords, nestedKey = null;
-
-    if (!SC.none(parentRecords)) {
-      var nestedRecords = parentRecords[parentKey]; 
-
-      if (!SC.none(nestedRecords)) {
-        for (var key in nestedRecords) {
-          if (nestedRecords.hasOwnProperty(key)) {
-            if (nestedRecords[key] === propertyPath) nestedKey = key;
-          }
-        }
-      }
-    }
-
-    return nestedKey;
   },
   
   /**
@@ -2216,7 +2161,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
-      if (dataHash) this.replaceNestedIds(storeKey, dataHash);
       
       statusOnly = newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2229,8 +2173,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
+
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
-      if (dataHash) this.replaceNestedIds(storeKey, dataHash);
 
       statusOnly = dataHash || newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2653,59 +2597,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   statusString: function(storeKey) {
     var rec = this.materializeRecord(storeKey);
     return rec.statusString();
-  },
-
-  /**
-    Recursively descends into the nested record structure of the data hash and
-    replaces IDs where necessary.
-
-    @param {Number} storeKey The store key of the parent record
-    @param {Hash} dataHash The data hash of the parent record
-  */
-  replaceNestedIds: function(storeKey, dataHash) {
-    var nestedRecs = this.parentRecords ? this.parentRecords[storeKey] : null,
-      nestedKey, path, splitPath, idx, newId, recType, pk;
-
-    // Is this a parent record? If not, don't bother recursing.
-    if (SC.typeOf(nestedRecs) === SC.T_HASH) {
-      for (nestedKey in nestedRecs) {
-        nestedKey *= 1;
-        path = nestedRecs[nestedKey];
-
-        // This would be weird, but just in case.
-        if (SC.typeOf(path) !== SC.T_STRING || SC.empty(path)) continue;
-
-        // Is this a path to an array element?
-        if (path.containsString('.')) {
-          splitPath = path.split('.');
-          idx = splitPath[1] * 1;
-          path = splitPath[0];
-
-          // Again, weird, but just in case.
-          if (SC.typeOf(idx) !== SC.T_NUMBER ||
-            SC.typeOf(path) !== SC.T_STRING || 
-            SC.empty(path) || 
-            SC.none(dataHash[path])) continue;
-
-          // Follow the white rabbit...
-          this.replaceNestedIds(nestedKey, dataHash[path][idx]);
-
-        } else {
-          // ...down the rabbit hole.
-          this.replaceNestedIds(nestedKey, dataHash[path]);
-        }
-      }
-    }
-
-    // Now replace the ID on this record, if necessary.
-    recType = this.recordTypeFor(storeKey);
-    pk = recType ? recType.prototype.primaryKey : null;
-
-    if (SC.typeOf(pk) !== SC.T_STRING || SC.empty(pk)) return;
-
-    newId = dataHash ? dataHash[pk] : null;
-
-    if (!SC.empty(newId)) SC.Store.replaceIdFor(storeKey, newId);
   }
   
 }) ;

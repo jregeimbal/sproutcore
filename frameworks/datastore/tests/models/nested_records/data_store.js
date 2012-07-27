@@ -131,22 +131,6 @@ test("Can Push onto child array",function() {
 
 });
 
-test("Function: nestedStoreKeyForPath()", function() {
-  var parentDir = store.find(NestedRecord.Directory, 1);
-  var parentKey = parentDir.get('storeKey');
-  var childDir = parentDir.get('contents').objectAt(0);
-  var childDirKey = childDir.get('storeKey');
-
-  equals(store.nestedStoreKeyForPath(parentKey, 'contents.0'), childDirKey,
-    'Should return correct store key for child directory (one level deep)');
-
-  var childFile = childDir.get('contents').objectAt(0);
-  var childFileKey = childFile.get('storeKey');
-
-  equals(store.nestedStoreKeyForPath(childDirKey, 'contents.0'), childFileKey,
-    'Should return correct store key for child file (two levels deep)');
-});
-
 test("Use in Nested Store", function(){
   var nstore, dir, c, file,
       pk, id, nFile;

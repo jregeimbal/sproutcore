@@ -360,9 +360,4 @@ test("Create Parent with Broken Child Array", function(){
 
 });
 
-test("Index-based getPath() with unknownProperty()", function() {
-  var e1 = testParent.getPath('elements.1');
-  ok(!SC.none(e1), 'Element should not be null or undefined');
-  equals(e1.get('name'), 'Child 2', 'Should have picked up the correct element (tested by name)');
-});
 

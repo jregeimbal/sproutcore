@@ -132,7 +132,7 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     if (!hash) return undefined;
     
     // not in cache, materialize
-    recs[idx] = ret = parent.registerNestedRecord(hash, '%@.%@'.fmt(pname, idx));
+    recs[idx] = ret = parent.registerNestedRecord(hash, pname);
     
     return ret;
   },
@@ -201,39 +201,6 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
     var rev = (children) ? children.propertyRevision : -1 ;
     this._childrenContentDidChange(children, '[]', children, rev);
     return this;
-  },
-
-  /**
-   * Overrides unknownProperty() to allow for index-based get() calls, which allows you to do
-   * things like get an instance of a child record within a child record array from the parent
-   * record. For example...
-   *
-   * var child = parent.get('children.0');
-   *
-   * Or even more simply...
-   *
-   * var child = children.get('0');
-   *
-   * Note that you can't set() child objects this way. In other words...
-   *
-   * children.set('0', child);
-   *
-   * ...won't work.
-   */
-  unknownProperty: function(key, value) {
-    // First check to see if this is a reduced property.
-    var ret = this.reducedProperty(key, value);
-
-    // Nope; let any superclasses/mixins have a crack at it.
-    if (ret === undefined) ret = sc_super();
-
-    // Finally, try to call objectAt().
-    if (ret === undefined && !SC.empty(key)) {
-      var index = parseInt(key, 0);
-      if (SC.typeOf(index) === SC.T_NUMBER) ret = this.objectAt(index);
-    }
-
-    return ret;
   },
 
   /** @private

@@ -12,21 +12,20 @@ var NestedRecord, store, storeKeys;
 var initModels = function(){
   NestedRecord.Family = SC.Record.extend({
     /** Child Record Namespace */
-    nestedRecordNamespace: NestedRecord,
+    childRecordNamespace: NestedRecord,
     primaryKey: 'id',
     name: SC.Record.attr(String),
-    members: SC.Record.toMany('NestedRecord.Person', { nested: true })
+    members: SC.Record.toMany('SC.Record', { nested: true })
   });
   
   NestedRecord.Person = SC.Record.extend({
-    nestedRecordNamespace: NestedRecord,
+    childRecordNamespace: NestedRecord,
     primaryKey: 'id',
     name: SC.Record.attr(String),
-    relationships: SC.Record.toMany('NestedRecord.Relationship', { nested: true })
+    relationships: SC.Record.toMany('SC.Record', { nested: true })
   });
   
   NestedRecord.Relationship = SC.Record.extend({
-    nestedRecordNamespace: NestedRecord,
     primaryKey: 'id',
     name: SC.Record.attr(String),
     connectedId: SC.Record.attr(String)
@@ -194,12 +193,13 @@ test("Test Commit to server and new member addition",function() {
 
 test("Test Commit to server and new member addition",function() {
   var family, familyHash, firstMembers, secondMembers,
-      first, second, secondHash;
+      first, second, firstHash, secondHash;
   
   // First
   family = store.materializeRecord(storeKeys[0]);
   firstMembers = family.get('members');
   first = firstMembers.objectAt(0);
+  firstHash = first.get('attributes');
   store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
   store.dataSourceDidComplete(storeKeys[0], {
     type: 'Family',
@@ -228,6 +228,7 @@ test("Test Commit to server and new member addition",function() {
   equals(SC.guidFor(second), SC.guidFor(first), "verify that Member 1 are the same after save");
   equals(second.get('attributes'), first.get('attributes'), "verify that Member 1 attributes are the same after save");
   same(second, first, "the SC.ChildRecord should the be the same before and after the save");
+  same(secondHash, firstHash, "the SC.ChildRecordHashes should the be the same before and after the save");
   same(second.get('id'), first.get('id'), "the SC.ChildRecord id should the be the same before and after the save");
   same(secondHash, familyHash.members[0], "the Family Record and the member id hash should match");
 });
