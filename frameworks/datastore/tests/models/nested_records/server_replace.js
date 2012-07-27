@@ -53,7 +53,8 @@ module("Server Data Replace, SC.ChildRecord", {
         members: [
           {
             type: 'Person',
-            name: 'Willie'
+            name: 'Willie',
+            id: 1
           }
         ]
       },
@@ -162,7 +163,7 @@ test("Test Commit to server and new member addition",function() {
   equals(realHash.members[0].name, testHash.members[0].name, "Smith Family Member 1 have the same name");
   equals(realHash.members[0].id, testHash.members[0].id, "Smith Family Member 1 have the same id");
   equals(realHash.members[1].name, testHash.members[1].name, "Smith Family Member 2 have the same name");
-  equals(realHash.members[1].id, testHash.members[1].id, "Smith Family Member 1 have the same id");
+  equals(realHash.members[1].id, testHash.members[1].id, "Smith Family Member 2 have the same id");
   store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
   store.dataSourceDidComplete(storeKeys[0], {
     type: 'Family',
