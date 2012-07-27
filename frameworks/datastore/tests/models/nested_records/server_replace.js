@@ -1,12 +1,10 @@
 /**
- * Complex Nested Records that have a replaced data hash from the server
+ * Complex nested records that are persisted to the server and replaced with modified hashes.
  *
  * @author Evin Grano
+ * @author Sean Eidemiller
+ * @author Joe Shelby
  */
-
-// ..........................................................
-// Basic Set up needs to move to the setup and teardown
-// 
 var NestedRecord, store, storeKeys; 
 
 var initModels = function(){
@@ -17,7 +15,7 @@ var initModels = function(){
     name: SC.Record.attr(String),
     members: SC.Record.toMany('SC.Record', { nested: true })
   });
-  
+
   NestedRecord.Person = SC.Record.extend({
     childRecordNamespace: NestedRecord,
     primaryKey: 'id',
@@ -28,15 +26,11 @@ var initModels = function(){
   NestedRecord.Relationship = SC.Record.extend({
     primaryKey: 'id',
     name: SC.Record.attr(String),
-    connectedId: SC.Record.attr(String)
+    members: SC.Record.toMany('NestedRecord.Person', { nested: true })
   });
-  
 };
 
-// ..........................................................
-// Basic SC.Record Stuff
-// 
-module("Server Data Replace, SC.ChildRecord", {
+module("SC.Record: Nested Record Data Modification", {
 
   setup: function() {
     NestedRecord = SC.Object.create({
@@ -81,11 +75,12 @@ module("Server Data Replace, SC.ChildRecord", {
   },
 
   teardown: function() {
-    delete NestedRecord.Family;
-    delete NestedRecord.Person;
     delete NestedRecord.Relationship;
-    NestedRecord = null;
+    delete NestedRecord.Person;
+    delete NestedRecord.Family;
+    NestedRecord = undefined;
     store = null;
+    storeKeys = null;
   }
 });
 
@@ -104,7 +99,7 @@ test("Proper Initialization",function() {
   ok(SC.instanceOf(second, NestedRecord.Family), "second record is a instance of a NestedRecord.Family Object");
 });
 
-test("Test Commit to server and data return",function() {
+test("Commit to server and data return",function() {
   var first;
   
   // First
@@ -128,7 +123,7 @@ test("Test Commit to server and data return",function() {
   equals(store.peekStatus(storeKeys[0]), SC.Record.READY_CLEAN, 'first record has a READY_CLEAN State after new data change');
 });
 
-test("Test Commit to server and new member addition",function() {
+test("Commit to server and new member addition",function() {
   var first, members, realHash, testHash;
   
   // First
