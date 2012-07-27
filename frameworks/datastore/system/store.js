@@ -879,7 +879,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     SproutCore.
   */
   findAll: function(recordType, conditions, params) {
-    console.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
+    SC.Logger.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
     
 
     if (!recordType || !recordType.isQuery) {
@@ -1421,8 +1421,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     delete crs[childStoreKey];
   },
 
-  /**
-  
   /**
     materialize the parent when passing in a store key for the child
   */
@@ -2685,7 +2683,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
           // Again, weird, but just in case.
           if (SC.typeOf(idx) !== SC.T_NUMBER ||
-            SC.typeOf(path) !== SC.T_STRING || SC.empty(path)) continue;
+            SC.typeOf(path) !== SC.T_STRING || 
+            SC.empty(path) || 
+            SC.none(dataHash[path])) continue;
 
           // Follow the white rabbit...
           this.replaceNestedIds(nestedKey, dataHash[path][idx]);
@@ -2703,7 +2703,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
     if (SC.typeOf(pk) !== SC.T_STRING || SC.empty(pk)) return;
 
-    newId = dataHash[pk];
+    newId = dataHash ? dataHash[pk] : null;
 
     if (!SC.empty(newId)) SC.Store.replaceIdFor(storeKey, newId);
   }
