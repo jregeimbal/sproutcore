@@ -496,7 +496,7 @@ SC.Request.manager = SC.Object.create( SC.DelegateSupport, {
     
     @property {Number}
   */
-  maxRequests: 6,
+  maxRequests: 24,
 
   /**
     Current requests that are inflight.
