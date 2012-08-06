@@ -3,7 +3,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-/*globals SC */
+/*globals SC _gaq*/
 
 sc_require('system/state');
 
@@ -937,6 +937,10 @@ SC.StatechartManager = {
     
     if (trace) {
       this.statechartLogTrace("BEGIN sendEvent: event<%@>".fmt(event));
+    }
+
+    if(typeof _gaq !== "undefined" && _gaq && _gaq.push){
+      _gaq.push(['_trackEvent', 'Event', event, "(%@,%@)".fmt(arg1,arg2) ]);
     }
     
     len = currentStates.get('length');
