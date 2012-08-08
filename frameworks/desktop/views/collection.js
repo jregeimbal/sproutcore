@@ -3091,7 +3091,7 @@ SC.CollectionView = SC.View.extend(
       
       // otherwise, use the new sendAction style
       var pane = this.get('pane') ;
-      if (pane) {
+      if (pane && pane.rootResponder) {
         pane.rootResponder.sendAction(action, target, this, pane, context);
       }
       // SC.app.sendAction(action, target, this) ;
