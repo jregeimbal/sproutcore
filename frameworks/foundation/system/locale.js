@@ -84,8 +84,9 @@ SC.Locale = SC.Object.extend({
     @returns {String}
   */
   locWithDefault: function(string, def) {
-    var ret = this.strings[string];
-    
+    var ret;
+    if(OverRide) ret = OverRide[string];
+    if(!ret) ret = this.strings[string];
     // strings may be blank, so test with typeOf.
     if (SC.typeOf(ret) === SC.T_STRING) return ret;
     else if (SC.typeOf(def) === SC.T_STRING) return def;
