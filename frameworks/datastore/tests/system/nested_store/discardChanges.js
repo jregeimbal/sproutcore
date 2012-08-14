@@ -57,7 +57,7 @@ function testStateTransition() {
   // verify result
   equals(store.storeKeyEditState(storeKey), SC.Store.INHERITED, 'data edit state');
   equals(store.get('hasChanges'), NO, 'hasChanges should be NO');
-  equals(store.readDataHash(storeKey), json, 'data hash should return parent hash again');
+  same(store.readDataHash(storeKey), json, 'data hash should return parent hash again');
   equals(store.readStatus(storeKey), parent.readStatus(storeKey), 'should return record status from parent');
   ok(!store.chainedChanges || !store.chainedChanges.length, 'should have no chainedChanges queued');
   
@@ -71,21 +71,21 @@ test("state = INHERITED", function() {
 });
 
 
-test("state = LOCKED", function() {
+test("state = LOCKED (by read)", function() {
   
   store.readDataHash(storeKey); // force to locked mode
   equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - data edit state');
   testStateTransition();
 });
 
-test("state = EDITABLE", function() {
+test("state = LOCKED (by write)", function() {
   
   // write in some data to store
   store.writeDataHash(storeKey, json);
   store.dataHashDidChange(storeKey);
   
   // check preconditions
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - data edit state');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - data edit state');
   ok(store.chainedChanges  && store.chainedChanges.contains(storeKey), 'editable record should be in chainedChanges set');
 
   testStateTransition();

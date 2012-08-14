@@ -296,21 +296,19 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   // to use these methods.
   
   /**
-    Returns the current edit status of a storekey.  May be one of EDITABLE or
-    LOCKED.  Used mostly for unit testing.
+    Returns the current edit status of a storekey.  May be one of LOCKED or
+    FREE.  Used mostly for unit testing.
     
     @param {Number} storeKey the store key
     @returns {Number} edit status
   */
   storeKeyEditState: function(storeKey) {
     var editables = this.editables, locks = this.locks;
-    return (editables && editables[storeKey]) ? SC.Store.EDITABLE : SC.Store.LOCKED ;
+    return (editables && editables[storeKey]) ? SC.Store.LOCKED : SC.Store.FREE ;
   },
    
   /** 
-    Returns the data hash for the given storeKey.  This will also 'lock'
-    the hash so that further edits to the parent store will no 
-    longer be reflected in this store until you reset.
+    Returns the data hash for the given storeKey.
     
     @param {Number} storeKey key to retrieve
     @returns {Hash} data hash or null
@@ -324,8 +322,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     the contents of the attributes if you like.  This will do the extra work
     to make sure that you only clone the attributes one time.  
     
-    If you use this method to modify data hash, be sure to call 
-    dataHashDidChange() when you make edits to record the change.
+    If you use this method to modify data hash, be sure to call writeDataHash()
+    when you make edits to record the change.
     
     @param {Number} storeKey the store key to retrieve
     @returns {Hash} the attributes hash
@@ -375,38 +373,113 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   },
   
   /**
-    Replaces the data hash for the storeKey.  This will lock the data hash and
-    mark them as cloned.  This will also call dataHashDidChange() for you.
-    
-    Note that the hash you set here must be a different object from the 
-    original data hash.  Once you make a change here, you must also call
-    dataHashDidChange() to register the changes.
+    Writes the given data hash for the given store key to the store's
+    dataHashes structure.
 
-    If the data hash does not yet exist in the store, this method will add it.
-    Pass the optional status to edit the status as well.
-    
-    @param {Number} storeKey the store key to write
-    @param {Hash} hash the new hash
-    @param {String} status the new hash status
+    If the data hash does not yet exist in the store, this function will add new
+    memory space.
+
+    If it does exist, this function will ensure that the memory space is
+    preserved and shared connections not severed.
+
+    Pass the optional new status as well.
+
+    Note that once you call this function, you should also call
+    dataHashDidChange() to register the changes with bindings/observers.
+
+    @param {Number} storeKey The store key to write.
+    @param {Hash} hash The new hash (optional).
+    @param {String} status The new status for the store key (optional).
+
     @returns {SC.Store} receiver
   */
   writeDataHash: function(storeKey, hash, status) {
+    // Write the hash if given.
+    if (hash) {
+      var key, prop;
+      var oldHash = SC.typeOf(this.dataHashes[storeKey]) === SC.T_HASH ?
+        this.dataHashes[storeKey] : null;
 
-    // update dataHashes and optionally status.
-    if (hash) this.dataHashes[storeKey] = hash;
-    if (status) this.statuses[storeKey] = status ;
+      if (oldHash) {
+        // Recursively write the properties of the new hash without creating
+        // new memory.
+        this._setHash(oldHash, hash);
+      } else {
+        // No existing hash, so create new memory space.
+        this.dataHashes[storeKey] = hash;
+      }
+    }
+
+    // Set the status if given.
+    if (status) this.statuses[storeKey] = status;
     
-    // also note that this hash is now editable
+    // Also note that this hash is now editable.
     var editables = this.editables;
     if (!editables) editables = this.editables = [];
-    editables[storeKey] = 1 ; // use number for dense array support
-    
+    editables[storeKey] = 1; // use number for dense array support.
+
+    // Propagte the status to all children.
     var that = this;
     this._propagateToChildren(storeKey, function(storeKey){
       that.writeDataHash(storeKey, null, status);
     });
-    
-    return this ;
+
+    return this;
+  },
+
+  _setHash: function(oldHash, newHash) {
+    var key, prop;
+
+    for (key in newHash) {
+      if (!newHash.hasOwnProperty(key)) continue;
+
+      prop = newHash[key];
+
+      if (SC.typeOf(oldHash) !== SC.T_HASH) oldHash = {};
+
+      if (SC.typeOf(prop) === SC.T_HASH) {
+        if (SC.typeOf(oldHash[key]) !== SC.T_HASH) oldHash[key] = {};
+        this._setHash(oldHash[key], prop);
+      } else if (SC.typeOf(prop) === SC.T_ARRAY) {
+        if (SC.typeOf(oldHash[key]) !== SC.T_ARRAY) oldHash[key] = [];
+        this._setArray(oldHash[key], prop);
+      } else {
+        oldHash[key] = prop;
+      }
+    }
+
+    for (key in oldHash) {
+      if (!oldHash.hasOwnProperty(key)) continue;
+      if (newHash[key] === undefined) delete oldHash[key];
+    }
+  },
+
+  _setArray: function(oldArray, newArray) {
+    var element, i;
+
+    for (i = 0; i < newArray.length; i++) {
+      element = newArray[i];
+
+      if (SC.typeOf(oldArray) !== SC.T_ARRAY) oldArray = [];
+
+      if (SC.typeOf(element) === SC.T_HASH) {
+        if (SC.typeOf(oldArray[i]) !== SC.T_HASH) oldArray[i] = {};
+        this._setHash(oldArray[i], element);
+      } else if (SC.typeOf(element) === SC.T_ARRAY) {
+        if (SC.typeOf(oldArray[i]) !== SC.T_ARRAY) oldArray[i] = [];
+        this._setArray(oldArray[i], element);
+      } else {
+        oldArray[i] = element;
+      }
+    }
+
+    for (i = 0; i < oldArray.length; i++) {
+      if (newArray[i] === undefined) oldArray[i] = undefined;
+    }
+
+    // Notify any observers (SC.ChildArray, for example) that the array
+    // contents have changed.
+    if (oldArray.propertyDidChange) oldArray.propertyDidChange('[]');
   },
 
   /**
@@ -437,7 +510,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this ;    
   },
-  
+
   /**
     Reads the current status for a storeKey.  This will also lock the data 
     hash.  If no status is found, returns SC.RECORD_EMPTY.
@@ -627,7 +700,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         // Are we invalidating all keys?  If so, don't pass any to
         // storeDidChangeProperties.
         if (keys === '*') keys = null;
-        
+
         // remove it so we don't trigger this twice
         records.remove(storeKey);
         
@@ -724,8 +797,15 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     for(i=0;i<len;i++) {
       storeKey = changes[i];
 
-      // now copy changes
-      myDataHashes[storeKey]    = chDataHashes[storeKey];
+      // Write the hashes without creating new memory (and severing shared
+      // memory connections).
+      if (myDataHashes[storeKey]) {
+        this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
+      } else {
+        myDataHashes[storeKey] = chDataHashes[storeKey];
+      }
+
+      // Write the various other data structures.
       myStatuses[storeKey]      = chStatuses[storeKey];
       myRevisions[storeKey]     = chRevisions[storeKey];
       myParentRecords[storeKey] = chParentRecords[storeKey];
@@ -879,7 +959,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     SproutCore.
   */
   findAll: function(recordType, conditions, params) {
-    console.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
+    SC.Logger.warn("SC.Store#findAll() will be removed in a future version of SproutCore.  Use SC.Store#find() instead");
     
 
     if (!recordType || !recordType.isQuery) {
@@ -1178,41 +1258,51 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   
   
   /**
-    Unloads a record, removing the data hash from the store.  If you try to 
-    unload a record that is already destroyed then this method will have no effect.  
-    If you unload a record that does not exist or an error then an exception 
-    will be raised.
+    Unloads a record, removing the data hash from the store. If you try to
+    unload a record that is already destroyed then this method will have no  
+    effect. If you unload a record that does not exist or an error then an
+    exception will be raised.
     
     @param {SC.Record} recordType the recordType
     @param {String} id the record id
     @param {Number} storeKey (optional) if passed, ignores recordType and id
+
     @returns {SC.Store} receiver
   */
   unloadRecord: function(recordType, id, storeKey, newStatus) {
     if (storeKey === undefined) storeKey = recordType.storeKeyFor(id);
     var status = this.readStatus(storeKey), K = SC.Record;
+
+    // Handled status; ignore if destroying or destroyed.
     newStatus = newStatus || K.EMPTY;
-    // handle status - ignore if destroying or destroyed
+
     if ((status === K.BUSY_DESTROYING) || (status & K.DESTROYED)) {
-      return this; // nothing to do
-      
-    // error out if empty
+      // Nothing to do.
+      return this;
     } else if (status & K.BUSY) {
-      throw K.BUSY_ERROR ;
-           
-    // otherwise, destroy in dirty state
-    } else status = newStatus ;
-    
-    // remove the data hash, set new status
-    this.removeDataHash(storeKey, status);
-    this.dataHashDidChange(storeKey);
-    
-    // Handle all the child Records
+      // Error if busy.
+      throw K.BUSY_ERROR;
+    } else status = newStatus;
+
+    // Propogate to all children.
     var that = this;
     this._propagateToChildren(storeKey, function(storeKey){
       that.unloadRecord(null, null, storeKey, newStatus);
     });
-      
+
+    // Unlink parent/child relationships.
+    if (this.parentRecords && this.parentRecords[storeKey]) {
+      delete this.parentRecords[storeKey];
+    }
+
+    if (this.childRecords && this.childRecords[storeKey]) {
+      delete this.childRecords[storeKey];
+    }
+
+    // Finally, remove the data hash and set new status.
+    this.removeDataHash(storeKey, status);
+    this.dataHashDidChange(storeKey);
+
     return this ;
   },
   
@@ -1370,7 +1460,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   /**
     register a Child Record to the parent
   */
-  registerChildToParent: function(parentStoreKey, childStoreKey, key){
+  registerChildToParent: function(parentStoreKey, childStoreKey, path){
     var prs, crs, oldPk, oldChildren, pkRef;
     // Check the child to see if it has a parent
     crs = this.childRecords || {};
@@ -1379,11 +1469,12 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     oldPk = crs[childStoreKey];
     if (oldPk){
       oldChildren = prs[oldPk];
-      if (oldChildren && oldChildren[childStoreKey]) {delete oldChildren[childStoreKey];}
-      // this.recordDidChange(null, null, oldPk, key);
+      if (oldChildren && oldChildren[childStoreKey]) {
+        delete oldChildren[childStoreKey];
+      }
     }
     pkRef = prs[parentStoreKey] || {};
-    pkRef[childStoreKey] = YES;
+    pkRef[childStoreKey] = path || YES;
     prs[parentStoreKey] = pkRef;
     crs[childStoreKey] = parentStoreKey;
     // sync the status of the child
@@ -1391,7 +1482,40 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     this.childRecords = crs;
     this.parentRecords = prs;
   },
-  
+
+  /**
+    Unregisters the nested record by removing the connection to the parent,
+    removing the data hash from the store and killing the cached instantion.
+
+    @param {Number} childKey The store key of the child to unregister.
+  */
+  unregisterChildFromParent: function(childKey) {
+    var parentKey = this.childRecords ? this.childRecords[childKey] : null, that = this;
+
+    // First propogate (yes, there's a misspelling) to all children of the child.
+    this._propagateToChildren(childKey, function(childKey) {
+      that.unregisterChildFromParent(childKey);
+    });
+
+    // Remove the data hash and the cached record (if it exists).
+    this.removeDataHash(childKey, SC.Record.DESTROYED_CLEAN);
+    delete this.records[childKey];
+
+    // Remove the two-way connection between parent and child.
+    if (!SC.empty(parentKey) && this.parentRecords &&
+      this.parentRecords[parentKey]) {
+
+      delete this.parentRecords[parentKey][childKey];
+    }
+
+    if (!SC.empty(childKey) && this.childRecords) { 
+      delete this.childRecords[childKey];
+    }
+
+    // Notify that the data hash has changed.
+    this.dataHashDidChange(childKey);
+  },
+
   /**
     materialize the parent when passing in a store key for the child
   */
@@ -1413,7 +1537,36 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     var crs = this.childRecords || {};
     return crs[storeKey];
   },
-  
+
+  /**
+    Returns the store key of a nested record located by property path relative to the parent record.
+
+    @param {String|Number} parentKey The store key of the parent record.
+    @param {String} propertyPath The property path of the nested record within the parent.
+
+    @returns {String|Number} The store key of the nested record, or null if it doesn't exist.
+  */
+  nestedStoreKeyForPath: function(parentKey, propertyPath) {
+    var parentRecords = this.parentRecords, nestedKey = null;
+
+    if (!SC.none(parentRecords)) {
+      var nestedRecords = parentRecords[parentKey]; 
+
+      if (!SC.none(nestedRecords)) {
+        for (var key in nestedRecords) {
+          if (nestedRecords.hasOwnProperty(key)) {
+            if (nestedRecords[key] === propertyPath) {
+              nestedKey = key * 1;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return nestedKey;
+  },
+ 
   /**
     function that propigates a function all to all children
   */
@@ -1423,7 +1576,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     var children = this.parentRecords[storeKey] || {};
     if (SC.none(func)) return;
     for (var key in children) {
-      if (children.hasOwnProperty(key)) func(key);
+      if (children.hasOwnProperty(key * 1)) func(key * 1);
     }
   },
   
@@ -2139,11 +2292,13 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @param {Number} storeKey record store key to change to READY_CLEAN state
     @param {Hash} dataHash optional data hash to replace current hash
     @param {Object} newId optional new id to replace the old one
+    @param {Boolean} replaceNestedIds if YES, descend into hash and replace
+      nested record IDs (optional)
     @returns {SC.Store} reciever
   */
-  dataSourceDidComplete: function(storeKey, dataHash, newId) {
+  dataSourceDidComplete: function(storeKey, dataHash, newId, replaceNestedIds) {
     var status = this.readStatus(storeKey), K = SC.Record, statusOnly;
-    
+
     // EMPTY, ERROR, READY_CLEAN, READY_NEW, READY_DIRTY, DESTROYED_CLEAN,
     // DESTROYED_DIRTY
     if (!(status & K.BUSY)) {
@@ -2161,6 +2316,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
+      if (dataHash && replaceNestedIds !== NO) this.replaceNestedIds(storeKey, dataHash);
       
       statusOnly = newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2173,8 +2329,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       this.writeStatus(storeKey, status);
       
       if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
-
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
+      if (dataHash && replaceNestedIds !== NO) this.replaceNestedIds(storeKey, dataHash);
 
       statusOnly = dataHash || newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
@@ -2262,7 +2418,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     if(storeKey===undefined) storeKey = recordType.storeKeyFor(id);
     status = this.readStatus(storeKey);
-    if(status==K.EMPTY || status==K.ERROR || status==K.READY_CLEAN || status==K.DESTROYED_CLEAN) {
+    if(status==K.EMPTY || status==K.ERROR || status==K.READY_CLEAN || status==K.READY_NEW || status==K.DESTROYED_CLEAN) {
       
       status = K.READY_CLEAN;
       if(dataHash===undefined) this.writeStatus(storeKey, status) ;
@@ -2597,6 +2753,59 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   statusString: function(storeKey) {
     var rec = this.materializeRecord(storeKey);
     return rec.statusString();
+  },
+
+  /**
+    Recursively descends into the nested record structure of the data hash and
+    replaces IDs where necessary.
+
+    @param {Number} storeKey The store key of the parent record
+    @param {Hash} dataHash The data hash of the parent record
+  */
+  replaceNestedIds: function(storeKey, dataHash) {
+    var nestedRecs = this.parentRecords ? this.parentRecords[storeKey] : null,
+      nestedKey, path, splitPath, idx, newId, recType, pk;
+
+    // Is this a parent record? If not, don't bother recursing.
+    if (SC.typeOf(nestedRecs) === SC.T_HASH) {
+      for (nestedKey in nestedRecs) {
+        nestedKey *= 1;
+        path = nestedRecs[nestedKey];
+
+        // This would be weird, but just in case.
+        if (SC.typeOf(path) !== SC.T_STRING || SC.empty(path)) continue;
+
+        // Is this a path to an array element?
+        if (path.containsString('.')) {
+          splitPath = path.split('.');
+          idx = splitPath[1] * 1;
+          path = splitPath[0];
+
+          // Again, weird, but just in case.
+          if (SC.typeOf(idx) !== SC.T_NUMBER ||
+            SC.typeOf(path) !== SC.T_STRING || 
+            SC.empty(path) || 
+            SC.none(dataHash[path])) continue;
+
+          // Follow the white rabbit...
+          this.replaceNestedIds(nestedKey, dataHash[path][idx]);
+
+        } else {
+          // ...down the rabbit hole.
+          this.replaceNestedIds(nestedKey, dataHash[path]);
+        }
+      }
+    }
+
+    // Now replace the ID on this record, if necessary.
+    recType = this.recordTypeFor(storeKey);
+    pk = recType ? recType.prototype.primaryKey : null;
+
+    if (SC.typeOf(pk) !== SC.T_STRING || SC.empty(pk)) return;
+
+    newId = dataHash ? dataHash[pk] : null;
+
+    if (!SC.empty(newId)) SC.Store.replaceIdFor(storeKey, newId);
   }
   
 }) ;
@@ -2636,23 +2845,23 @@ SC.Store.mixin({
   NESTED_STORE_RETRIEVE_DIRTY_ERROR: new Error("Cannot Retrieve Dirty Record in Nested Store"),
 
   /**
-    Data hash state indicates the data hash is currently editable
-    
+    Data hash state indicates the data hash is currently free (not locked).
+
     @property {String}
   */
-  EDITABLE:  'editable',
-  
-  /**
-    Data hash state indicates the hash no longer tracks changes from a 
-    parent store, but it is not editable.
-    
-    @property {String}
-  */
-  LOCKED:    'locked',
+  FREE: 'free',
 
   /**
+    Data hash state indicates the data hash is currently locked and is no
+    longer tracking changes from the parent store.
+    
+    @property {String}
+  */
+  LOCKED: 'locked',
+  
+  /**
     Data hash state indicates the hash is tracking changes from the parent
-    store and is not editable.
+    store and is not locked.
     
     @property {String}
   */

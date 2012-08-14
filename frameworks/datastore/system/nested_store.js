@@ -255,14 +255,14 @@ SC.NestedStore = SC.Store.extend(
   
   /**
     Returns the current edit status of a storekey.  May be one of INHERITED,
-    EDITABLE, and LOCKED.  Used mostly for unit testing.
+    and LOCKED.  Used mostly for unit testing.
     
     @param {Number} storeKey the store key
     @returns {Number} edit status
   */
   storeKeyEditState: function(storeKey) {
     var editables = this.editables, locks = this.locks;
-    return (editables && editables[storeKey]) ? SC.Store.EDITABLE : (locks && locks[storeKey]) ? SC.Store.LOCKED : SC.Store.INHERITED ;
+    return (editables && editables[storeKey]) ? SC.Store.LOCKED : SC.Store.INHERITED ;
   },
    
   /**  @private
@@ -278,31 +278,30 @@ SC.NestedStore = SC.Store.extend(
     // create locks if needed
     if (!locks) locks = this.locks = [];
 
-    // fixup editables
-    editables = this.editables;
-    if (editables) editables[storeKey] = 0;
-    
-    
-    // if the data hash in the parent store is editable, then clone the hash
-    // for our own use.  Otherwise, just copy a reference to the data hash
-    // in the parent store. -- find first non-inherited state
+    // clone the data hash from the parent store and mark as editable.
     var pstore = this.get('parentStore'), editState;
-    while(pstore && (editState=pstore.storeKeyEditState(storeKey)) === SC.Store.INHERITED) {
+
+    /* NOTE: [SE] _lock() used to walk up the hierachy looking for the top-most parent store,
+       but that behavior was incorrect. We actually want the immediate parent, because that's
+       what we should be tracking changes from.
+
+    while (pstore && (editState=pstore.storeKeyEditState(storeKey)) === SC.Store.INHERITED) {
       pstore = pstore.get('parentStore');
     }
-    
-    if (pstore && editState === SC.Store.EDITABLE) {
-      this.dataHashes[storeKey] = SC.clone(pstore.dataHashes[storeKey], YES);
-      if (!editables) editables = this.editables = [];
-      editables[storeKey] = 1 ; // mark as editable
-      
-    } else this.dataHashes[storeKey] = this.dataHashes[storeKey];
-    
+    */
+
+    if (!pstore) return this; // something weird happened
+
+    this.dataHashes[storeKey] = SC.clone(pstore.dataHashes[storeKey], YES);
+    editables = this.editables;
+    if (!editables) editables = this.editables = [];
+    editables[storeKey] = 1;
+ 
     // also copy the status + revision
     this.statuses[storeKey] = this.statuses[storeKey];
     rev = this.revisions[storeKey] = this.revisions[storeKey];
     
-    // save a lock and make it not editable
+    // set the lock revision
     locks[storeKey] = rev || 1;    
     
     return this ;
@@ -322,48 +321,22 @@ SC.NestedStore = SC.Store.extend(
     
     return sc_super();
   },
-  
-  /** @private - adds chaining support - 
-    Does not call sc_super because the implementation of the method vary too
-    much. 
-  */
+
+  /**
+   * An implementation of writeDataHash() specific to nested stores (addressed locking issues).
+   */
   writeDataHash: function(storeKey, hash, status) {
-    var locks = this.locks, didLock = NO, rev ;
+    var locks = this.locks, rev;
 
-    // Update our dataHash and/or status, depending on what was passed in.
-    // Note that if no new hash was passed in, we'll lock the storeKey to
-    // properly fork our dataHash from our parent store.  Similarly, if no
-    // status was passed in, we'll save our own copy of the value.
-    if (hash) {
-      this.dataHashes[storeKey] = hash;
-    }
-    else {
-      this._lock(storeKey);
-      didLock = YES;
-    }
+    // Lock if needed and set the revision.
+    this._lock(storeKey);
 
-    if (status) {
-      this.statuses[storeKey] = status;
-    }
-    else {
-      if (!didLock) this.statuses[storeKey] = (this.statuses[storeKey] || SC.Record.READY_NEW);
-    }
+    rev = this.revisions[storeKey] = this.revisions[storeKey]; // copy ref
+    if (!locks) locks = this.locks = [];
+    if (!locks[storeKey]) locks[storeKey] = rev || 1;
 
-    if (!didLock) {
-      rev = this.revisions[storeKey] = this.revisions[storeKey]; // copy ref
-    
-      // make sure we lock if needed.
-      if (!locks) locks = this.locks = [];
-      if (!locks[storeKey]) locks[storeKey] = rev || 1;
-    }
-    
-    // Also note that this hash is now editable.  (Even if we locked it,
-    // above, it may not have been marked as editable.)
-    var editables = this.editables;
-    if (!editables) editables = this.editables = [];
-    editables[storeKey] = 1 ; // use number for dense array support
-    
-    return this ;
+    // Let the implementation in SC.Store take over.
+    return sc_super();
   },
 
   /** @private - adds chaining support */

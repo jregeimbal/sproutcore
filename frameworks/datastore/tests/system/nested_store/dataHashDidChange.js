@@ -61,31 +61,27 @@ function testStateTransition(fromState, toState) {
   equals(store.get('hasChanges'), YES, 'should have changes');
 } 
 
-test("edit state = INHERITED, parent editable = NO", function() {
+test("edit state = INHERITED, parent locked = NO", function() {
 
   // verify preconditions
-  equals(parent.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - parent store edit state is not EDITABLE');
+  equals(parent.storeKeyEditState(storeKey), SC.Store.FREE, 'precond - parent store edit state is not LOCKED');
   
   testStateTransition(SC.Store.INHERITED, SC.Store.LOCKED);
 }) ;
 
-test("edit state = INHERITED, parent editable = YES", function() {
+test("edit state = INHERITED, parent locked = YES", function() {
 
   // verify preconditions
   parent.readEditableDataHash(storeKey);
-  equals(parent.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - parent store edit state is EDITABLE');
+  equals(parent.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - parent store edit state is LOCKED');
 
-  testStateTransition(SC.Store.INHERITED, SC.Store.EDITABLE);
+  testStateTransition(SC.Store.INHERITED, SC.Store.LOCKED);
 }) ;
 
 test("edit state = LOCKED", function() {
-  store.readDataHash(storeKey); // lock
-  testStateTransition(SC.Store.LOCKED, SC.Store.LOCKED);
-}) ;
-
-test("edit state = EDITABLE", function() {
   store.readEditableDataHash(storeKey); // make editable
-  testStateTransition(SC.Store.EDITABLE, SC.Store.EDITABLE);
+  equals(parent.storeKeyEditState(storeKey), SC.Store.FREE, 'precond - parent store edit state is not LOCKED');
+  testStateTransition(SC.Store.LOCKED, SC.Store.LOCKED);
 }) ;
 
 // ..........................................................

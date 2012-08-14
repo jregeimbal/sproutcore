@@ -25,11 +25,11 @@ module("SC.Store#readEditableDataHash", {
   }
 });
 
-test("data state=LOCKED", function() {
+test("data state=FREE (read)", function() {
   
   // test preconditions
   store.editables = null ; // manually reset for testing state
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - edit state should be LOCKED');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'precond - edit state should be FREE');
   var oldrev = store.revisions[storeKey] ;
 
   // perform read
@@ -39,7 +39,7 @@ test("data state=LOCKED", function() {
   same(ret, json, 'should return equivalent json object');
   ok(!(ret===json), 'should not return same json instance');
   
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'edit state should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'edit state should be locked');
   
   // should not change revisions, but should copy it...
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
@@ -49,10 +49,10 @@ test("data state=LOCKED", function() {
   
 });
 
-test("data state=EDITABLE", function() {
+test("data state=LOCKED (readEditable)", function() {
   
   // test preconditions
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - edit state should be EDITABLE');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - edit state should be LOCKED');
   var oldrev = store.revisions[storeKey] ;
 
   // perform read
@@ -61,7 +61,7 @@ test("data state=EDITABLE", function() {
   // validate
   equals(ret, json, 'should return same editable json instance');
   
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'edit state should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'edit state should be locked');
   
   // should not change revisions, but should copy it...
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
