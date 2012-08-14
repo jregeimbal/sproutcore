@@ -80,19 +80,21 @@ SC.Event = function(originalEvent) {
     var deltaMultiplier = 1,
         version = parseFloat(SC.browser.version);
 
-    // normalize wheelDelta, wheelDeltaX, & wheelDeltaY for Safari
-    if (SC.browser.safari && originalEvent.wheelDelta!==undefined) {
+    // normalize wheelDelta, wheelDeltaX, & wheelDeltaY for Safari and Chrome
+    if ( (SC.browser.safari || SC.browser.chrome) && originalEvent.wheelDelta!==undefined) {
       this.wheelDelta = 0-(originalEvent.wheelDeltaY || originalEvent.wheelDeltaX);
       this.wheelDeltaY = 0-(originalEvent.wheelDeltaY||0);
       this.wheelDeltaX = 0-(originalEvent.wheelDeltaX||0);
 
-      // Scrolling in Safari 5.0.1, which is huge for some reason
-      if (version >= 533.17 && version <= 533.19) {
-        deltaMultiplier = 0.004;
+      if (SC.browser.safari) {
+        // Scrolling in Safari 5.0.1, which is huge for some reason
+        if (version >= 533.17 && version <= 533.19) {
+          deltaMultiplier = 0.004;
 
-      // Scrolling in Safari 5.0
-      } else if (version < 533 || version >= 534) {
-        deltaMultiplier = 40;
+        // Scrolling in Safari 5.0
+        } else if (version < 533 || version >= 534) {
+          deltaMultiplier = 40;
+        }
       }
 
     // normalize wheelDelta for Firefox
