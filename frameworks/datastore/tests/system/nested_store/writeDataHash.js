@@ -43,9 +43,9 @@ function testWriteDataHash() {
   equals(store.writeDataHash(storeKey, json2, SC.Record.READY_NEW), store, 'should return receiver');
   
   // verify
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'new edit state should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'new edit state should be locked');
   
-  equals(store.readDataHash(storeKey), json2, 'should have new json data hash');
+  same(store.readDataHash(storeKey), json2, 'should have new json data hash');
   equals(store.readStatus(storeKey), SC.Record.READY_NEW, 'should have new status');
 
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
@@ -73,11 +73,11 @@ test("edit state=LOCKED", function() {
 
 });
 
-test("edit state=EDITABLE", function() {
+test("edit state=LOCKED (by write)", function() {
   
   // test preconditions
   store.readEditableDataHash(storeKey);
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - edit state should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - edit state should be locked');
   
   testWriteDataHash();
 
@@ -96,7 +96,7 @@ test("writing a new hash", function() {
   equals(store.writeDataHash(storeKey, json, SC.Record.READY_NEW), store, 'should return receiver');
   
   // verify change
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'new status should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'new status should be locked');
   equals(store.readDataHash(storeKey), json, 'should match new json');
   equals(store.readStatus(storeKey), SC.Record.READY_NEW, 'should have new record status');
 });
@@ -111,49 +111,49 @@ test("change should propogate to child if child edit state = INHERITED", functio
   equals(child.storeKeyEditState(storeKey), SC.Store.INHERITED, 'precond - child edit state should be INHERITED');
 
   // perform change
+  var originalJson = SC.clone(json, YES);
   var json2 = { version: 2 };
   store.writeDataHash(storeKey, json2, SC.Record.READY_NEW);
   
   // verify
   same(child.readDataHash(storeKey), json2, 'child should pick up change');
-  equals(parent.readDataHash(storeKey), json, 'parent should still have old json');
+  same(parent.readDataHash(storeKey), originalJson, 'parent should still have old json');
   
   equals(child.readStatus(storeKey), SC.Record.READY_NEW, 'child should pick up new status');
   equals(parent.readStatus(storeKey), SC.Record.READY_CLEAN, 'parent should still have old status');
 
 });
 
-
-function testLockedOrEditableChild() {
+function testLockedChild() {
   // perform change
+  var originalJson = SC.clone(json, YES);
   var json2 = { version: 2 };
   store.writeDataHash(storeKey, json2, SC.Record.READY_NEW);
   
   // verify
-  same(child.readDataHash(storeKey), json, 'child should NOT pick up change');
-  equals(parent.readDataHash(storeKey), json, 'parent should still have old json');
+  same(child.readDataHash(storeKey), originalJson, 'child should NOT pick up change');
+  same(parent.readDataHash(storeKey), originalJson, 'parent should still have old json');
   
   equals(child.readStatus(storeKey), SC.Record.READY_CLEAN, 'child should pick up new status');
   equals(parent.readStatus(storeKey), SC.Record.READY_CLEAN, 'parent should still have old status');
 }
 
-
-test("change should not propogate to child if child edit state = LOCKED", function() {
+test("change should not propogate to child if child edit state = LOCKED (read)", function() {
 
   // verify preconditions
   child.readDataHash(storeKey);
   equals(child.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - child edit state should be LOCKED');
 
-  testLockedOrEditableChild();
+  testLockedChild();
 });
 
-test("change should not propogate to child if child edit state = EDITABLE", function() {
+test("change should not propogate to child if child edit state = LOCKED (readEdible)", function() {
 
   // verify preconditions
   child.readEditableDataHash(storeKey);
-  equals(child.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - child edit state should be EDITABLE');
+  equals(child.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - child edit state should be LOCKED');
 
-  testLockedOrEditableChild();
+  testLockedChild();
 });
 
 

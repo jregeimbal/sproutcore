@@ -26,18 +26,18 @@ module("SC.Store#readDataHash", {
   }
 });
 
-test("data state=LOCKED", function() {
+test("data state=FREE (read)", function() {
   
   // preconditions
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - data state should be LOCKED');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'precond - data state should be FREE');
   var oldrev = store.revisions[storeKey];
   
   // perform read
   var ret = store.readDataHash(storeKey);
   
   // verify
-  equals(ret, json, 'should read same data hash once locked');
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'should remain in locked state');
+  equals(ret, json, 'should read same data hash once read');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'should remain in free state');
 
   // test revisions
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
@@ -46,11 +46,11 @@ test("data state=LOCKED", function() {
   }
 });
 
-test("data state=EDITABLE", function() {
+test("data state=LOCKED (readEditable)", function() {
   
   // preconditions
   var ret1 = store.readEditableDataHash(storeKey);
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - data state should be EDITABLE');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - data state should be LOCKED');
   var oldrev = store.revisions[storeKey];
   
   // perform read
@@ -58,7 +58,7 @@ test("data state=EDITABLE", function() {
   
   // verify
   equals(ret1, ret2, 'should read same data hash once editable');
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'should remain in editable state');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'should remain in locked state');
 
   // test revisions
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
@@ -69,6 +69,6 @@ test("data state=EDITABLE", function() {
 
 test("should return null when accessing an unknown storeKey", function() {
   equals(store.readDataHash(20000000), null, 'shuld return null for non-existant store key');
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'should put into locked edit state');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'should remain in FREE state');
 });
 

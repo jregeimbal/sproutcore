@@ -63,20 +63,20 @@ function testStateTransition(fromState, toState) {
   
 } 
 
-test("edit state = LOCKED", function() {
+test("edit state = FREE", function() {
   SC.RunLoop.begin();
   
-  store.readDataHash(storeKey); // lock
-  testStateTransition(SC.Store.LOCKED, SC.Store.LOCKED);
+  store.readDataHash(storeKey);
+  testStateTransition(SC.Store.FREE, SC.Store.FREE);
   
   SC.RunLoop.end();
 }) ;
 
-test("edit state = EDITABLE", function() {
+test("edit state = LOCKED (readEditable)", function() {
   SC.RunLoop.begin();
   
-  store.readEditableDataHash(storeKey); // make editable
-  testStateTransition(SC.Store.EDITABLE, SC.Store.EDITABLE);
+  store.readEditableDataHash(storeKey); // make locked
+  testStateTransition(SC.Store.LOCKED, SC.Store.LOCKED);
   
   SC.RunLoop.end();
 }) ;

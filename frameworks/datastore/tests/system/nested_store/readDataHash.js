@@ -33,14 +33,14 @@ module("SC.NestedStore#readDataHash", {
 // BASIC STATE TRANSITIONS
 // 
 
-test("data state=INHERITED, lockOnRead=YES, parent editable=NO", function() {
+test("data state=INHERITED, lockOnRead=YES, parent locked=NO", function() {
   // preconditions
   equals(store.get('lockOnRead'), YES, 'precond - lockOnRead should be YES');
   equals(store.storeKeyEditState(storeKey), SC.Store.INHERITED, 'precond - storeKey should be inherited from parent');
   var oldrev = store.revisions[storeKey]; // save old rev for testing later
 
   // perform read
-  equals(store.readDataHash(storeKey), json, 'should return json');
+  same(store.readDataHash(storeKey), json, 'should return json');
 
   // verify
   equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'storeKey should be read-locked now');
@@ -54,7 +54,7 @@ test("data state=INHERITED, lockOnRead=YES, parent editable=NO", function() {
 });
 
 
-test("data state=INHERITED, lockOnRead=NO, parent editable=NO", function() {
+test("data state=INHERITED, lockOnRead=NO, parent locked=NO", function() {
   // preconditions
   store.set('lockOnRead', NO);
   
@@ -77,14 +77,14 @@ test("data state=INHERITED, lockOnRead=NO, parent editable=NO", function() {
 });
 
 
-test("data state=INHERITED, lockOnRead=YES, parent editable=YES", function() {
+test("data state=INHERITED, lockOnRead=YES, parent locked=YES", function() {
 
   // preconditions
   
   // first, make parentStore record editable.  an editable record needs to be
   // cloned into nested stores on lock to avoid un-monitored edits
   parent.readEditableDataHash(storeKey);
-  equals(parent.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - parent storeKey should be editable');
+  equals(parent.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - parent storeKey should be locked');
   equals(store.get('lockOnRead'), YES, 'precond - lockOnRead should be YES');
   equals(store.storeKeyEditState(storeKey), SC.Store.INHERITED, 'precond - storeKey should be inherited from parent');
   var oldrev = store.revisions[storeKey]; // save old rev for testing later
@@ -95,7 +95,7 @@ test("data state=INHERITED, lockOnRead=YES, parent editable=YES", function() {
   ok(!(ret === json), 'should return clone of json instance not exact same instance');
 
   // verify new state
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'storeKey should be locked');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'storeKey should be locked');
   ok(store.dataHashes.hasOwnProperty(storeKey), 'should have reference to json');
 
   // test revisions...
@@ -105,7 +105,7 @@ test("data state=INHERITED, lockOnRead=YES, parent editable=YES", function() {
   }
 });
 
-test("data state=LOCKED", function() {
+test("data state=LOCKED (by read)", function() {
   
   // preconditions
   store.set('lockOnRead', YES); // make sure reading will lock
@@ -127,12 +127,12 @@ test("data state=LOCKED", function() {
   }
 });
 
-test("data state=EDITABLE", function() {
+test("data state=LOCKED (by write)", function() {
   
   // preconditions
   store.set('lockOnRead', YES); // make sure reading will lock
   var ret1 = store.readEditableDataHash(storeKey);
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - data state should be EDITABLE');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - data state should be LOCKED');
   var oldrev = store.revisions[storeKey];
   
   // perform read
@@ -140,7 +140,7 @@ test("data state=EDITABLE", function() {
   
   // verify
   equals(ret1, ret2, 'should read same data hash once editable');
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'should remain in editable state');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'should remain in locked state');
 
   // test revisions
   equals(store.revisions[storeKey], oldrev, 'should not change revision');
@@ -158,17 +158,17 @@ test("should return null when accessing an unknown storeKey", function() {
 // SPECIAL CASES
 //
 
-test("locking deep nested store when top-level parent is editable and middle store is inherited", function() {
+test("locking deep nested store when top-level parent is locked and middle store is inherited", function() {
 
-  // first, make the parent store data hash editable
+  // first, make the parent store data hash locked
   json = parent.readEditableDataHash(storeKey);
-  equals(parent.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'parent edit state should be EDITABLE');
+  equals(parent.storeKeyEditState(storeKey), SC.Store.LOCKED, 'parent edit state should be LOCKED');
   equals(store.storeKeyEditState(storeKey), SC.Store.INHERITED, 'middle store edit state should be INHERITED');
   equals(child.storeKeyEditState(storeKey), SC.Store.INHERITED, 'child store edit state should be INHERITED');
   
   // now read data hash from child, locking child
   var json2 = child.readDataHash(storeKey);
-  equals(child.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'child store edit state should be locked after reading data');
+  equals(child.storeKeyEditState(storeKey), SC.Store.LOCKED, 'child store edit state should be locked after reading data');
   
   // now edit the root json and make sure it does NOT propogate.
   json.newItem = "bar";

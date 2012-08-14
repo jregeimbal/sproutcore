@@ -40,7 +40,7 @@ function testRemoveDataHash() {
   equals(store.removeDataHash(storeKey, SC.Record.DESTROYED_CLEAN), store, 'should return receiver');
   
   // verify
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'new edit state should be locked');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'new edit state should be free');
   
   equals(store.readDataHash(storeKey), null, 'should have NO json data');
   equals(store.readStatus(storeKey), SC.Record.DESTROYED_CLEAN, 'should have new status');
@@ -52,20 +52,20 @@ function testRemoveDataHash() {
 }
 
 
-test("edit state=LOCKED", function() {
+test("edit state=FREE", function() {
   
   // test preconditions
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - edit state should be locked');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'precond - edit state should be free');
   
   testRemoveDataHash();
 
 });
 
-test("edit state=EDITABLE", function() {
+test("edit state=LOCKED (readEditable)", function() {
   
   // test preconditions
   store.readEditableDataHash(storeKey);
-  equals(store.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - edit state should be editable');
+  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - edit state should be locked');
   
   testRemoveDataHash();
 
@@ -83,7 +83,7 @@ test("remove a non-existing hash", function() {
   equals(store.removeDataHash(storeKey, SC.Record.DESTROYED_CLEAN), store, 'should return receiver');
   
   // verify change
-  equals(store.storeKeyEditState(storeKey), SC.Store.LOCKED, 'new status should be locked');
+  equals(store.storeKeyEditState(storeKey), SC.Store.FREE, 'new status should be free');
   equals(store.readDataHash(storeKey), null, 'should still be null');
   equals(store.readStatus(storeKey), SC.Record.DESTROYED_CLEAN, 'should have new record status');
 });
@@ -105,33 +105,18 @@ test("change should propogate to child if child edit state = INHERITED", functio
   equals(child.readStatus(storeKey), SC.Record.DESTROYED_CLEAN, 'child should pick up new status');
 });
 
+test("change should not propogate to child if child edit state = LOCKED", function() {
 
-function testLockedOrEditableChild() {
+  // verify preconditions
+  child.readEditableDataHash(storeKey);
+  equals(child.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - child edit state should be LOCKED');
+
   // perform change
   store.removeDataHash(storeKey, SC.Record.DESTROYED_CLEAN);
   
   // verify
   same(child.readDataHash(storeKey), json, 'child should NOT pick up change');
   equals(child.readStatus(storeKey), SC.Record.READY_CLEAN, 'child should pick up new status');
-}
-
-
-test("change should not propogate to child if child edit state = LOCKED", function() {
-
-  // verify preconditions
-  child.readDataHash(storeKey);
-  equals(child.storeKeyEditState(storeKey), SC.Store.LOCKED, 'precond - child edit state should be LOCKED');
-
-  testLockedOrEditableChild();
-});
-
-test("change should not propogate to child if child edit state = EDITABLE", function() {
-
-  // verify preconditions
-  child.readEditableDataHash(storeKey);
-  equals(child.storeKeyEditState(storeKey), SC.Store.EDITABLE, 'precond - child edit state should be EDITABLE');
-
-  testLockedOrEditableChild();
 });
 
 

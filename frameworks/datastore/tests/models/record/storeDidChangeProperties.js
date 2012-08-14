@@ -150,7 +150,7 @@ test("changing attributes on a parent store should NOT notify child store if loc
   var parentfoo = store.materializeRecord(foo.storeKey);
   var childfoo = child.materializeRecord(foo.storeKey);
   childfoo.readAttribute('foo');
-  equals(child.storeKeyEditState(foo.storeKey), SC.Store.EDITABLE, 'precond - foo should be locked from parent store');
+  equals(child.storeKeyEditState(foo.storeKey), SC.Store.LOCKED, 'precond - foo should be locked from parent store');
    
   SC.RunLoop.begin();
   parentfoo.writeAttribute('foo', 'baz'); // must not be bar
