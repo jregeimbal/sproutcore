@@ -24,44 +24,44 @@ test("should replace opening tag with string and add closing tag, leaving middle
 
 test("should emit any CSS class names included in the tag opts.classNames array", function() {
   context.classNames("foo bar".w()).end();
-  ok(context.get(0).match(/class=\"foo bar\"/), '<div> has class attr') ;
+  ok(context.get(0).match(/class=\'foo bar\'/), '<div> has class attr') ;
 });
 
 test("should emit id in tag opts.id", function() {
   context.id("foo").end();
-  ok(context.get(0).match(/id=\"foo\"/), "<div> has id attr");
+  ok(context.get(0).match(/id=\'foo\'/), "<div> has id attr");
 });
 
 test("should emit style in tag if opts.styles is defined", function() {
   context.styles({ alpha: "beta", foo: "bar" }).end();
-  ok(context.get(0).match(/style=\"alpha: beta; foo: bar\"/), '<div> has style="alpha: beta; foo: bar"');
+  ok(context.get(0).match(/style=\'alpha: beta; foo: bar\'/), '<div> has style="alpha: beta; foo: bar"');
 });
 
 test("should emit style with custom browser attributes", function() {
   context.styles({ mozColumnCount: '3', webkitColumnCount: '3', oColumnCount: '3', msColumnCount: '3' }).end();
-  ok(context.get(0).match('<div style="-moz-column-count: 3px; -webkit-column-count: 3px; -o-column-count: 3px; -ms-column-count: 3px" >'),
-                            '<div> has style="-moz-column-count: 3; -webkit-column-count: 3, -o-column-count: 3, -ms-column-count: 3"');
+  ok(context.get(0).match('<div style=\'-moz-column-count: 3px; -webkit-column-count: 3px; -o-column-count: 3px; -ms-column-count: 3px\' >'),
+                            '<div> has style=\'-moz-column-count: 3; -webkit-column-count: 3, -o-column-count: 3, -ms-column-count: 3\'');
 });
 
 test("should write arbitrary attrs has in opts", function() {
   context.attr({ foo: "bar", bar: "baz" }).end();
-  ok(context.get(0).match(/foo=\"bar\"/), 'has foo="bar"');
-  ok(context.get(0).match(/bar=\"baz\"/), 'has bar="baz"');
+  ok(context.get(0).match(/foo=\'bar\'/), 'has foo="bar"');
+  ok(context.get(0).match(/bar=\'baz\'/), 'has bar="baz"');
 });
 
 test("classNames should override attrs.class", function() {
   context.classNames("foo".w()).attr({ "class": "bar" }).end();
-  ok(context.get(0).match(/class=\"foo\"/), 'has class="foo"');
+  ok(context.get(0).match(/class=\'foo\'/), 'has class="foo"');
 });
 
 test("opts.id should override opts.attrs.id", function() {
   context.id("foo").attr({ id: "bar" }).end();
-  ok(context.get(0).match(/id=\"foo\"/), 'has id="foo"');
+  ok(context.get(0).match(/id=\'foo\'/), 'has id="foo"');
 });
 
 test("opts.styles should override opts.attrs.style", function() {
   context.styles({ foo: "foo" }).attr({ style: "bar: bar" }).end();
-  ok(context.get(0).match(/style=\"foo: foo\"/), 'has style="foo: foo"');
+  ok(context.get(0).match(/style=\'foo: foo\'/), 'has style="foo: foo"');
 });
 
 test("should return receiver if receiver has no prevObject", function() {
@@ -109,7 +109,7 @@ test("it should make sure to clear reused temporary attributes object", function
   // generate second tag...will reuse internal temporary attrs object.
   context.begin('input').id("bar").end();
   var str = context.get(context.length-1);
-  equals(str, "<input id=\"bar\"  />");
+  equals(str, "<input id=\'bar\'  />");
 });
 
 test("it should work when nested more than one level deep", function() {
@@ -118,7 +118,7 @@ test("it should work when nested more than one level deep", function() {
   .end();
   
   var str = context.join('');
-  ok(str.match(/id="foo"/), 'has foo');
-  ok(str.match(/id="bar"/), 'has bar');
+  ok(str.match(/id=\'foo\'/), 'has foo');
+  ok(str.match(/id=\'bar\'/), 'has bar');
 });
 
