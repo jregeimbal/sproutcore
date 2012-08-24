@@ -119,6 +119,7 @@ SC.ImageView = SC.View.extend(SC.Control,
     var toolTip = this.get('toolTip') ;
     if (SC.typeOf(toolTip) === SC.T_STRING) {
       if (this.get('localize')) toolTip = toolTip.loc() ;
+      toolTip = toolTip.replace('\'', "");
       context.attr('title', toolTip) ;
       context.attr('alt', toolTip) ;
     } else {
