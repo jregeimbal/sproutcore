@@ -61,7 +61,7 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
     @param {String|DOMElement} tagNameOrElement 
     @returns {SC.RenderContext} receiver
   */
-  init: function(tagNameOrElement, prevContext) {
+  init: function(tagNameOrElement, prevContext, useSingleQuotes) {
     var strings, tagNameOrElementIsString;
     
     // if a prevContext was passed, setup with that first...
@@ -69,7 +69,9 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
       this.prevObject = prevContext ;
       this.strings    = prevContext.strings ;
       this.offset     = prevContext.length + prevContext.offset ;
-    } 
+    }
+    if(useSingleQuotes) {this._useSingleQuotes = true;}
+    else this._useSingleQuotes = false;
 
     if (!this.strings) this.strings = [] ;
 
@@ -240,7 +242,7 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
   */
   begin: function(tagNameOrElement) {
     // console.log('%@.begin(%@) called'.fmt(this, tagNameOrElement));
-    return SC.RenderContext(tagNameOrElement, this);
+    return SC.RenderContext(tagNameOrElement, this, this._useSingleQuotes);
   },
   
   /**
@@ -470,7 +472,8 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         if (!attrs.hasOwnProperty(key)) continue ;
         value = attrs[key];
         if (value === null) continue ; // skip empty attrs
-        tag.push(key, '="', value, '" ');
+        if(this._useSingleQuotes){ tag.push(key, "='", value, "' ");}
+        else {tag.push(key, '="', value, '" ');}
       }
       
       // if we are using the DEFAULT_ATTRS temporary object, make sure we 
