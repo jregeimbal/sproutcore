@@ -470,13 +470,7 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         if (!attrs.hasOwnProperty(key)) continue ;
         value = attrs[key];
         if (value === null) continue ; // skip empty attrs
-        //if it has a ' use the double quotes
-        if(value.indexOf("'") >= 0){
-          tag.push(key, "='", value, "' ");
-        }
-        else{
-          tag.push(key, '="', value, '" ');
-        }
+        tag.push(key, '="', value, '" ');
       }
       
       // if we are using the DEFAULT_ATTRS temporary object, make sure we 
