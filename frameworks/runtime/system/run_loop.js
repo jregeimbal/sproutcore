@@ -283,13 +283,8 @@ SC.run = function(callback, target, useExistingRunLoop) {
       if (SC.ExceptionHandler) {
         SC.ExceptionHandler.handleException(e);
       }
-
-      // Now that we've handled the exception, throw it again so the browser
-      // can deal with it (and potentially use it for debugging).
-      // (We don't throw it in IE because the user will see two errors)
-      if (!SC.browser.msie) {
-        throw e;
-      }
+      window.console.error('uncaught exception', e);
+      SC.RunLoop.end();
     }
   }
 };
