@@ -448,7 +448,7 @@ SC.Enumerable = {
     @param value {Array} optional value to test against.
     @returns {Array} found items or null
   */
-  findPropertyInArray: function(key, ary) {
+  findPropertyInArray: function(key, ary, lazyMatchStrings) {
     if (ary===undefined) {
       return this.findProperty(key);
     }
@@ -457,11 +457,26 @@ SC.Enumerable = {
     var context = SC.Enumerator._popContext();
     var iAry = ary ? ary.copy() : [];
     var iLen = ary ? ary.length : 0;
+
+    if (!!lazyMatchStrings) {
+      var lowerIAry = [], lowerI;
+      for (var i=0;i<iLen;i++) {
+        lowerI = iAry[i];
+        if (typeof(lowerI) === 'string') {
+          lowerI = lowerI.toLowerCase();
+        }
+        lowerIAry.push(lowerI);
+      }
+      iAry = lowerIAry;
+    }
     
     for(var idx=0;idx<len && iLen > 0;idx++) {
       next = this.nextObject(idx, last, context) ;
       cur = next ? (next.get ? next.get(key) : next[key]) : null;
       
+      if (!!lazyMatchStrings && typeof(cur) === 'string') {
+        cur = cur.toLowerCase();
+      }
       var pos = iAry.indexOf(cur);
       if (pos !== -1) {
         found = YES;
@@ -1113,7 +1128,7 @@ Array.prototype.isEnumerable = YES ;
       return ret ;
     }, 
 
-    findPropertyInArray: function(key,valueArray) {
+    findPropertyInArray: function(key,valueArray,lazyMatchStrings) {
       if (valueArray===undefined || SC.typeOf(valueArray) === 'string') {
         return this.findProperty(key,valueArray);
       }
@@ -1121,11 +1136,27 @@ Array.prototype.isEnumerable = YES ;
       var found = NO, ret = [], last = null, next, cur ;
       var iAry = valueArray ? valueArray.copy() : [];
       var iLen = valueArray ? valueArray.length : 0;
-      
+
+      if (!!lazyMatchStrings) {
+        var lowerIAry = [], lowerI;
+        for (var i=0;i<iLen;i++) {
+          lowerI = iAry[i];
+          if (typeof(lowerI) === 'string') {
+            lowerI = lowerI.toLowerCase();
+          }
+          lowerIAry.push(lowerI);
+        }
+        iAry = lowerIAry;
+      }
+
       for(var idx=0;idx<len && iLen > 0;idx++) {
         next = this[idx] ;
         cur = next ? SC.valueOf(next,key) : null;
-        
+
+        if (!!lazyMatchStrings && typeof(cur) === 'string') {
+          cur = cur.toLowerCase();
+        }
+
         var pos = iAry.indexOf(cur);
         if (pos !== -1) {
           found = YES;
