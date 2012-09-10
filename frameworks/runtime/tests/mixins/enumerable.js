@@ -554,6 +554,15 @@ test("should find the first element matching the criteria", function() {
   equals(jenna.first, 'Jenna');
 });
 
+test("should test strict and loose match strings for findPropertyInArray", function () {
+  var people = enumerables[1];
+  equals(people.findPropertyInArray('first',['Jenna','Charles']).length,2,'Should find 2 people');
+  equals(people.findPropertyInArray('first',['jenna','charles']),null,'Should be null when cases are different');
+
+  equals(people.findPropertyInArray('first',['jenna','charles'],true).length,2,'Should find 2 people when cases are different and lazy matching');
+  equals(people.findPropertyInArray('first',['Jenna','Charles'],true).length,2,'Should find 2 people when cases are same and lazy matching');
+});
+
 var source ; // global variables
 
 module("Real Array", {
