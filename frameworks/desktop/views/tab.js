@@ -95,6 +95,13 @@ SC.TabView = SC.View.extend(
     @property {String}
   */
   itemActionKey: null,
+
+  /** 
+    This key passes on to Segmented the ability for the value to be set even if you have an action
+    
+    @property {String}
+  */
+  itemAlwaysSetValueKey: null,
   
   /** 
     The key that contains the target for each item. This will be passed onto the segmented view.  If this and itemActionKey
@@ -248,4 +255,4 @@ SC.TabView = SC.View.extend(
   
 }) ;
 
-SC._TAB_ITEM_KEYS = 'itemTitleKey itemValueKey itemIsEnabledKey itemIconKey itemWidthKey itemToolTipKey itemActionKey itemTargetKey'.w();
+SC._TAB_ITEM_KEYS = 'itemTitleKey itemValueKey itemIsEnabledKey itemIconKey itemWidthKey itemToolTipKey itemActionKey itemTargetKey itemAlwaysSetValueKey'.w();
