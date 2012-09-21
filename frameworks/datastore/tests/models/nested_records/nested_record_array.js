@@ -366,3 +366,48 @@ test("Index-based getPath() with unknownProperty()", function() {
   equals(e1.get('name'), 'Child 2', 'Should have picked up the correct element (tested by name)');
 });
 
+test("Basic Array Functionality: insertAt w/ HASH", function() {   
+  var elements, elementsAttrs, cr, crFirst, crLast;
+  // Add something to the array
+  elements = testParent.get('elements');
+  // PushObject Tests
+  elements.insertAt(3, { type: 'ChildRecordTest1', name: 'Testikles', value: 'God Of Fertility'});
+  elements = testParent.get('elements');
+  equals(elements.get('length'), 5, "after insertAt() on parent, check that the length of the array of child records is 5");
+  cr = elements.objectAt(3);
+  ok(SC.kindOf(cr, SC.Record), "check that newly added ChildRecord creates an actual instance that is a kind of a SC.Record Object");
+  ok(SC.instanceOf(cr, NestedRecord.ChildRecordTest1), "check that newly added ChildRecord creates an actual instance of a ChildRecordTest1 Object");
+  equals(cr.get('name'), 'Testikles', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+  ok(cr.get('status') & SC.Record.DIRTY, 'check that the child record is dirty');
+  ok(testParent.get('status') & SC.Record.DIRTY, 'check that the parent record is dirty'); 
+
+  cr = elements.objectAt(4);
+  ok(SC.kindOf(cr, SC.Record), "check that existing last ChildRecord is an actual instance that is a kind of a SC.Record Object");
+  ok(SC.instanceOf(cr, NestedRecord.ChildRecordTest1), "check that existing last ChildRecordChildRecord is an actual instance of a ChildRecordTest1 Object");
+  equals(cr.get('name'), 'Child 4', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+  equals(cr.get('value'), 'moe', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+});
+
+test("Basic Array Functionality: insertAt w/ ChildRecord", function() {   
+  var elements, elementsAttrs, cr, crFirst, crLast;
+  // Add something to the array
+  elements = testParent.get('elements');
+  // PushObject Tests
+  cr = store.createRecord(NestedRecord.ChildRecordTest1, { type: 'ChildRecordTest1', name: 'Testikles', value: 'God Of Fertility'});
+  elements.insertAt(3, cr);
+  elements = testParent.get('elements');
+  equals(elements.get('length'), 5, "after insertAt() on parent, check that the length of the array of child records is 5");
+  cr = elements.objectAt(3);
+  ok(SC.kindOf(cr, SC.Record), "check that newly added ChildRecord creates an actual instance that is a kind of a SC.Record Object");
+  ok(SC.instanceOf(cr, NestedRecord.ChildRecordTest1), "check that newly added ChildRecord creates an actual instance of a ChildRecordTest1 Object");
+  equals(cr.get('name'), 'Testikles', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+  ok(cr.get('status') & SC.Record.DIRTY, 'check that the child record is dirty');
+  ok(testParent.get('status') & SC.Record.DIRTY, 'check that the parent record is dirty'); 
+
+  cr = elements.objectAt(4);
+  ok(SC.kindOf(cr, SC.Record), "check that existing last ChildRecord is an actual instance that is a kind of a SC.Record Object");
+  ok(SC.instanceOf(cr, NestedRecord.ChildRecordTest1), "check that existing last ChildRecordChildRecord is an actual instance of a ChildRecordTest1 Object");
+  equals(cr.get('name'), 'Child 4', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+  equals(cr.get('value'), 'moe', "after a insertAt on parent, check to see if it has all the right values for the attributes");
+});
+
