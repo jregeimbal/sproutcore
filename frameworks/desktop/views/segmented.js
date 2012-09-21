@@ -578,6 +578,19 @@ SC.SegmentedView = SC.View.extend(SC.Control,
     return YES ;
   },
 
+  /*
+    Short-cut function to not have to rely on mouse clicks
+    to toggle the view.
+  */
+  selectValue: function (value) {
+    var items = this.get('items'),
+      valueIndex = items.indexOf(items.findProperty(this.get('itemValueKey'), value));
+    if (valueIndex > -1) {
+      this.set('selectedIndex',valueIndex);
+    }
+    return valueIndex;
+  },
+
   /** 
     Simulates the user clicking on the segment at the specified index. This
     will update the value if possible and fire the action.
