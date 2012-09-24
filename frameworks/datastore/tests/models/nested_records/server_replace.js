@@ -230,4 +230,35 @@ test("Test Commit to server and new member addition",function() {
   same(secondHash, familyHash.members[0], "the Family Record and the member id hash should match");
 });
 
-
+test("Commit to server and new member removal",function() {
+  var first, members, realHash, testHash;
+  
+  // First 'save' the original with one item
+  first = store.materializeRecord(storeKeys[0]);
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
+  store.dataSourceDidComplete(storeKeys[0], {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      {
+        type: 'Person',
+        name: 'Willie',
+        id: 1
+      }
+    ]
+  });
+  // now 'refresh' the item
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_REFRESH);
+  store.dataSourceDidComplete(storeKeys[0], {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [ ]
+  });
+  realHash = store.readDataHash(storeKeys[0]);
+  members = first.get('members');
+  equals(members.get('length'), 0, 'Smith Family has 0 members...length is correct, everybody died');
+  equals(realHash.members.length, 0, 'Smith Family hash has 0 members...length is correct, everybody died');
+  // confirmed through console log - realHash.members[0] is undefined, just as it is where the error occurs.
+});
