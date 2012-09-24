@@ -472,9 +472,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         oldArray[i] = element;
       }
     }
-
-    for (i = 0; i < oldArray.length; i++) {
-      if (newArray[i] === undefined) oldArray[i] = undefined;
+    // now, any excess items in the old array that *used* to be there need to be totally removed, not just 'undefined'
+    var oldLength = oldArray.length;
+    for (; i < oldLength; i++) {
+      oldArray.pop();
     }
 
     // Notify any observers (SC.ChildArray, for example) that the array
