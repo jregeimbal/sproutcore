@@ -295,7 +295,7 @@ test("Basic Array Functionality: popObject", function() {
   var elements, elementsAttrs, cr, crFirst, crLast;
   // Add something to the array
   elements = testParent.get('elements');
-  // PushObject Tests
+  // PopObject Tests
   elements.popObject();
   elements = testParent.get('elements');
   equals(elements.get('length'), 3, "after popObject() on parent, check that the length of the array of child records is 3");
@@ -308,6 +308,45 @@ test("Basic Array Functionality: popObject", function() {
   crLast = elements.objectAt(2).get('attributes');
   same(elementsAttrs[0], crFirst, "verify that parent attributes are the same as the first individual child attributes");
   same(elementsAttrs[2], crLast, "verify that parent attributes are the same as the last individual child attributes");
+});
+
+test("Basic Array Functionality: popObject and pushObject different type", function() {   
+  var elements, elementsAttrs, cr, crFirst, crLast, poppedObject;
+  // Add something to the array
+  elements = testParent.get('elements');
+  // PopObject Tests
+  poppedObject = elements.popObject();
+  ok(SC.instanceOf(poppedObject, NestedRecord.ChildRecordTest1), "check that popped ChildRecord was an actual instance of a ChildRecordTest1 Object");
+  
+  elements = testParent.get('elements');
+  equals(elements.get('length'), 3, "after popObject() on parent, check that the length of the array of child records is 3");
+  ok(testParent.get('status') & SC.Record.DIRTY, 'check that the parent record is dirty'); 
+  
+  // Verify the Attrs
+  elementsAttrs = testParent.readAttribute('elements');
+  equals(elementsAttrs.length, 3, "after pushObject() on parent, check that the length of the attribute array of child records is 3");
+  crFirst = elements.objectAt(0).get('attributes');
+  crLast = elements.objectAt(2).get('attributes');
+  same(elementsAttrs[0], crFirst, "verify that parent attributes are the same as the first individual child attributes");
+  same(elementsAttrs[2], crLast, "verify that parent attributes are the same as the last individual child attributes");
+
+  // PushObject Tests
+  elements.pushObject({ type: 'ChildRecordTest2', name: 'Testikles', value: 'God Of Fertility'});
+  elements = testParent.get('elements');
+  equals(elements.get('length'), 4, "after pushObject() on parent, check that the length of the array of child records is 4");
+  cr = elements.objectAt(3);
+  ok(SC.kindOf(cr, SC.Record), "check that newly added ChildRecord creates an actual instance that is a kind of a SC.Record Object");
+  ok(SC.instanceOf(cr, NestedRecord.ChildRecordTest2), "check that newly added ChildRecord creates an actual instance of a ChildRecordTest2 Object");
+  equals(cr.get('name'), 'Testikles', "after a pushObject on parent, check to see if it has all the right values for the attributes");
+  ok(cr.get('status') & SC.Record.DIRTY, 'check that the child record is dirty');
+  
+  // Verify the Attrs
+  elementsAttrs = testParent.readAttribute('elements');
+  equals(elementsAttrs.length, 4, "after pushObject() on parent, check that the length of the attribute array of child records is 4");
+  crFirst = elements.objectAt(0).get('attributes');
+  crLast = elements.objectAt(3).get('attributes');
+  same(elementsAttrs[0], crFirst, "verify that parent attributes are the same as the first individual child attributes");
+  same(elementsAttrs[3], crLast, "verify that parent attributes are the same as the last individual child attributes");
 });
 
 test("Basic Array Functionality: shiftObject", function() {   
