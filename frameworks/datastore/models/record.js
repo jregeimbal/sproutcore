@@ -845,7 +845,7 @@ SC.Record = SC.Object.extend(
   replaceRegisteredNestedRecordPath: function(oldPath, newPath) {
     var childRecord, csk, store;
     store = this.get('store');
-    csk = store.nestedStoreKeyForPath(oldPath);
+    csk = store.nestedStoreKeyForPath(this.get('storeKey'), oldPath);
     // if no child or child not materialized, nothing to do
     if (csk) {
       store.replaceRegisteredChildPath(this.get('storeKey'), csk, newPath);
