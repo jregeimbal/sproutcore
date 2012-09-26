@@ -144,14 +144,22 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
   replace: function(idx, amt, recs) {
     var children = this.get('editableChildren'), 
         len      = recs ? (recs.get ? recs.get('length') : recs.length) : 0,
-        record   = this.get('record'), newRecs,
+        parent   = this.get('record'), newRecs,
         
         pname    = this.get('propertyName'),
-        cr, recordType;
+        cr, recordType, i, limit=idx+amt;
     newRecs = this._processRecordsToHashes(recs);
+
+    // if removing records, unregister them from the parent path cache
+    if (amt && len === 0) {
+      for (i = idx; i < limit; ++i) {
+        parent.unregisterNestedRecord('%@.%@'.fmt(pname, i));
+      }
+    }
     children.replace(idx, amt, newRecs);
+
     // notify that the record did change...
-    record.recordDidChange(pname);
+    parent.recordDidChange(pname);
   
     return this;
   },
