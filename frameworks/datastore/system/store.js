@@ -1457,6 +1457,20 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     }
     return this ;
   },
+
+  /**
+    changes the registered path of a child without removing it
+  */
+  replaceRegisteredChildPath: function(parentStoreKey, childStoreKey, newPath){
+    var prs, crs, pkRef, oldPath;
+
+    prs = this.parentRecords || {};
+    pkRef = prs[parentStoreKey] || {};
+    pkRef[childStoreKey] = newPath;
+    prs[parentStoreKey] = pkRef;
+
+    this.parentRecords = prs;    
+  },
   
   /**
     register a Child Record to the parent

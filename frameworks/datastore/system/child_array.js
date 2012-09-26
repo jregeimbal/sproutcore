@@ -144,14 +144,30 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
   replace: function(idx, amt, recs) {
     var children = this.get('editableChildren'), 
         len      = recs ? (recs.get ? recs.get('length') : recs.length) : 0,
-        record   = this.get('record'), newRecs,
+        parent   = this.get('record'), newRecs,
         
         pname    = this.get('propertyName'),
-        cr, recordType;
+        cr, recordType, i, limit=idx+amt;
     newRecs = this._processRecordsToHashes(recs);
+    // if removing records, unregister them from the parent path cache
+    if (amt) {
+      for (i = idx; i < limit; ++i) {
+        parent.unregisterNestedRecord('%@.%@'.fmt(pname, i));
+      }
+    }
+
+    // perform the replace operation on the contained array
     children.replace(idx, amt, newRecs);
+
+    // now change the registration path for all children after the replace area
+    var newIndex, oldIndex, length = children.get('length');
+    for (newIndex = idx+len; newIndex < length; ++newIndex) {
+      oldIndex = newIndex - len + amt;
+      parent.replaceRegisteredNestedRecordPath('%@.%@'.fmt(pname, oldIndex),'%@.%@'.fmt(pname, newIndex))
+    }
+    
     // notify that the record did change...
-    record.recordDidChange(pname);
+    parent.recordDidChange(pname);
   
     return this;
   },
