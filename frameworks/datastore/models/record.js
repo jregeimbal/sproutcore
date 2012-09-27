@@ -840,6 +840,19 @@ SC.Record = SC.Object.extend(
   },
   
   /**
+   updates the registration path for array-stored children, to be called when indexes change by a replace operation
+   */
+  replaceRegisteredNestedRecordPath: function(oldPath, newPath) {
+    var childRecord, csk, store;
+    store = this.get('store');
+    csk = store.nestedStoreKeyForPath(this.get('storeKey'), oldPath);
+    // if no child or child not materialized, nothing to do
+    if (csk) {
+      store.replaceRegisteredChildPath(this.get('storeKey'), csk, newPath);
+    }
+  },
+  
+  /**
      private method that retrieves the recordType from the hash that is provided.
 
      Important for use in polymorphism but you must have the following items in the
