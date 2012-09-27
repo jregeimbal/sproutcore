@@ -450,7 +450,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
     for (key in oldHash) {
       if (!oldHash.hasOwnProperty(key)) continue;
-      if (newHash[key] === undefined) delete oldHash[key];
+      if (!newHash || newHash[key] === undefined) delete oldHash[key];
     }
   },
 
