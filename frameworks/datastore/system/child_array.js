@@ -149,15 +149,23 @@ SC.ChildArray = SC.Object.extend(SC.Enumerable, SC.Array,
         pname    = this.get('propertyName'),
         cr, recordType, i, limit=idx+amt;
     newRecs = this._processRecordsToHashes(recs);
-
     // if removing records, unregister them from the parent path cache
-    if (amt && len === 0) {
+    if (amt) {
       for (i = idx; i < limit; ++i) {
         parent.unregisterNestedRecord('%@.%@'.fmt(pname, i));
       }
     }
+
+    // perform the replace operation on the contained array
     children.replace(idx, amt, newRecs);
 
+    // now change the registration path for all children after the replace area
+    var newIndex, oldIndex, length = children.get('length');
+    for (newIndex = idx+len; newIndex < length; ++newIndex) {
+      oldIndex = newIndex - len + amt;
+      parent.replaceRegisteredNestedRecordPath('%@.%@'.fmt(pname, oldIndex),'%@.%@'.fmt(pname, newIndex))
+    }
+    
     // notify that the record did change...
     parent.recordDidChange(pname);
   
