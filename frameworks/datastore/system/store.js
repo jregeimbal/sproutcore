@@ -804,31 +804,44 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       storeKey = changes[i];
 
       if (myDataHashes[storeKey]) {
-        // If the parent store knows about the store key, write the hashes without creating new
-        // memory space.
-        this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
-      } else if (!chChildRecords[storeKey]) {
-        // If the parent store doesn't know about the store key, only commit the data hash if this
-        // is NOT a nested record.
-        myDataHashes[storeKey] = chDataHashes[storeKey];
-      } else {
-        // This is a nested record created and instantiated in the nested store; DO NOT commit the
-        // data hash to the parent store, but DO remove its store key from the parent's list of
-        // nested store keys.
-        parentKey = chChildRecords[storeKey];
+        // The parent store knows about the store key.
+        if (!chChildRecords[storeKey]) {
+          // This is NOT a nested record; write the hash without creating new memory.
+          this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
+        } else {
+          // This is a nested record.
+          parentKey = chChildRecords[storeKey];
 
-        if (!SC.empty(parentKey)) {
-          children = chParentRecords[parentKey];
-          if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
-
-          // Also look for it in the parent store's list of nested keys for the parent record,
-          // since it may have already been committed (we can't guarantee the order of the
-          // change set).
-          children = myParentRecords[parentKey];
-          if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
+          if (!chParentRecords[parentKey]) {
+            // The nested store does NOT know about the parent; write the hash without creating new
+            // memory.
+            this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
+          }
         }
 
-        continue;
+      } else {
+        // The parent store does NOT know about the store key.
+        if (!chChildRecords[storeKey]) {
+          // This is NOT a nested record; write the hash to new memory space.
+          myDataHashes[storeKey] = chDataHashes[storeKey];
+        } else {
+          // This is a nested record; DO NOT commit the data hash to the parent store, but DO
+          // remove its store key from the parent's list of nested store keys.
+          parentKey = chChildRecords[storeKey];
+
+          if (!SC.empty(parentKey)) {
+            children = chParentRecords[parentKey];
+            if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
+
+            // Also look for it in the parent store's list of nested keys for the parent record,
+            // since it may have already been committed (we can't guarantee the order of the
+            // change set).
+            children = myParentRecords[parentKey];
+            if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
+          }
+
+          continue;
+        }
       }
 
       // Write the various other data structures.
