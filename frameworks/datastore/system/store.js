@@ -23,6 +23,12 @@ sc_require('models/record');
   and manage syncing those changes with your data source.  A data source may
   be a server, local storage, or any other persistent code.
 
+  TODO: [SE] Rework the concept of FREE vs. LOCKED and the editables array.
+  TODO: [SE] Remove inconsistencies in child/nested nomenclature (should be "nested").
+
+  @author ???
+  @author Sean Eidemiller
+
   @extends SC.Object
   @since SproutCore 1.0
 */
@@ -756,80 +762,102 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   
   /** @private
     Called by a nested store on a parent store to commit any changes from the
-    store.  This will copy any changed dataHashes as well as any persistant 
+    store. This will copy any changed dataHashes as well as any persistant 
     change logs.
     
     If the parentStore detects a conflict with the optimistic locking, it will
-    raise an exception before it makes any changes.  If you pass the 
-    force flag then this detection phase will be skipped and the changes will
-    be applied even if another resource has modified the store in the mean
-    time.
+    raise an exception before it makes any changes. If you pass the force flag
+    then this detection phase will be skipped and the changes will be applied
+    even if another resource has modified the store in the meantime.
   
-    @param {SC.Store} nestedStore the child store
-    @param {SC.Set} changes the set of changed store keys
-    @param {Boolean} force
+    @param {SC.Store} nestedStore The nested store (duh).
+    @param {SC.Set} changes The set of changed store keys.
+    @param {Boolean} force If YES, apply changes regardless of lock status.
+
     @returns {SC.Store} receiver
   */
   commitChangesFromNestedStore: function(nestedStore, changes, force) {
-    // first, check for optimistic locking problems
+    // First check for lock issues.
     if (!force) this._verifyLockRevisions(changes, nestedStore.locks);
     
-    // OK, no locking issues.  So let's just copy them changes. 
-    // get local reference to values.
-    var len = changes.length, i, storeKey, myDataHashes, myStatuses, 
-      myEditables, myRevisions, myParentRecords, myChildRecords, 
+    // No locking issues; set up locally-scoped data structures for easy access.
+    var len = changes.length, i, storeKey, parentKey, children,
+      myDataHashes, myStatuses, myEditables, myRevisions, myParentRecords, myChildRecords, 
       chDataHashes, chStatuses, chRevisions, chParentRecords, chChildRecords;
     
-    myRevisions     = this.revisions ;
-    myDataHashes    = this.dataHashes;
-    myStatuses      = this.statuses;
-    myEditables     = this.editables ;
-    myParentRecords = this.parentRecords ? this.parentRecords : this.parentRecords ={} ;
-    myChildRecords  = this.childRecords ? this.childRecords : this.childRecords = {} ;
-    
-    // setup some arrays if needed
-    if (!myEditables) myEditables = this.editables = [] ;
-    chDataHashes    = nestedStore.dataHashes;
-    chRevisions     = nestedStore.revisions ;
-    chStatuses      = nestedStore.statuses;
+    myRevisions = this.revisions;
+    myDataHashes = this.dataHashes;
+    myStatuses = this.statuses;
+    myEditables = this.editables;
+    myParentRecords = this.parentRecords ? this.parentRecords : this.parentRecords = {};
+    myChildRecords = this.childRecords ? this.childRecords : this.childRecords = {};
+    if (!myEditables) myEditables = this.editables = [];
+
+    chDataHashes = nestedStore.dataHashes;
+    chRevisions = nestedStore.revisions;
+    chStatuses = nestedStore.statuses;
     chParentRecords = nestedStore.parentRecords || {};
-    chChildRecords  = nestedStore.childRecords || {};
-    
-    for(i=0;i<len;i++) {
+    chChildRecords = nestedStore.childRecords || {};
+
+    // Loop through the changed store keys.
+    for (i = 0; i < len; i++) {
       storeKey = changes[i];
 
-      // Write the hashes without creating new memory (and severing shared
-      // memory connections).
       if (myDataHashes[storeKey]) {
+        // If the parent store knows about the store key, write the hashes without creating new
+        // memory space.
         this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
-      } else {
+      } else if (!chChildRecords[storeKey]) {
+        // If the parent store doesn't know about the store key, only commit the data hash if this
+        // is NOT a nested record.
         myDataHashes[storeKey] = chDataHashes[storeKey];
+      } else {
+        // This is a nested record created and instantiated in the nested store; DO NOT commit the
+        // data hash to the parent store, but DO remove its store key from the parent's list of
+        // nested store keys.
+        parentKey = chChildRecords[storeKey];
+
+        if (!SC.empty(parentKey)) {
+          children = chParentRecords[parentKey];
+          if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
+
+          // Also look for it in the parent store's list of nested keys for the parent record,
+          // since it may have already been committed (we can't guarantee the order of the
+          // change set).
+          children = myParentRecords[parentKey];
+          if (SC.typeOf(children) === SC.T_HASH) delete children[storeKey];
+        }
+
+        continue;
       }
 
       // Write the various other data structures.
-      myStatuses[storeKey]      = chStatuses[storeKey];
-      myRevisions[storeKey]     = chRevisions[storeKey];
+      myStatuses[storeKey] = chStatuses[storeKey];
+      myRevisions[storeKey] = chRevisions[storeKey];
       myParentRecords[storeKey] = chParentRecords[storeKey];
-      myChildRecords[storeKey]  = chChildRecords[storeKey];
-      
-      myEditables[storeKey] = 0 ; // always make dataHash no longer editable
-      
+      myChildRecords[storeKey] = chChildRecords[storeKey];
+
+      // Always make the data hash no longer editable.
+      myEditables[storeKey] = 0;
+
       this._notifyRecordPropertyChange(storeKey, NO);
     }
-    
-    // add any records to the changelog for commit handling
+
+    // Add any records to the changelog for commit handling.
     var myChangelog = this.changelog, chChangelog = nestedStore.changelog;
+
     if (chChangelog) {
       if (!myChangelog) myChangelog = this.changelog = SC.CoreSet.create();
       myChangelog.addEach(chChangelog);
     }  
+
     this.changelog = myChangelog;
-    
-    // immediately flush changes to notify records - nested stores will flush
+
+    // Immediately flush changes to notify records; nested stores will flush
     // later on.
     if (!this.get('parentStore')) this.flush();
-    
-    return this ;
+
+    return this;
   },
 
   /** @private
