@@ -265,46 +265,117 @@ SC.NestedStore = SC.Store.extend(
     return (editables && editables[storeKey]) ? SC.Store.LOCKED : SC.Store.INHERITED ;
   },
    
-  /**  @private
-    Locks the data hash so that it iterates independently from the parent 
-    store.
-  */
+  /*
+   * Locks the data hash for the given store key so that it iterates independently from the parent
+   * store.
+   */
   _lock: function(storeKey) {
     var locks = this.locks, rev, editables;
-    
-    // already locked -- nothing to do
+
+    // If this isn't a top-level parent, get the key of the top-level parent and lock THAT instead.
+    if (!this._isTopLevelParent(storeKey)) {
+      return this._lock(this._getTopLevelParentKey(storeKey));
+    }
+
+    // If already locked, nothing to do.
     if (locks && locks[storeKey]) return this;
 
-    // create locks if needed
+    // Create the locks array if needed.
     if (!locks) locks = this.locks = [];
 
-    // clone the data hash from the parent store and mark as editable.
+    // Clone the hash from the parent store.
     var pstore = this.get('parentStore'), editState;
-
-    /* NOTE: [SE] _lock() used to walk up the hierachy looking for the top-most parent store,
-       but that behavior was incorrect. We actually want the immediate parent, because that's
-       what we should be tracking changes from.
-
-    while (pstore && (editState=pstore.storeKeyEditState(storeKey)) === SC.Store.INHERITED) {
-      pstore = pstore.get('parentStore');
-    }
-    */
-
-    if (!pstore) return this; // something weird happened
+    if (!pstore) return this;
 
     this.dataHashes[storeKey] = SC.clone(pstore.dataHashes[storeKey], YES);
     editables = this.editables;
     if (!editables) editables = this.editables = [];
     editables[storeKey] = 1;
  
-    // also copy the status + revision
+    // Also copy the status and revision entries for this store key.
     this.statuses[storeKey] = this.statuses[storeKey];
     rev = this.revisions[storeKey] = this.revisions[storeKey];
-    
-    // set the lock revision
+
+    // Set the lock revision.
     locks[storeKey] = rev || 1;    
-    
-    return this ;
+
+    // Connect the child hashes in the dataHashes array (shared mem).
+    this._connectChildren(storeKey);
+ 
+    return this;
+  },
+
+  /*
+   * Returns YES if the given key corresponds to a top-level parent record.
+   */
+  _isTopLevelParent: function(storeKey) {
+    return (!this.childRecords || !this.childRecords[storeKey]);
+  },
+
+  /*
+   * Returns the store key of the top-level parent of the record corresponding to the given store
+   * key (yes, that was long-winded).
+   */
+  _getTopLevelParentKey: function(storeKey) {
+    var parentKey = this.childRecords ? this.childRecords[storeKey] : null;
+
+    if (!parentKey) {
+      return storeKey;
+    } else {
+      return this._getTopLevelParentKey(parentKey);
+    }
+  },
+
+  /*
+   * Connects the children of the record corresponding to the given store key in the dataHashes
+   * array (creates the shared memory connections).
+   */
+  _connectChildren: function(storeKey) {
+    var children = this.parentRecords ? this.parentRecords[storeKey] : null;
+    if (SC.typeOf(children) !== SC.T_HASH) return;
+
+    var childKey, childPath, tokens, idx, parentHash, array, hash, rev;
+
+    // Loop through all of the children and connect the memory in the dataHashes array.
+    for (childKey in children) { 
+      if (!children.hasOwnProperty(childKey)) continue;
+
+      childKey *= 1;
+
+      childPath = children[childKey];
+      if (SC.empty(childPath)) continue;
+
+      tokens = childPath.split('.');
+      if (SC.typeOf(tokens) !== SC.T_ARRAY) continue;
+
+      parentHash = this.dataHashes[storeKey];
+      if (SC.typeOf(parentHash) !== SC.T_HASH) continue;
+
+      if (tokens.length > 1) {
+        array = parentHash[tokens[0]];
+        idx = tokens[1] * 1;
+
+        if (SC.typeOf(array) !== SC.T_ARRAY) continue;
+        if (SC.typeOf(idx) !== SC.T_NUMBER) continue;
+
+        this.dataHashes[childKey] = array[idx];
+
+      } else {
+        hash = parentHash[tokens[0]];
+        if (SC.typeOf(hash) !== SC.T_HASH) continue;
+
+        this.dataHashes[childKey] = hash;
+      }
+
+      // Set the various locking/status constructs.
+      this.editables[childKey] = 1;
+      this.statuses[childKey] = this.statuses[childKey];
+      rev = this.revisions[childKey] = this.revisions[childKey];
+      this.locks[childKey] = rev || 1;
+
+      // Keep recursing downward.
+      this._connectChildren(childKey);
+    }
   },
   
   /** @private - adds chaining support */
