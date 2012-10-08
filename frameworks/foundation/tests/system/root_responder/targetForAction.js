@@ -196,14 +196,17 @@ test("no target, explicit pane, no first responder", function() {
 });
 
 test("no target, explicit pane, does not implement action", function() {
-  equals(r.targetForAction('keyAction', null, null, pane), null,
-    'should not return keyPane');
+  equals(r.targetForAction('keyAction', null, null, pane), keyPane,
+    'should return keyPane');
     
-  equals(r.targetForAction('mainAction', null, null, pane), null,
-    'should not return mainPane');
+  equals(r.targetForAction('mainAction', null, null, pane), mainPane,
+    'should return mainPane');
 
-  equals(r.targetForAction('globalAction', null, null, pane), null,
-    'should not return global defaultResponder');
+  equals(r.targetForAction('globalAction', null, null, pane), globalResponder,
+    'should return global defaultResponder');
+      
+  equals(r2.targetForAction('globalAction', null, null, pane), globalResponderContext,
+    'should return global defaultResponder');
 });
 
 test("no target, no explicit pane", function() {
