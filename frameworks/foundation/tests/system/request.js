@@ -15,6 +15,7 @@ module("SC.Request", {
   
   teardown: function() {
     url = request = contents;
+    SC.Request.manager.cancelAll();
   }
   
 });
@@ -45,7 +46,32 @@ test("Test Asynchronous GET Request", function() {
   response = request.send();
   ok(response !== null, 'request.send() should return a response object');
   ok(response.get('status')<0, 'response should still not have a return code since this should be async');
+  equals(SC.Request.manager.get('inflight').length, 1, 'one item should be in the inflight list');
+  equals(SC.Request.manager.get('inflightShortRequests').length, 1, 'one item should be in the inflightShortRequest list');
+  stop() ; // stops the test runner - wait for response
+});
+
+test("Test Asynchronous isLongRequest GET Request", function() {
   
+  var response, timer;
+
+  timer = setTimeout(function() {
+    ok(false, 'response did not invoke notify() within 2sec');
+    window.start();
+  }, 2000);
+  request.set('isLongRequest', YES);
+  request.notify(this, function(response) {
+    ok(SC.ok(response), 'response should not be an error');
+    equals(response.get('body'), '{"message": "Yay!"}', 'should match retrieved message');
+    clearTimeout(timer);
+    window.start();
+  });
+  
+  response = request.send();
+  ok(response !== null, 'request.send() should return a response object');
+  ok(response.get('status')<0, 'response should still not have a return code since this should be async');
+  equals(SC.Request.manager.get('inflight').length, 1, 'one item should be in the inflight list');
+  equals(SC.Request.manager.get('inflightShortRequests').length, 0, 'item should NOT be in the inflightShortRequest list');
   stop() ; // stops the test runner - wait for response
 });
 
