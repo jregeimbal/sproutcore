@@ -1295,7 +1295,8 @@ SC.CollectionView = SC.View.extend(
     // okay, found the DOM node for the view, go ahead and create it
     // first, find the contentIndex
     if (contentIndex >= this.get('length')) {
-      throw "layout for item view %@ was found when item view does not exist (%@)".fmt(id, this);
+      SC.Logger.error("layout for item view %@ was found when item view does not exist (%@)".fmt(id, this));
+      return null;
     }
     
     return this.itemViewForContentIndex(contentIndex);
