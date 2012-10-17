@@ -136,17 +136,18 @@ SC.NestedStore = SC.Store.extend(
   },
 
   /**
-    Discard the changes made to this store and reset the store.
+    Discard the changes made to this store and reset the various data structures.
     
     @returns {SC.Store} receiver
   */
   discardChanges: function() {
-    // any locked records whose rev or lock rev differs from parent need to
-    // be notified.
+    // Any locked records whose rev or lock rev differs from parent need to be notified.
     var records, locks;
+
     if ((records = this.records) && (locks = this.locks)) {
       var pstore = this.get('parentStore'), psRevisions = pstore.revisions;
       var revisions = this.revisions, storeKey, lock, rev;
+
       for (storeKey in records) {
         if (!records.hasOwnProperty(storeKey)) continue ;
         if (!(lock = locks[storeKey])) continue; // not locked.
@@ -156,11 +157,17 @@ SC.NestedStore = SC.Store.extend(
           this._notifyRecordPropertyChange(parseInt(storeKey, 10));
         }
       }
-    }   
-    
+    }
+ 
+    // We need a runloop around these calls to ensure that everything is shored up before the
+    // enclosing runloop completes (can potentially cause nested store conflicts and internal
+    // inconsistency errors without this).
+    SC.RunLoop.begin();
     this.reset();
     this.flush();
-    return this ;
+    SC.RunLoop.end();
+
+    return this;
   },
   
   /**
