@@ -192,29 +192,29 @@ SC.NestedStore = SC.Store.extend(
     @returns {SC.Store} receiver
   */
   reset: function() {
-
-    // requires a pstore to reset
+    // Make sure there *is* a parent store (would be weird if there wasn't).
     var parentStore = this.get('parentStore');
     if (!parentStore) throw SC.Store.NO_PARENT_STORE_ERROR;
-    
-    // inherit data store from parent store.
+
+    // Inherit data hashes, revs and statuses via beget().
     this.dataHashes = SC.beget(parentStore.dataHashes);
-    this.revisions  = SC.beget(parentStore.revisions);
-    this.statuses   = SC.beget(parentStore.statuses);
-    
-    // beget nested records references
-    this.childRecords = parentStore.childRecords ? SC.beget(parentStore.childRecords) : {};
-    this.parentRecords = parentStore.parentRecords ? SC.beget(parentStore.parentRecords) : {};
-    
-    // also, reset private temporary objects
+    this.revisions = SC.beget(parentStore.revisions);
+    this.statuses = SC.beget(parentStore.statuses);
+
+    // Clone (deep) the child record and parent record mappings.
+    this.childRecords = parentStore.childRecords ? SC.copy(parentStore.childRecords, YES) : {};
+    this.parentRecords = parentStore.parentRecords ? SC.copy(parentStore.parentRecords, YES) : {};
+
+    // Reset private temporary objects
     this.chainedChanges = this.locks = this.editables = null;
     this.changelog = null ;
 
-    // TODO: Notify record instances
-    
+    // TODO: Notify record instances.
+    // NOTE: [SE] I don't think that's necessary, actually.
+ 
     this.set('hasChanges', NO);
   },
-  
+ 
   /** @private
   
     Chain to parentstore

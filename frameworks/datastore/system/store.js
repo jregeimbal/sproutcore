@@ -153,9 +153,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       newStoreClass = SC.NestedStore;
     }
     
-    // Replicate parent records references
-    attrs.childRecords = this.childRecords ? SC.clone(this.childRecords) : {};
-    attrs.parentRecords = this.parentRecords ? SC.clone(this.parentRecords) : {};
+    // Clone (deep) the child record and parent record mappings.
+    attrs.childRecords = this.childRecords ? SC.copy(this.childRecords, YES) : {};
+    attrs.parentRecords = this.parentRecords ? SC.copy(this.parentRecords, YES) : {};
     
     var ret    = newStoreClass.create(attrs),
         nested = this.nestedStores;
@@ -1559,10 +1559,11 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     delete this.records[childKey];
 
     // Remove the two-way connection between parent and child.
-    if (!SC.empty(parentKey) && this.parentRecords &&
-      this.parentRecords[parentKey]) {
-
+    if (!SC.empty(parentKey) && this.parentRecords && this.parentRecords[parentKey]) {
       delete this.parentRecords[parentKey][childKey];
+
+      // TODO: [SE] Remove this entry in parentRecords entirely if there are no children left
+      // (saw that shit in Good Housekeeping).
     }
 
     if (!SC.empty(childKey) && this.childRecords) { 
