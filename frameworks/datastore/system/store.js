@@ -409,7 +409,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       if (oldHash) {
         // Recursively write the properties of the new hash without creating
         // new memory.
-        this._setHash(oldHash, hash);
+        this._setHash(oldHash, hash, storeKey);
       } else {
         // No existing hash, so create new memory space.
         this.dataHashes[storeKey] = hash;
@@ -433,8 +433,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     return this;
   },
 
-  _setHash: function(oldHash, newHash) {
-    var key, prop;
+  _setHash: function(oldHash, newHash, storeKey) {
+    var key, prop, childKey, path;
 
     for (key in newHash) {
       if (!newHash.hasOwnProperty(key)) continue;
@@ -445,10 +445,22 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
       if (SC.typeOf(prop) === SC.T_HASH) {
         if (SC.typeOf(oldHash[key]) !== SC.T_HASH) oldHash[key] = {};
-        this._setHash(oldHash[key], prop);
+
+        // Try to get a child key for the hash.
+        childKey = parseInt(this._storeKeyForPath(storeKey, prop), 10);
+
+        this._setHash(oldHash[key], prop, childKey);
+
+        // If there is a child key, it means that this is a previously-instantiated nested record
+        // and we need to update the shared memory connection to point back into the parent's
+        // memory space, which may have been reorganized.
+        if (SC.typeOf(childKey) === SC.T_NUMBER && this.dataHashes[childKey]) {
+          this.dataHashes[childKey] = prop;
+        }
+
       } else if (SC.typeOf(prop) === SC.T_ARRAY) {
         if (SC.typeOf(oldHash[key]) !== SC.T_ARRAY) oldHash[key] = [];
-        this._setArray(oldHash[key], prop);
+        this._setArray(oldHash[key], prop, key, storeKey);
       } else {
         oldHash[key] = prop;
       }
@@ -460,8 +472,8 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     }
   },
 
-  _setArray: function(oldArray, newArray) {
-    var element, i;
+  _setArray: function(oldArray, newArray, prop, storeKey) {
+    var element, i, childKey;
 
     for (i = 0; i < newArray.length; i++) {
       element = newArray[i];
@@ -470,10 +482,22 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
       if (SC.typeOf(element) === SC.T_HASH) {
         if (SC.typeOf(oldArray[i]) !== SC.T_HASH) oldArray[i] = {};
-        this._setHash(oldArray[i], element);
+
+        // Try to get a child key for the hash.
+        childKey = parseInt(this._storeKeyForPath(storeKey, '%@.%@'.fmt(prop, i)), 10);
+        
+        this._setHash(oldArray[i], element, childKey);
+
+        // If there is a child key, it means that this is a previously-instantiated nested record
+        // and we need to update the shared memory connection to point back into the parent's
+        // memory space, which may have been reorganized.
+        if (SC.typeOf(childKey) === SC.T_NUMBER && this.dataHashes[childKey]) {
+          this.dataHashes[childKey] = element;
+        }
+        
       } else if (SC.typeOf(element) === SC.T_ARRAY) {
         if (SC.typeOf(oldArray[i]) !== SC.T_ARRAY) oldArray[i] = [];
-        this._setArray(oldArray[i], element);
+        this._setArray(oldArray[i], element, '%@.%@'.fmt(prop, i), storeKey);
       } else {
         oldArray[i] = element;
       }
@@ -487,6 +511,22 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // Notify any observers (SC.ChildArray, for example) that the array
     // contents have changed.
     if (oldArray.propertyDidChange) oldArray.propertyDidChange('[]');
+  },
+
+  /*
+   * Returns the store key associated with the given path (to the parent referenced by parentKey).
+   *
+   * @param {Number} parentKey
+   * @param {String} path
+   */
+  _storeKeyForPath: function(parentKey, path) {
+    var paths = SC.valueOf(this.parentRecords, parentKey);
+    if (!paths) return null;
+
+    for (var key in paths) {
+      if (!paths.hasOwnProperty(key)) continue;
+      if (paths[key] === path) return key;
+    }
   },
 
   /**
@@ -2388,9 +2428,9 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       status = K.READY_CLEAN;
       this.writeStatus(storeKey, status);
       
+      if (dataHash && replaceNestedIds !== NO) this.replaceNestedIds(storeKey, dataHash);
       if (dataHash) this.writeDataHash(storeKey, dataHash, status) ;
       if (newId) SC.Store.replaceIdFor(storeKey, newId);
-      if (dataHash && replaceNestedIds !== NO) this.replaceNestedIds(storeKey, dataHash);
 
       statusOnly = dataHash || newId ? NO : YES;
       this.dataHashDidChange(storeKey, null, statusOnly);
