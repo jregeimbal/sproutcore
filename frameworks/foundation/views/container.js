@@ -103,6 +103,14 @@ SC.ContainerView = SC.View.extend(
     // If nowShowing was changed because the content was set directly, then do nothing.
     if (content === SC.CONTENT_SET_DIRECTLY) return ;
     
+    content = this.instantiateViewFromNowShowing(content);
+    
+    // Sets the content.
+    this.set('contentView', content) ;
+    
+  }.observes('nowShowing'),
+  
+  instantiateViewFromNowShowing: function(content){
     // If it's a string, try to turn it into the object it references...
     if (SC.typeOf(content) === SC.T_STRING && content.length > 0) {
       // if the first character is a '.', this is a static path. This allows 
@@ -134,10 +142,8 @@ SC.ContainerView = SC.View.extend(
     // If content has not been turned into a view by now, it's hopeless.
     if (content && !(content instanceof SC.View)) content = null;
     
-    // Sets the content.
-    this.set('contentView', content) ;
-    
-  }.observes('nowShowing'),
+    return content;
+  },
   
   /**
     Invoked whenever the content property changes.  This method will simply

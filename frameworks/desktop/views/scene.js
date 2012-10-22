@@ -59,6 +59,25 @@ SC.SceneView = SC.ContainerView.extend(
   transitionDuration: 200,
   
   _state: 'NO_VIEW', // no view
+  
+  _preloadedSceneViews: null,
+  
+  /** @private
+    replace the container view functionality to do this
+    Works great for scene view which should maintain 
+    references to the views
+  */
+  instantiateViewFromNowShowing: function(content){
+    var view, plsv = this._preloadedSceneViews || {};
+    if (SC.typeOf(content) === SC.T_STRING) view = plsv[content];
+    if (!view){
+      view = sc_super();
+      plsv[content] = view;
+      this._preloadedSceneViews = plsv;
+    }
+    return view;
+  },
+  
 
   /** @private
   
@@ -133,7 +152,7 @@ SC.SceneView = SC.ContainerView.extend(
     // setup views
     this.removeAllChildren();
 
-    if (oldContent) this.appendChild(oldContent)
+    if (oldContent) this.appendChild(oldContent);
     if (newContent) this.appendChild(newContent);
 
     // setup other general state
