@@ -455,7 +455,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         // and we need to update the shared memory connection to point back into the parent's
         // memory space, which may have been reorganized.
         if (SC.typeOf(childKey) === SC.T_NUMBER && this.dataHashes[childKey]) {
-          this.dataHashes[childKey] = prop;
+          this.dataHashes[childKey] = oldHash[key];
         }
 
       } else if (SC.typeOf(prop) === SC.T_ARRAY) {
@@ -492,7 +492,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         // and we need to update the shared memory connection to point back into the parent's
         // memory space, which may have been reorganized.
         if (SC.typeOf(childKey) === SC.T_NUMBER && this.dataHashes[childKey]) {
-          this.dataHashes[childKey] = element;
+          this.dataHashes[childKey] = oldArray[i];
         }
         
       } else if (SC.typeOf(element) === SC.T_ARRAY) {
