@@ -324,6 +324,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   },
   
   /** 
+    TODO: [SE] Deprecate this function, as we don't really need it anymore (and
+    the name was always a bit misleading in any case). It may be worthwhile,
+    however, to create a readClonedDataHash() function as a convenience.
+
     Returns the data hash for the storeKey, cloned so that you can edit
     the contents of the attributes if you like.  This will do the extra work
     to make sure that you only clone the attributes one time.  
