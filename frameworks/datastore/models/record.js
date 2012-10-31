@@ -185,7 +185,7 @@ SC.Record = SC.Object.extend(
   attributes: function() {
     var store    = this.get('store'), 
         storeKey = this.storeKey;
-    return store.readEditableDataHash(storeKey);
+    return store.readDataHash(storeKey);
   }.property(),
 
   /**
