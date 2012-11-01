@@ -451,7 +451,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         if (SC.typeOf(oldHash[key]) !== SC.T_HASH) oldHash[key] = {};
 
         // Try to get a child key for the hash.
-        childKey = parseInt(this._storeKeyForPath(storeKey, prop), 10);
+        childKey = parseInt(this._storeKeyForPath(storeKey, key), 10);
 
         this._setHash(oldHash[key], prop, childKey);
 
@@ -851,7 +851,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         // The parent store knows about the store key.
         if (!chChildRecords[storeKey]) {
           // This is NOT a nested record; write the hash without creating new memory.
-          this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
+          this._setHash(myDataHashes[storeKey], chDataHashes[storeKey], storeKey);
         } else {
           // This is a nested record.
           parentKey = chChildRecords[storeKey];
@@ -859,7 +859,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
           if (!chParentRecords[parentKey]) {
             // The nested store does NOT know about the parent; write the hash without creating new
             // memory.
-            this._setHash(myDataHashes[storeKey], chDataHashes[storeKey]);
+            this._setHash(myDataHashes[storeKey], chDataHashes[storeKey], storeKey);
           }
         }
 
