@@ -262,3 +262,116 @@ test("Commit to server and new member removal",function() {
   equals(realHash.members.length, 0, 'Smith Family hash has 0 members...length is correct, everybody died');
   // confirmed through console log - realHash.members[0] is undefined, just as it is where the error occurs.
 });
+
+test("Commit to server and new member addition and refresh order changed",function() {
+  var first, members, realHash, testHash, member0, member1;
+  
+  // First
+  first = store.materializeRecord(storeKeys[0]);
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
+  store.dataSourceDidComplete(storeKeys[0], {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      {
+        type: 'Person',
+        name: 'Willie',
+        id: 1
+      }
+    ]
+  });
+  
+  // Add new member
+  first.get('members').pushObject({type: 'Person', name: "Wilma"});
+  testHash = {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      { type: 'Person', id: 1, name: 'Willie'},
+      { type: 'Person', name: "Wilma" }
+    ]
+  };
+  realHash = store.readDataHash(storeKeys[0]);
+  equals(realHash.members.length, testHash.members.length, "Smith Family Members have the same length");
+  equals(realHash.members[0].name, testHash.members[0].name, "Smith Family Member 1 have the same name");
+  equals(realHash.members[0].id, testHash.members[0].id, "Smith Family Member 1 have the same id");
+  equals(realHash.members[1].name, testHash.members[1].name, "Smith Family Member 2 have the same name");
+  equals(realHash.members[1].id, testHash.members[1].id, "Smith Family Member 2 have the same id");
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_LOADING);
+  store.dataSourceDidComplete(storeKeys[0], {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      { type: 'Person', id: 1, name: 'Willie'},
+      { type: 'Person', id: 4, name: "Wilma"}
+    ]
+  });
+  realHash = store.readDataHash(storeKeys[0]);
+  members = first.get('members');
+  testHash = {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      { type: 'Person', id: 1, name: 'Willie'},
+      { type: 'Person', id: 4, name: "Wilma" }
+    ]
+  };
+  equals(members.get('length'), 2, 'Smith Family has 2 members...length is correct');
+  equals(realHash.members[0].name, testHash.members[0].name, "Smith Family Member 1 have the same name after save");
+  equals(realHash.members[0].id, testHash.members[0].id, "Smith Family Member 1 have the same id after save");
+  equals(realHash.members[1].name, testHash.members[1].name, "Smith Family Member 2 have the same name after save");
+  equals(realHash.members[1].id, testHash.members[1].id, "Smith Family Member 2 have the same id after save");
+
+  member0 = first.get('members').objectAt(0);
+  member1 = first.get('members').objectAt(1);
+  
+  equals(member0.get('name'), testHash.members[0].name, "Smith Family Member 1 Record have the same name after save");
+  equals(member0.get('id'), testHash.members[0].id, "Smith Family Member 1 Record have the same id after save");
+  equals(member1.get('name'), testHash.members[1].name, "Smith Family Member 2 Record have the same name after save");
+  equals(member1.get('id'), testHash.members[1].id, "Smith Family Member 2 Record have the same id after save");
+
+  // now simulate a refresh where the order of elements got changed
+
+  store.writeStatus(storeKeys[0], SC.Record.BUSY_REFRESH_CLEAN);
+  store.dataSourceDidComplete(storeKeys[0], {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      { type: 'Person', id: 4, name: "Wilma"},
+      { type: 'Person', id: 1, name: 'Willie'}
+    ]
+  });
+  realHash = store.readDataHash(storeKeys[0]);
+  members = first.get('members');
+  testHash = {
+    type: 'Family',
+    name: 'Smith',
+    id: 1,
+    members: [
+      { type: 'Person', id: 4, name: "Wilma" },
+      { type: 'Person', id: 1, name: 'Willie'}
+    ]
+  };
+  equals(members.get('length'), 2, 'Smith Family has 2 members after refresh changes the order...length is correct');
+  equals(realHash.members[0].name, testHash.members[0].name, "Smith Family Member 1 have the same name after refresh");
+  equals(realHash.members[0].id, testHash.members[0].id, "Smith Family Member 1 have the same id after refresh");
+  equals(realHash.members[1].name, testHash.members[1].name, "Smith Family Member 2 have the same name after refresh");
+  equals(realHash.members[1].id, testHash.members[1].id, "Smith Family Member 2 have the same id after refresh");
+
+  SC.RunLoop.begin().end();
+
+  member0 = first.get('members').objectAt(0);
+  member1 = first.get('members').objectAt(1);
+  
+  equals(member0.get('name'), testHash.members[0].name, "Smith Family Member 1 Record have the same name after refresh");
+  equals(member0.get('id'), testHash.members[0].id, "Smith Family Member 1 Record have the same id after refresh");
+  equals(member1.get('name'), testHash.members[1].name, "Smith Family Member 2 Record have the same name after refresh");
+  equals(member1.get('id'), testHash.members[1].id, "Smith Family Member 2 Record have the same id after refresh");
+
+});
+
