@@ -852,18 +852,25 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
 
       if (myDataHashes[storeKey]) {
         // The parent store knows about the store key.
-        if (!chChildRecords[storeKey]) {
-          // This is NOT a nested record; write the hash without creating new memory.
-          this._setHash(myDataHashes[storeKey], chDataHashes[storeKey], storeKey);
-        } else {
-          // This is a nested record.
-          parentKey = chChildRecords[storeKey];
-
-          if (!chParentRecords[parentKey]) {
-            // The nested store does NOT know about the parent; write the hash without creating new
-            // memory.
+        if (chDataHashes[storeKey]) {
+          // The record WAS NOT deleted from the nested store.
+          if (!chChildRecords[storeKey]) {
+            // This is NOT a nested record; write the hash without creating new memory.
             this._setHash(myDataHashes[storeKey], chDataHashes[storeKey], storeKey);
+          } else {
+            // This is a nested record.
+            parentKey = chChildRecords[storeKey];
+
+            if (!chParentRecords[parentKey]) {
+              // The nested store does NOT know about the parent; write the hash without creating
+              // new memory.
+              this._setHash(myDataHashes[storeKey], chDataHashes[storeKey], storeKey);
+            }
           }
+
+        } else {
+          // The record WAS deleted from the nested store; unlink the memory.
+          delete myDataHashes[storeKey];
         }
 
       } else {
