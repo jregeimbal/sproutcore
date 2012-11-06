@@ -882,6 +882,7 @@ SC.Record = SC.Object.extend(
 
     // When all else fails throw and exception.
     if (!recordType || !SC.kindOf(recordType, SC.Record)) {
+      debugger;
       throw 'SC.Child: Error during transform: Invalid record type.';
     }
 
