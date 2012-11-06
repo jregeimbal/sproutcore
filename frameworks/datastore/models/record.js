@@ -894,11 +894,10 @@ SC.Record = SC.Object.extend(
     @param {SC.Record} recordType The type of the nested record to create.
     @param {Hash} hash The hash of attributes to apply to the child record (optional).
     @param {String|Number} psk The store key of the parent.
-    @param {String} path The attribute path of the nested record.
 
     @returns {SC.Record} The newly-created nested record.
    */
-  createNestedRecord: function(recordType, hash, psk, path) {
+  createNestedRecord: function(recordType, hash, psk) {
     var store = this.get('store'), id, sk, cr;
 
     // We can't create a nested record without a store (not having one would be very strange).
@@ -912,9 +911,6 @@ SC.Record = SC.Object.extend(
 
     // Check to see if there's already a store key for the child record (by ID).
     sk = recordType.storeKeyExists(id);
-
-    // If not, check to see if we can get the store key with the path.
-    if (SC.empty(sk)) sk = store.nestedStoreKeyForPath(psk, path);
 
     if (!SC.empty(sk)) {
       // If we found a store key, write the nested data hash without severing the shared memory
