@@ -451,7 +451,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         if (SC.typeOf(oldHash[key]) !== SC.T_HASH) oldHash[key] = {};
 
         // Try to get a child key for the hash.
-        childKey = parseInt(this._storeKeyForPath(storeKey, key), 10);
+        childKey = this._storeKeyForChildHash(storeKey, prop, key);
 
         this._setHash(oldHash[key], prop, childKey);
 
@@ -488,7 +488,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
         if (SC.typeOf(oldArray[i]) !== SC.T_HASH) oldArray[i] = {};
 
         // Try to get a child key for the hash.
-        childKey = parseInt(this._storeKeyForPath(storeKey, '%@.%@'.fmt(prop, i)), 10);
+        childKey = this._storeKeyForChildHash(storeKey, element, '%@.%@'.fmt(prop, i));
         
         this._setHash(oldArray[i], element, childKey);
 
@@ -518,18 +518,21 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   },
 
   /*
-   * Returns the store key associated with the given path (to the parent referenced by parentKey).
+   * Returns the store key associated with the given hash and path (relative to the parent).
    *
    * @param {Number} parentKey
+   * @param {Hash} hash
    * @param {String} path
+   *
+   * @returns {Number}
    */
-  _storeKeyForPath: function(parentKey, path) {
+  _storeKeyForChildHash: function(parentKey, hash, path) {
     var paths = SC.valueOf(this.parentRecords, parentKey);
     if (!paths) return null;
 
     for (var key in paths) {
       if (!paths.hasOwnProperty(key)) continue;
-      if (paths[key] === path) return key;
+      if (paths[key] === path) return (key * 1);
     }
   },
 
