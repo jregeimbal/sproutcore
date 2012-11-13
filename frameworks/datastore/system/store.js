@@ -512,7 +512,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       oldArray.pop();
     }
 
-    // Notify any observers (SC.ChildArray, for example) that the array
+    // Notify any observers (SC.NestedArray, for example) that the array
     // contents have changed.
     if (oldArray.propertyDidChange) oldArray.propertyDidChange('[]');
   },

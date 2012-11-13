@@ -216,12 +216,12 @@ test("Test Commit to server and new member addition",function() {
   familyHash = store.readDataHash(storeKeys[0]);
   secondMembers = family.get('members');
   
-  secondMembers._childrenContentDidChange();
+  secondMembers._contentDidChange();
   second = secondMembers.objectAt(0);
   secondHash = second.get('attributes');
   
   // Tests
-  equals(SC.guidFor(secondMembers), SC.guidFor(firstMembers), "verify that members ChildArrays are the same after save");
+  equals(SC.guidFor(secondMembers), SC.guidFor(firstMembers), "verify that members NestedArrays are the same after save");
   equals(SC.guidFor(second), SC.guidFor(first), "verify that Member 1 are the same after save");
   equals(second.get('attributes'), first.get('attributes'), "verify that Member 1 attributes are the same after save");
   same(second, first, "the SC.ChildRecord should the be the same before and after the save");

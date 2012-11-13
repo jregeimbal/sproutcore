@@ -1262,7 +1262,7 @@ SC.Record.mixin( /** @scope SC.Record */ {
     
     1: SC.ManyAttribute that describes a record array backed by an 
     array of guids stored in the underlying JSON.  
-    2: SC.ChildrenAttribute that describes a record array backed by a
+    2: SC.NestedArrayAttribute that describes a record array backed by a
     array of hashes.
     
     You can edit the contents of this relationship.
@@ -1274,14 +1274,14 @@ SC.Record.mixin( /** @scope SC.Record */ {
     
     @param {SC.Record|String} recordType The type of record to create
     @param {Hash} opts the options for the attribute
-    @returns {SC.ManyAttribute|SC.ChildrenAttribute} created instance
+    @returns {SC.ManyAttribute|SC.NestedArrayAttribute} created instance
   */
   toMany: function(recordType, opts) {
     opts = opts || {};
     var isNested = opts.nested || opts.isNested;
     var attr;
     if(isNested){
-      attr = SC.ChildrenAttribute.attr(recordType, opts);
+      attr = SC.NestedArrayAttribute.attr(recordType, opts);
     }
     else {
       attr = SC.ManyAttribute.attr(recordType, opts);
@@ -1295,19 +1295,19 @@ SC.Record.mixin( /** @scope SC.Record */ {
     record.  If you modify this property, it will rewrite the underyling ID. 
     It will also modify the inverse of the relationship, if you set it.
     
-    2. SC.ChildAttribute that you can edit the contents
+    2. SC.NestedAttribute that you can edit the contents
     of this relationship.
     
     @param {SC.Record|String} recordType the type of the record to create
     @param {Hash} opts additional options
-    @returns {SC.SingleAttribute|SC.ChildAttribute} created instance
+    @returns {SC.SingleAttribute|SC.NestedAttribute} created instance
   */
   toOne: function(recordType, opts) {
     opts = opts || {};
     var isNested = opts.nested || opts.isNested;
     var attr;
     if(isNested){
-      attr = SC.ChildAttribute.attr(recordType, opts);
+      attr = SC.NestedAttribute.attr(recordType, opts);
     }
     else {
       attr = SC.SingleAttribute.attr(recordType, opts);

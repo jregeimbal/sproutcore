@@ -181,7 +181,7 @@ test("Basic Read, Testing the First Child Array", function() {
   ppl = testParent.get('people');
   // Check Model Class information
   
-  ok(SC.instanceOf(ppl, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+  ok(SC.instanceOf(ppl, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
   equals(ppl.get('length'), 3, "check that the length of the array of child records is 3");
   p = ppl.objectAt(0);
   ok(SC.kindOf(p, SC.Record), "check that first ChildRecord from the get() creates an actual instance that is a kind of a SC.Record Object");
@@ -196,7 +196,7 @@ test("Basic Read, Testing the First Child Array", function() {
   
   // Check to see if the attributes of a Child Record match the refrence of the parent
   pplAttr = testParent.readAttribute('people');
-  ok(!SC.instanceOf(pplAttr, SC.ChildArray), "check that readAttribute() does not create an actual instance of a SC.ChildArray");
+  ok(!SC.instanceOf(pplAttr, SC.NestedArray), "check that readAttribute() does not create an actual instance of a SC.NestedArray");
   same(pplAttr[0], pStore.get('attributes'), "check that the ChildRecord's attributes are the same as the ParentRecord's readAttribute for the reference");
   
   // Duplication check
@@ -222,7 +222,7 @@ test("Basic Read, Testing the Second Child Array", function() {
   addrs = p.get('addresses');
   // Check Model Class information
   
-  ok(SC.instanceOf(addrs, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+  ok(SC.instanceOf(addrs, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
   equals(addrs.get('length'), 2, "check that the length of the array of child records is 2");
   a = addrs.objectAt(0);
   ok(SC.kindOf(a, SC.Record), "check that first ChildRecord from the get() creates an actual instance that is a kind of a SC.Record Object");
@@ -237,10 +237,10 @@ test("Basic Read, Testing the Second Child Array", function() {
   
   // Check to see if the attributes of a Child Record match the refrence of the parent
   addrsAttr = p.readAttribute('addresses');
-  ok(!SC.instanceOf(addrsAttr, SC.ChildArray), "check that readAttribute() does not create an actual instance of a SC.ChildArray");
+  ok(!SC.instanceOf(addrsAttr, SC.NestedArray), "check that readAttribute() does not create an actual instance of a SC.NestedArray");
   same(addrsAttr[0], aStore.get('attributes'), "check that the ChildRecord's attributes are the same as the ParentRecord's readAttribute for the reference");
   pplAttr = testParent.readAttribute('people');
-  ok(!SC.instanceOf(pplAttr[0].addresses, SC.ChildArray), "check from the Group (parent Record) that readAttribute() does not create an actual instance of a SC.ChildArray");
+  ok(!SC.instanceOf(pplAttr[0].addresses, SC.NestedArray), "check from the Group (parent Record) that readAttribute() does not create an actual instance of a SC.NestedArray");
   same(pplAttr[0].addresses[0], aStore.get('attributes'), "check from the Group (parent Record) that the ChildRecord's attributes are the same as the ParentRecord's readAttribute for the reference");
   
   // Duplication check
@@ -266,7 +266,7 @@ test("Basic Write: Testing the First Child Array", function() {
   
    testParent.set('people', peopleData2);
    ppl = testParent.get('people');
-   ok(SC.instanceOf(ppl, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+   ok(SC.instanceOf(ppl, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
    equals(ppl.get('length'), 2, "after set() on parent, check that the length of the array of child records is 2");
    p = ppl.objectAt(0);
    ok(SC.kindOf(p, SC.Record), "check that first ChildRecord from the get() creates an actual instance that is a kind of a SC.Record Object");
@@ -284,7 +284,7 @@ test("Basic Write: Testing the First Child Array", function() {
    // Check for changes on the child bubble to the parent.
    p.set('addresses', addressData1);
    pAddrs = p.get('addresses');
-   ok(SC.kindOf(pAddrs, SC.ChildArray), "check to see that the set('addresses') has returned a SC.ChildArray");
+   ok(SC.kindOf(pAddrs, SC.NestedArray), "check to see that the set('addresses') has returned a SC.NestedArray");
    equals(pAddrs.get('length'), 4, "check with a get() that the new address length is 4");
    pAddrsAttr = p.readAttribute('addresses');
    equals(pAddrsAttr.length, 4, "check with a readAttribute() that the new address length is 4");

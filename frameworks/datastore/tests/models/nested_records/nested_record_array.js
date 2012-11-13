@@ -157,7 +157,7 @@ test("Basic Read", function() {
   var arrayOfCRs = testParent.get('elements');
   // Check Model Class information
   
-  ok(SC.instanceOf(arrayOfCRs, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+  ok(SC.instanceOf(arrayOfCRs, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
   equals(arrayOfCRs.get('length'), 4, "check that the length of the array of child records is 4");
   var cr = arrayOfCRs.objectAt(0);
   ok(SC.kindOf(cr, SC.Record), "check that first ChildRecord from the get() creates an actual instance that is a kind of a SC.Record Object");
@@ -172,7 +172,7 @@ test("Basic Read", function() {
   
   // Check to see if the attributes of a Child Record match the refrence of the parent
   var parentArray = testParent.readAttribute('elements');
-  ok(!SC.instanceOf(parentArray, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+  ok(!SC.instanceOf(parentArray, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
   same(parentArray[0], storeRef.get('attributes'), "check that the ChildRecord's attributes are the same as the ParentRecord's readAttribute for the reference");
   
   // // Duplication check
@@ -205,7 +205,7 @@ test("Basic Write", function() {
 
   testParent.set('elements', newChildren);
   var newArray = testParent.get('elements');
-  ok(SC.instanceOf(newArray, SC.ChildArray), "check that get() creates an actual instance of a SC.ChildArray");
+  ok(SC.instanceOf(newArray, SC.NestedArray), "check that get() creates an actual instance of a SC.NestedArray");
   equals(newArray.get('length'), 3, "after set() on parent, check that the length of the array of child records is 3");
   var cr = newArray.objectAt(0);
 
@@ -435,7 +435,7 @@ test("Basic Array Functionality: unshiftObject", function() {
 test("Create Parent with Broken Child Array", function(){
   var elements = testParent2.get('elements');
   ok (!SC.none(elements), "elements should be something");
-  var isChildRecordArrays = elements.instanceOf(SC.ChildArray);
+  var isChildRecordArrays = elements.instanceOf(SC.NestedArray);
   ok(isChildRecordArrays, 'elements array is of right type');
 
   var length = elements.get('length');

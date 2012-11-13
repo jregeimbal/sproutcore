@@ -58,7 +58,7 @@ module("SC.Record normalize method", {
     // A parent record
     MyApp.FooParent = SC.Record.extend({
       nestedRecordNamespace: MyApp,
-      myChild: SC.ChildAttribute.attr('MyApp.FooChild')
+      myChild: SC.NestedAttribute.attr('MyApp.FooChild')
     });
 
     // A child record
@@ -273,7 +273,7 @@ test("normalizing a new record with a null child reference", function() {
     guid: 'testId1'
   };
 
-  // Create a parent record with an ChildAttribute property referring to no child.
+  // Create a parent record with an NestedAttribute property referring to no child.
   // Make sure normalize() can handle that.
   var newRecord = MyApp.store.createRecord(MyApp.FooParent, recHash);
   var newRecordId, findRecord;
@@ -291,7 +291,7 @@ test("normalizing a new record with toOne without defaultValue" ,function() {
   var oneBarHash = {
     guid: 1,
     many_foos: [1]
-  }
+  };
   
   var oneBarRecord = MyApp.store.createRecord(MyApp.OneBar, oneBarHash);
 
