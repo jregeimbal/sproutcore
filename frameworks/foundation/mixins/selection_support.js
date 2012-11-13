@@ -184,7 +184,7 @@ SC.SelectionSupport = {
   */
   selectObject: function(object, extend) {
     if (object === null) {
-      if (!extend) this.set('selection', null);
+      if (!extend) this.set('selection', SC.SelectionSet.EMPTY);
       return this;
 
     } else return this.selectObjects([object], extend);
