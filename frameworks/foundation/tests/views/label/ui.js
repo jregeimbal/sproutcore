@@ -5,11 +5,11 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-/*global module test htmlbody ok equals same */
+/*global module test htmlbody ok equals same sc_static*/
 
 htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
 
-var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+var iconURL= sc_static("/images/sproutcore-logo.png");
 (function() {
 var pane = SC.ControlTestPane.design()
   .add("basic", SC.LabelView, { 

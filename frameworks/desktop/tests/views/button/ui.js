@@ -9,7 +9,7 @@
 
 htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
 
-  var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+var iconURL = sc_static("/images/tests/people.gif");
 (function() {
 var pane = SC.ControlTestPane.design()
   .add("basic", SC.ButtonView, { 

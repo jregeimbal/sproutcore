@@ -7,7 +7,7 @@
 
 /*global module test htmlbody ok equals same stop start */
 
-var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+var iconURL= sc_static("/images/tests/people.gif");
 var pane, view, elem, rect1, rect2, rect3;
 module("SC.SegmentedView", {
   setup: function() {
@@ -110,7 +110,10 @@ test("Check that properties are mapped correctly", function() {
    equals(view.get('activeIndex'), 2, 'The active item is the third segment.');
    
    // try moving mouse while mouse down
-   var secondItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: rect2.left + 1, pageY: rect2.top + 1 });
+   var pos = {x: 0, y: 0};
+   pos.x = rect2.left+((rect2.right-rect2.left)/2);
+   pos.y = rect2.top + 1;
+   var secondItemEvent = SC.Event.simulateEvent(elem, 'mousedown', { pageX: pos.x, pageY: pos.y });
    view.mouseMoved(secondItemEvent);
    equals(view._isMouseDown, YES, 'Mouse down flag on mousemoved should be ');
    equals(view.get('activeIndex'), 1, 'The active item should have changed to the second segment.');

@@ -11,7 +11,7 @@
 htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
 var pane;
 (function() {
-  var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+  var iconURL= sc_static("/images/tests/people.gif");
   
   pane = SC.ControlTestPane.design()
     

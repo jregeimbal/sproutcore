@@ -5,13 +5,13 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-/*global module test htmlbody ok equals same stop start */
+/*global module test htmlbody ok equals same stop start sc_static*/
 
 
 htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
 
 (function() {
-  var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+  var iconURL= sc_static("/images/tests/people.gif");
   
   var pane = SC.ControlTestPane.design()
     
@@ -79,7 +79,7 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
      ok(viewElem.hasClass('sc-tab-view'), 'tabView1.hasClass(sc-tab-view) should be YES');
      ok(views[1].className.indexOf('sc-segmented-view')>=0, 'tabView1 should contain a segmented view');
      ok(views[0].className.indexOf('sc-container-view')>=0, 'tabView1 should contain a container view');
-     ok(views[1].childNodes.length==3, 'tabView1 should have 3 options');
+     ok(views[1].childNodes.length===3, 'tabView1 should have 3 options');
      
 
    });

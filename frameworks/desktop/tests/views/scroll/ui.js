@@ -8,8 +8,8 @@
 /*global module test ok equals same stop start */
 
 (function() {
-    var appleURL="http://photos4.meetupstatic.com/photos/event/4/6/9/9/600_4518073.jpeg";
-    var iv=SC.ImageView.design({value: appleURL, layout: {height:400, width:400}});
+    var scURL = sc_static("/images/tests/logo.jpeg");
+    var iv=SC.ImageView.design({value: scURL, layout: {height:400, width:400}});
     var pane = SC.ControlTestPane.design({ height: 100 })
     .add("basic", SC.ScrollView, {
   

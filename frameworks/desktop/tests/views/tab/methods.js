@@ -5,9 +5,9 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-/*global module test htmlbody ok equals same stop start */
+/*global module test htmlbody ok equals same stop start sc_static*/
 
-var iconURL= "http://www.freeiconsweb.com/Icons/16x16_people_icons/People_046.gif";
+var iconURL= sc_static("/images/tests/people.gif");
 var pane, view;
 module("SC.TabView", {
   setup: function() {
