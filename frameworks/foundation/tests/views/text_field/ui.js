@@ -577,11 +577,11 @@ test("editing a field should not change the cursor position", function() {
   input.val('John Doe');
   textField.set('selection', SC.TextSelection.create({start:2, end:3}));
   SC.Event.trigger(input, 'change');
-
-  ok(input.val() === 'John Doe', 'input value should be \'John Doe\'');
+  var val = input.val();
+  equals(val, 'John Doe', 'input value should be \'John Doe\'');
   var selection = textField.get('selection');
   console.log("Selection:  %@".fmt(selection));
-  ok(selection.get('start') == 2 && selection.get('end') == 3, 'cursor position should be unchanged');
+  ok(selection.get('start') === 2 && selection.get('end') === 3, 'cursor position should be unchanged');
 });
 
 test("focus then lose key responder", function() {

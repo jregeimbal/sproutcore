@@ -274,6 +274,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       }
     }
     else {
+      // make sure the field value has been propigated to the textfield object.
+      this.fieldValueDidChange();
       // The client is setting the value.  Make sure the new value is a text
       // selection object.
       if (!value  ||  !value.kindOf  ||  !value.kindOf(SC.TextSelection)) {
