@@ -225,6 +225,31 @@ SC.mixin(/** @scope SC */ {
   },
 
   /**
+    Extends the functionality of valueOf to a path.
+
+    @param {Object | SC.Object} item - the item to get the value from
+    @param {String} keyPath - the keyPath that holds the value you want to get
+    @param {Object} defaultVal *optional, - default value if you want one
+    @returns {Object} the value that is in the property
+  */
+  valueOfPath: function (item, keyPath, defaultVal) {
+    var ary, itm;
+    if (keyPath.indexOf('.') < 0) { return this.valueOf(item, keyPath, defaultVal); }
+
+    if (!!item.getPath) { return item.getPath(keyPath); }
+
+    ary = keyPath.split('.');
+    itm = this.valueOf(item,ary.shift(), defaultVal);
+
+    for (var i=0,l=ary.length;i<l;i+=1) {
+      itm = this.valueOf(itm, ary[i], defaultVal);
+      if (itm === undefined) { break; }
+    }
+
+    return itm;
+  },
+
+  /**
     Returns YES if the passed value is null or undefined.  This avoids errors
     from JSLint complaining about use of ==, which can be technically 
     confusing.
