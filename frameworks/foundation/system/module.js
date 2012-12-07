@@ -225,6 +225,7 @@ SC.Module = SC.Object.create(/** @scope SC.Module */ {
         lazyInfo[idx]();
       } catch(e) {
         SC.Logger.error("SC.Module: Failed to lazily instatiate entry for  '%@'".fmt(moduleName));
+        SC.Logger.error(e);
       }
     }
 

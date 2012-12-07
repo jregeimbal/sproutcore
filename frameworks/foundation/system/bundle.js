@@ -31,6 +31,7 @@ SC.mixin(/** @scope SC */ {
                 item[idx]();
               } catch(e) {
                 SC.Logger.error("Failed to lazily instatiate entry for  '%@'".fmt(itemKey));
+                SC.Logger.error(e);
               }
             }
             // Free up memory containing the functions once they have been executed.
