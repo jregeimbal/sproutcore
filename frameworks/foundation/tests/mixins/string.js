@@ -81,3 +81,14 @@ test("Localize a string even if localized version is empty", function() {
   equals("empty".loc(), "");
   equals("empty".locWithDefault("Empty"), "");
 });
+
+test("Localize a string that isn't there with override", function() {
+  equals("dork".loc(), 'dork');
+  
+  window.OverRide = {dork: 'Dork1'};
+  
+  equals("dork".loc(), 'Dork1');
+  
+  window.OverRide = null;
+
+});
