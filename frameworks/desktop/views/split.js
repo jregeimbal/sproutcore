@@ -80,8 +80,6 @@ SC.SplitView = SC.View.extend(
   
   classNames: ['sc-split-view'],
   
-  displayProperties: ['layoutDirection'],
-  
   /**
     delegate for controlling split view behavior.
   */
@@ -170,6 +168,11 @@ SC.SplitView = SC.View.extend(
     var direction = this.get('layoutDirection') ,
         ret = view.get('frame') ;
     return (direction === SC.LAYOUT_HORIZONTAL) ? ret.width : ret.height ;
+  },
+  
+  updateThicknessCache: function() {
+    this._topLeftViewThickness = this.thicknessForView(this.get('topLeftView'));
+    this._bottomRightThickness = this.thicknessForView(this.get('bottomRightView'));
   },
   
   createChildViews: function() {
@@ -359,67 +362,65 @@ SC.SplitView = SC.View.extend(
   
   /** @private */
   renderLayout: function(context, firstTime) {
-    if (firstTime || this._recalculateDivider) {
-      if (!this.get('thumbViewCursor')) {
-        this.set('thumbViewCursor', SC.Cursor.create()) ;
-      }
-      
-      var layoutDirection = this.get('layoutDirection') ,
-          fr = this.get('frame'),
-          splitViewThickness, elemRendered = this.$(),
-          desiredThickness = this.get('defaultThickness') ,
-          autoResizeBehavior = this.get('autoresizeBehavior') ;
-      var dividerThickness = this.get('dividerThickness') ;
-      dividerThickness = (!SC.none(dividerThickness)) ? dividerThickness : 7 ;
-      // Turn a flag on to recalculate the spliting if the desired thickness
-      // is a percentage
-      if(this._recalculateDivider===undefined && desiredThickness<1) {
-        this._recalculateDivider=YES;
-      }
-      else if(this._recalculateDivider) this._recalculateDivider=NO;
-      
-      if(elemRendered[0]) {
-        splitViewThickness = (layoutDirection === SC.LAYOUT_HORIZONTAL) ? 
-              elemRendered[0].offsetWidth : elemRendered[0].offsetHeight ;
-      }else{
-        splitViewThickness = (layoutDirection === SC.LAYOUT_HORIZONTAL) ? 
-              fr.width : fr.height ;
-      }
-      // if default thickness is < 1, convert from percentage to absolute
-      if (SC.none(desiredThickness) || 
-        (desiredThickness > 0 && desiredThickness < 1)) {
-        desiredThickness =  Math.floor((splitViewThickness - 
-                            (dividerThickness))* (desiredThickness || 0.5)) ;
-      }
-      if (autoResizeBehavior === SC.RESIZE_BOTTOM_RIGHT) {
-        this._desiredTopLeftThickness = desiredThickness ;
-      } else { // (autoResizeBehavior === SC.RESIZE_TOP_LEFT)
-        this._desiredTopLeftThickness =  splitViewThickness 
-                                      - dividerThickness - desiredThickness ;
-      }
-      
-      // make sure we don't exceed our min and max values, and that collapse 
-      // settings are respected
-      // cached values are required by _updateTopLeftThickness() below...
-      this._topLeftView = this.get('topLeftView') ;
-      this._bottomRightView = this.get('bottomRightView') ;
-      this._topLeftViewThickness = this.thicknessForView(this.get('topLeftView'));
-      this._bottomRightThickness = this.thicknessForView(this.get('bottomRightView'));
-      this._dividerThickness = this.get('dividerThickness') ;
-      this._layoutDirection = this.get('layoutDirection') ;
-      
-      // this handles min-max settings and collapse parameters
-      this._updateTopLeftThickness(0) ;
-      
-      // update the cursor used by thumb views
-      this._setCursorStyle() ;
-      
-      // HACK: [BB] OR-14281
-      SC.RunLoop.begin();
-      // actually set layout for our child views
-      this.updateChildLayout() ;
-      SC.RunLoop.end();
+    if (!this.get('thumbViewCursor')) {
+      this.set('thumbViewCursor', SC.Cursor.create()) ;
     }
+    
+    var layoutDirection = this.get('layoutDirection') ,
+        fr = this.get('frame'),
+        splitViewThickness, elemRendered = this.$(),
+        desiredThickness = this.get('defaultThickness') ,
+        autoResizeBehavior = this.get('autoresizeBehavior') ;
+    var dividerThickness = this.get('dividerThickness') ;
+    dividerThickness = (!SC.none(dividerThickness)) ? dividerThickness : 7 ;
+    // Turn a flag on to recalculate the spliting if the desired thickness
+    // is a percentage
+    if(this._recalculateDivider===undefined && desiredThickness<1) {
+      this._recalculateDivider=YES;
+    }
+    else if(this._recalculateDivider) this._recalculateDivider=NO;
+    
+    if(elemRendered[0]) {
+      splitViewThickness = (layoutDirection === SC.LAYOUT_HORIZONTAL) ? 
+            elemRendered[0].offsetWidth : elemRendered[0].offsetHeight ;
+    }else{
+      splitViewThickness = (layoutDirection === SC.LAYOUT_HORIZONTAL) ? 
+            fr.width : fr.height ;
+    }
+    // if default thickness is < 1, convert from percentage to absolute
+    if (SC.none(desiredThickness) || 
+      (desiredThickness > 0 && desiredThickness < 1)) {
+      desiredThickness =  Math.floor((splitViewThickness - 
+                          (dividerThickness))* (desiredThickness || 0.5)) ;
+    }
+    if (autoResizeBehavior === SC.RESIZE_BOTTOM_RIGHT) {
+      this._desiredTopLeftThickness = desiredThickness ;
+    } else { // (autoResizeBehavior === SC.RESIZE_TOP_LEFT)
+      this._desiredTopLeftThickness =  splitViewThickness 
+                                    - dividerThickness - desiredThickness ;
+    }
+    
+    // make sure we don't exceed our min and max values, and that collapse 
+    // settings are respected
+    // cached values are required by updateTopLeftThickness() below...
+    this._topLeftView = this.get('topLeftView') ;
+    this._bottomRightView = this.get('bottomRightView') ;
+    this.updateThicknessCache();
+    this._dividerThickness = this.get('dividerThickness') ;
+    this._layoutDirection = this.get('layoutDirection') ;
+    
+    // this handles min-max settings and collapse parameters
+    this.updateTopLeftThickness(0) ;
+    
+    // update the cursor used by thumb views
+    this.setCursorStyle() ;
+    
+    // HACK: [BB] OR-14281
+    SC.RunLoop.begin();
+    // actually set layout for our child views
+    this.updateChildLayout() ;
+    SC.RunLoop.end();
+    
     sc_super() ;
   },
   
@@ -427,11 +428,17 @@ SC.SplitView = SC.View.extend(
   render: function(context, firstTime) {
     sc_super() ;
     
-    if (this._inLiveResize) this._setCursorStyle() ;
+    if (this._inLiveResize) this.setCursorStyle() ;
     
     var dir = this.get('layoutDirection') ;
-    if (dir===SC.LAYOUT_HORIZONTAL) context.addClass('sc-horizontal') ;
-    else context.addClass('sc-vertical') ;
+    if (dir===SC.LAYOUT_HORIZONTAL) {
+      context.addClass('sc-horizontal') ;
+      context.removeClass('sc-vertical') ;
+    }
+    else { 
+      context.addClass('sc-vertical') ;
+      context.removeClass('sc-horizontal') ;
+    }
   },
   
   /**
@@ -456,8 +463,7 @@ SC.SplitView = SC.View.extend(
     this._thumbView = thumbView ;
     this._topLeftView = this.get('topLeftView') ;
     this._bottomRightView = this.get('bottomRightView') ;
-    this._topLeftViewThickness = this.thicknessForView(this.get('topLeftView'));
-    this._bottomRightThickness = this.thicknessForView(this.get('bottomRightView'));
+    this.updateThicknessCache();
     this._dividerThickness = this.get('dividerThickness') ;
     this._layoutDirection = this.get('layoutDirection') ;
     
@@ -470,7 +476,7 @@ SC.SplitView = SC.View.extend(
   mouseDragged: function(evt) {
     var offset = (this._layoutDirection === SC.LAYOUT_HORIZONTAL) ? evt.pageX 
                 - this._mouseDownX : evt.pageY - this._mouseDownY ;
-    this._updateTopLeftThickness(offset) ;
+    this.updateTopLeftThickness(offset) ;
     return YES;
   },
   
@@ -508,9 +514,9 @@ SC.SplitView = SC.View.extend(
       // and collapse
       // this.setThicknessForView(view, 0) ;
       if (view === this._topLeftView) {
-        this._updateTopLeftThickness(this.topLeftThickness()*-1) ;
+        this.updateTopLeftThickness(this.topLeftThickness()*-1) ;
       } else {
-        this._updateBottomRightThickness(this.bottomRightThickness()*-1) ;
+        this.updateBottomRightThickness(this.bottomRightThickness()*-1) ;
       }
       
       // if however the splitview decided not to collapse, clear:
@@ -520,18 +526,17 @@ SC.SplitView = SC.View.extend(
     } else {
       // uncollapse to the last thickness in it's uncollapsed state
       if (view === this._topLeftView) {
-        this._updateTopLeftThickness(this._uncollapsedThickness) ;
+        this.updateTopLeftThickness(this._uncollapsedThickness) ;
       } else {
-        this._updateBottomRightThickness(this._uncollapsedThickness) ;
+        this.updateBottomRightThickness(this._uncollapsedThickness) ;
       }
       view._uncollapsedThickness = null ;
     }
-    this._setCursorStyle() ;
+    this.setCursorStyle() ;
     return true ;
   },
   
-  /** @private */
-  _updateTopLeftThickness: function(offset) {
+  updateTopLeftThickness: function(offset) {
     var topLeftView = this._topLeftView ,
         bottomRightView = this._bottomRightView,
         // the current thickness, not the original thickness
@@ -605,7 +610,7 @@ SC.SplitView = SC.View.extend(
     }
     
     // now apply constrained value
-    if (thickness != this.thicknessForView(topLeftView)) {
+    if (thickness !== this.thicknessForView(topLeftView)) {
       this._desiredTopLeftThickness = thickness ;
       
       // un-collapse if needed.
@@ -622,7 +627,7 @@ SC.SplitView = SC.View.extend(
   },
   
   
-  _updateBottomRightThickness: function(offset) {
+  updateBottomRightThickness: function(offset) {
     var topLeftView = this._topLeftView ,
         bottomRightView = this._bottomRightView,
         topLeftViewThickness = this.thicknessForView(topLeftView), // the current thickness, not the original thickness
@@ -683,7 +688,7 @@ SC.SplitView = SC.View.extend(
     }
     
     // now apply constrained value
-    if (thickness != this.thicknessForView(topLeftView)) {
+    if (thickness !== this.thicknessForView(topLeftView)) {
       this._desiredTopLeftThickness = thickness ;
       
       // un-collapse if needed.
@@ -700,12 +705,9 @@ SC.SplitView = SC.View.extend(
   },
   
   /** 
-    This observes 'layoutDirection' to update the cursor style immediately
-    after the value of the layoutDirection of Split view is changed
-
-    @private 
+    update cursor style
   */
-  _setCursorStyle: function() {
+  setCursorStyle: function() {
     var topLeftView = this._topLeftView,
         bottomRightView = this._bottomRightView,
         thumbViewCursor = this.get('thumbViewCursor'),
@@ -716,12 +718,12 @@ SC.SplitView = SC.View.extend(
     this._layoutDirection = this.get('layoutDirection') ;
     if (topLeftView.get('isCollapsed') || 
       tlThickness === this.get("topLeftMinThickness") || 
-      brThickness == this.get("bottomRightMaxThickness")) {
+      brThickness === this.get("bottomRightMaxThickness")) {
       thumbViewCursor.set('cursorStyle', 
         this._layoutDirection === SC.LAYOUT_HORIZONTAL ? "e-resize" : "s-resize") ;
     } else if (bottomRightView.get('isCollapsed') || 
       tlThickness === this.get("topLeftMaxThickness") || 
-      brThickness == this.get("bottomRightMinThickness")) {
+      brThickness === this.get("bottomRightMinThickness")) {
       thumbViewCursor.set('cursorStyle', 
         this._layoutDirection === SC.LAYOUT_HORIZONTAL ? "w-resize" : "n-resize") ;
     } else {
@@ -734,7 +736,7 @@ SC.SplitView = SC.View.extend(
           this._layoutDirection === SC.LAYOUT_HORIZONTAL ? "ew-resize" : "ns-resize") ;
       }
     }
-  }.observes('layoutDirection'),
+  },
   
   /**
     (DELEGATE) Control whether a view can be collapsed.
@@ -786,6 +788,16 @@ SC.SplitView = SC.View.extend(
      sc_super();
      this.notifyPropertyChange('topLeftThickness')
          .notifyPropertyChange('bottomRightThickness');
-   }.observes('layout')
-
+   }.observes('layout'),
+   
+   
+   /** 
+     This observes 'layoutDirection' to update the cursor style immediately
+     after the value of the layoutDirection of Split view is changed
+   */   
+   _layoutDirectionDidChange: function() {
+     this.displayDidChange();
+     this.updateLayout();
+     this.setCursorStyle();
+   }.observes('layoutDirection')
 });
