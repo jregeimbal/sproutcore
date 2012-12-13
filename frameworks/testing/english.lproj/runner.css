@@ -38,7 +38,18 @@
   margin-top: -8px;
 }
 
-.testresult label.hide-passed.disabled {
+.testresult label.show-panes {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: 0;
+  left: 155px;
+  height: 14px;
+  top: 50%;
+  margin-top: -8px;
+}
+
+.testresult label.hide-passed.disabled label.show-panes.disabled {
   color: #aaa;
 }
 

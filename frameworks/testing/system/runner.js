@@ -52,6 +52,9 @@ CoreTest.Runner = {
         '<label class="hide-passed">',
           '<input type="checkbox" checked="checked" /> Hide passed tests',
         '</label>',
+        '<label class="show-panes">',
+          '<input type="checkbox" checked="checked" /> Show Test Control Panes',
+        '</label>',
         '<span class="status">Running...</span>',
       '</div>',
       '<div class="detail">',
@@ -75,6 +78,11 @@ CoreTest.Runner = {
     this.checkbox.change(function() {
       runner.hidePassedTestsDidChange();
     });
+    // remove the control panes
+    this.p_checkbox = this.report.find('.show-panes input'); 
+    this.p_checkbox.change(function() {
+      runner.showTestPanesDidChange();
+    });
     
     Q$('body').append(this.report);
   },
@@ -86,6 +94,15 @@ CoreTest.Runner = {
       this.logq.addClass('hide-clean');
     } else {
       this.logq.removeClass('hide-clean');
+    }
+  },
+  
+  showTestPanesDidChange: function(){
+    var checked = !!this.p_checkbox[0].checked;
+    if (checked) {
+      Q$('.sc-control-test-pane').show();
+    } else {
+      Q$('.sc-control-test-pane').hide();
     }
   },
   
