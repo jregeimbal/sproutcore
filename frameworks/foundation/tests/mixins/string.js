@@ -12,7 +12,7 @@ module('String.prototype.w()', {
 				init: function(){
 					sc_super();
 					//hash of new languages
-					var newLocales = { deflang: 'dl', empty: '' };
+					var newLocales = { deflang: 'dl', empty: '', something: 'else' };
 					
 					//Added the new languages to the existing list of locales
 					SC.Locale.addStrings(newLocales);
@@ -88,6 +88,17 @@ test("Localize a string that isn't there with override", function() {
   window.OverRide = {dork: 'Dork1'};
   
   equals("dork".loc(), 'Dork1');
+  
+  window.OverRide = null;
+
+});
+
+test("Localize a string and override", function() {
+  equals("something".loc(), 'else');
+  
+  window.OverRide = {'else': 'Dork1'};
+  
+  equals("something".loc(), 'Dork1');
   
   window.OverRide = null;
 

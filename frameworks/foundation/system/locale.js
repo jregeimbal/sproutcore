@@ -84,10 +84,12 @@ SC.Locale = SC.Object.extend({
     @returns {String}
   */
   locWithDefault: function(string, def) {
-    var ret;
+    var ret, lookupVal;
     if(!ret) ret = this.strings[string];
-    if(ret === null || ret === undefined) ret = string; //reset if no value was found in stirngs
-    if(window.OverRide && window.OverRide[ret]) ret = window.OverRide[ret];
+    
+    lookupVal = (ret === null || ret === undefined) ? string : ret;
+    
+    if(window.OverRide && window.OverRide[lookupVal]) ret = window.OverRide[lookupVal]; 
     
     // strings may be blank, so test with typeOf.
     if (SC.typeOf(ret) === SC.T_STRING) return ret;
