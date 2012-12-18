@@ -1,3 +1,9 @@
+module('SC.DateFieldView');
+
+test("Non-Empty Test", function(){
+  ok(true, "I'm here for your pleasure...");
+});
+
 // // ==========================================================================
 // // Project:   SproutCore - JavaScript Application Framework
 // // Copyright: ©2006-2011 Strobe Inc. and contributors.
