@@ -6,6 +6,10 @@
 // ==========================================================================
 
 /*global module test htmlbody ok equals same stop start */
+module('SC.ProgressView Methods');
+test("Non-Empty Test", function(){
+  ok(true, "I'm here for your pleasure...");
+});
 /*
 module("SC.ProgressView Methods", {
   setup: function() {

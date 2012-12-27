@@ -6,7 +6,10 @@
 // // ==========================================================================
 // 
 // /*global module test htmlbody ok equals same stop start */
-// (function() {
+module('SC.DateFieldView ui');
+test("Non-Empty Test", function(){
+  ok(true, "I'm here for your pleasure...");
+});
 //   var pane = SC.ControlTestPane.design()
 //   .add("empty", SC.DateFieldView, { 
 //     hint: "dd/mm/yyyy", 
@@ -453,4 +456,4 @@
 //   ok(selection.get('start') == 2 && selection.get('end') == 3, 'cursor position should be unchanged');
 // });
 // */
-// })();
+// 
