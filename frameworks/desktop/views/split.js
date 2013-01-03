@@ -795,7 +795,7 @@ SC.SplitView = SC.View.extend(
      This observes 'layoutDirection' to update the cursor style immediately
      after the value of the layoutDirection of Split view is changed
    */   
-   _layoutDirectionDidChange: function() {
+   layoutDirectionDidChange: function() {
      this.displayDidChange();
      this.updateLayout();
      this.setCursorStyle();
