@@ -126,10 +126,11 @@ function basic(view, sel, disabled) {
   ok(cq.hasClass('sc-list-item-view'), 'should have sc-list-item-view class');
   
   equals(cq.hasClass('sel'), !!sel, 'expect sel class');
-  equals(cq.hasClass('disabled'), !!disabled, 'expect disabled class');
+  // this is just making explicit that disabled must be false
+  equals(cq.hasClass('disabled'), (disabled === false) ? disabled : true, 'expect disabled class');
   
   var idx = view.get('contentIndex');
-  var evenOrOdd = (idx % 2 == 0) ? 'even' : 'odd';
+  var evenOrOdd = (idx % 2 === 0) ? 'even' : 'odd';
   ok(cq.hasClass(evenOrOdd), 'should have an %@ class'.fmt(evenOrOdd));
 }
 

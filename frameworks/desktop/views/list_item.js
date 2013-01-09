@@ -213,7 +213,8 @@ SC.ListItemView = SC.View.extend(
     
     // add alternating row classes
     classArray.push((this.get('contentIndex')%2 === 0) ? 'even' : 'odd');
-    context.setClass('disabled', !this.get('isEnabled'));
+    // false should be the only acceptable way to disable
+    context.setClass('disabled', this.get('isEnabled') === false);
 
     // outline level wrapper
     working = context.begin("div").addClass("sc-outline");
