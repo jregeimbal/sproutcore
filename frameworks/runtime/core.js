@@ -250,6 +250,26 @@ SC.mixin(/** @scope SC */ {
   },
 
   /**
+    Extending the principles of valueOf, we now
+    have setValue which will set the value on
+    an object's key.
+
+    @param {Object | SC.Object} item that contains the property
+    @param {String} key that you want to change
+    @param {Any} value that the key should be changed to
+    @returns {Any} returns the value you set.
+  */
+  setValue: function (item,key,value) {
+    if (item.get) {
+      item.set(key,value);
+    } else {
+      item[key] = value;
+    }
+
+    return value;
+  },
+
+  /**
     Returns YES if the passed value is null or undefined.  This avoids errors
     from JSLint complaining about use of ==, which can be technically 
     confusing.
