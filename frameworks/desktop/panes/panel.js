@@ -175,15 +175,6 @@ SC.PanelPane = SC.Pane.extend({
   paneDidAttach: function() {
     var ret = sc_super();
     this.becomeKeyPane();
-    this.makeFirstResponder(this);
     return ret ;
-  },
-
-  keyDown: function(evt) {
-    var rv = sc_super();
-    // if a modal dialog, don't propagate uncaught key events - the browser may catch them and do 'the wrong thing'
-    if (!rv && this._isShowingModal) {
-      return YES;
-    }
   }
 });
