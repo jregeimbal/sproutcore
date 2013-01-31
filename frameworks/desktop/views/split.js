@@ -526,11 +526,11 @@ SC.SplitView = SC.View.extend(
     } else {
       // uncollapse to the last thickness in it's uncollapsed state
       if (view === this._topLeftView) {
-        this.updateTopLeftThickness(this._uncollapsedThickness) ;
+        this.updateTopLeftThickness(SC.none(this._uncollapsedThickness) ? this.bottomRightThickness()*0.5 : this._uncollapsedThickness);
       } else {
-        this.updateBottomRightThickness(this._uncollapsedThickness) ;
+        this.updateBottomRightThickness(SC.none(this._uncollapsedThickness) ? this.topRightThickness()*0.5 : this._uncollapsedThickness);
       }
-      view._uncollapsedThickness = null ;
+      this._uncollapsedThickness = null ;
     }
     this.setCursorStyle() ;
     return true ;
