@@ -1530,7 +1530,7 @@ SC.RootResponder = SC.Object.extend({
     }
 
     // Firefox does NOT handle delete here...
-    if (SC.browser.mozilla && (evt.which === 8)) return true ;
+    if ((SC.browser.mozilla || SC.browser.chrome)&& (evt.which === 8)) return true ;
 
     // modifier keys are handled separately by the 'flagsChanged' event
     // send event for modifier key changes, but only stop processing if this
