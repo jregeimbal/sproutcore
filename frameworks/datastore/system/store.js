@@ -1890,6 +1890,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
   _TMP_RETRIEVE_ARRAY: [],
   
   _callback_queue: {},
+  _additional_callback_queue: {},
   
   /**
     @private
@@ -1900,14 +1901,31 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     if(hasCallbackArray) queue[storeKey] = {callback: callback, otherKeys: storeKeys};
     else queue[storeKey] = callback;
   },
+  
+  /**
+    @public
+    Public method for attaching callbacks to inflight storeKeys
+  **/
+  setAdditionalCallbackForStoreKey: function(storeKey, callback, hasCallbackArray, storeKeys) {
+    var queue = this._additional_callback_queue;
+    if(hasCallbackArray) queue[storeKey] = {callback: callback, otherKeys: storeKeys};
+    else queue[storeKey] = callback;
+  },
+  
   /**
     @private
     retreives and calls callback for storkey if exists
     also handles if a single callback is need for one key
   **/
   _retreiveCallbackForStoreKey: function(storeKey){
-    var queue = this._callback_queue,
-        callback = queue[storeKey],
+    var queue = this._callback_queue;
+    this._executeCallbackFromQueue(queue, storeKey);
+    queue = this._additional_callback_queue;
+    this._executeCallbackFromQueue(queue, storeKey);
+  },
+  
+  _executeCallbackFromQueue: function(queue, storeKey) {
+    var callback = queue[storeKey],
         allFinished, keys;
     if(callback){
       if(SC.typeOf(callback) === SC.T_FUNCTION){
@@ -1928,11 +1946,10 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
             delete queue[key];
           });
         }
-        
       }
     }
   },
-  
+    
   /*
     @private
     
