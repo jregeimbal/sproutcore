@@ -211,7 +211,11 @@ SC.MenuItemView = SC.View.extend(SC.ContentDisplay,
     if (this.get('escapeHTML')) {
       label = SC.RenderContext.escapeHTML(label) ;
     }
-    context.push("<span class='value ellipsis'>"+label+"</span>") ;
+    context.begin('span')
+           .addClass('value')
+           .addClass('ellipsis')
+           .text(label)
+           .end();
   },
 
   /**
