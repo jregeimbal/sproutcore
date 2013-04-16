@@ -399,7 +399,7 @@ SC.ListItemView = SC.View.extend(
    @returns {void}
   */
   renderLabel: function(context, label) {
-    context.begin('label').text(label).end();
+    context.push('<label>', label || '', '</label>') ;
   },
   
   /**
