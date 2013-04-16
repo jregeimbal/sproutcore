@@ -210,7 +210,7 @@ SC.Drag = SC.Object.extend(
   */
   dataForType: function(dataType) {
     // first try to use the data Source.
-    if (this.dataSource) {
+    if (this.dataSource && SC.typeOf(this.dataSource.dragDataForType) === SC.T_FUNCTION) {
       return this.dataSource.dragDataForType(this, dataType) ;
       
     // then try to use the data hash.
@@ -443,14 +443,14 @@ SC.Drag = SC.Object.extend(
         op = SC.DRAG_NONE;
       }
     } catch (e) {
-      console.error('Exception in SC.Drag.mouseUp(acceptDragOperation|performDragOperation): %@'.fmt(e)) ;
+      SC.Logger.error('Exception in SC.Drag.mouseUp(acceptDragOperation|performDragOperation): %@'.fmt(e)) ;
     }
     
     try {
       // notify last drop target that the drag exited, to allow it to cleanup
       if (target && target.dragExited) target.dragExited(this, evt) ;
     } catch (ex) {
-      console.error('Exception in SC.Drag.mouseUp(target.dragExited): %@'.fmt(ex)) ;
+      SC.Logger.error('Exception in SC.Drag.mouseUp(target.dragExited): %@'.fmt(ex)) ;
     }
     
     // notify all drop targets that the drag ended
@@ -459,7 +459,7 @@ SC.Drag = SC.Object.extend(
       try {
         ary[idx].tryToPerform('dragEnded', this, evt) ;
       } catch (ex2) {
-        console.error('Exception in SC.Drag.mouseUp(dragEnded on %@): %@'.fmt(ary[idx], ex2)) ;
+        SC.Logger.error('Exception in SC.Drag.mouseUp(dragEnded on %@): %@'.fmt(ary[idx], ex2)) ;
       }
     }
 
