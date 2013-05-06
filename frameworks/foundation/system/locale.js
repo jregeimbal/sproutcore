@@ -275,20 +275,6 @@ SC.Locale.locales = {
   es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] })
 } ;
 
-SC.Locale.locales['en-np'] = SC.Locale.locales['en'].extend({
-  locWithDefault: function(string, def) {
-    var ret = this.strings[string];
-    
-    // strings may be blank, so test with typeOf.
-    if (SC.typeOf(ret) === SC.T_STRING) return ret;
-    else if (SC.typeOf(def) === SC.T_STRING) return def;
-    return string;
-  }
-  
-}) ;
-
-
-
 
 /**
   This special helper will store the strings you pass in the locale matching
