@@ -418,7 +418,7 @@ SC.DateTime.mixin(SC.Comparable,
     @property
     @type {Array}
   */
-  dayNames: '_SC.DateTime.dayNames'.loc().w(),
+  dayNames: "_SC.DateTime.dayNames".loc().w(),
   
   /** @private
     The English day names used for the 'lastMonday',
@@ -437,7 +437,7 @@ SC.DateTime.mixin(SC.Comparable,
     @property
     @type {Array}
   */
-  abbreviatedDayNames: '_SC.DateTime.abbreviatedDayNames'.loc().w(),
+  abbreviatedDayNames: "_SC.DateTime.abbreviatedDayNames".loc().w(),
 
   /**
     The localized month names. Add the key '_SC.DateTime.monthNames' and its
@@ -447,7 +447,7 @@ SC.DateTime.mixin(SC.Comparable,
     @property
     @type {Array}
   */
-  monthNames: '_SC.DateTime.monthNames'.loc().w(),
+  monthNames: "_SC.DateTime.monthNames".loc().w(),
 
   /**
     The localized abbreviated month names. Add the key
@@ -457,7 +457,7 @@ SC.DateTime.mixin(SC.Comparable,
     @property
     @type {Array}
   */
-  abbreviatedMonthNames: '_SC.DateTime.abbreviatedMonthNames'.loc().w(),
+  abbreviatedMonthNames: "_SC.DateTime.abbreviatedMonthNames".loc().w(),
   
   /** @private
     The unique internal Date object used to make computations. Better
