@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- *******************************************************************
+     Eloqua translation
+     ******************************************************************* -->
+<translation>
+  <meta>
+     <source-control>GIT</source-control>
+  </meta>
+
+  <file-set name="Eloqua" languages="Std_Admin +Canadian_French +Czech +Danish +Dutch +Finnish +Hungarian +Norwegian +Polish +Russian +Swedish +Turkish">
+
+    <!-- strings.js files
+         NOTE: This assumes that directory "english.lproj" have been renamed to "en-us.lproj"
+    -->
+    <extract filter="Wildcard" pattern="**/%v.lproj/strings.js" file-type="sproutcore">
+      <directory source="."/>
+      <!-- exclude non-translatable strings.js files; DO NOT OMIT %v -->
+      <exclude source="apps/docs/%v.lproj/strings.js"/>
+      <exclude source="apps/greenhouse/%v.lproj/strings.js"/>
+      <exclude source="apps/tests/%v.lproj/strings.js"/>
+      <exclude source="apps/welcome/%v.lproj/strings.js"/>
+    </extract>
+
+    <!-- strings.js files
+         NOTE: translatable strings.js must be listed one by one if it is located in "english.lproj"
+    -->
+    <file source="frameworks/core_tools/english.lproj/strings.js"
+          target="frameworks/core_tools/%v.lproj/strings.js"
+          file-type="sproutcore"/>
+    <file source="frameworks/desktop/english.lproj/strings.js"
+          target="frameworks/desktop/%v.lproj/strings.js"
+          file-type="sproutcore"/>
+    <file source="frameworks/foundation/english.lproj/strings.js"
+          target="frameworks/foundation/%v.lproj/strings.js"
+          file-type="sproutcore"/>
+    <file source="themes/iphone_theme/english.lproj/strings.js"
+          target="themes/iphone_theme/%v.lproj/strings.js"
+          file-type="sproutcore"/>
+  </file-set>
+  
+</translation>

@@ -1,0 +1,1 @@
+git requires at least one file in the folder so that it doesn't get removed.
