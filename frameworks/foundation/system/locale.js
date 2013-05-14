@@ -119,7 +119,6 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     the locale to make a decision.
   */
   createCurrentLocale: function() {
-
     // get values from String if defined for compatibility with < 1.0 build 
     // tools.
     var autodetect = (String.useAutodetectedLanguage !== undefined) ? String.useAutodetectedLanguage : this.useAutodetectedLanguage; 
@@ -135,6 +134,7 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
 
     // if the detected language does not match the current language (or there
     // is none) then set it up.
+    // for (var locale in this.locales ) this.locales[locale].create();
     if (lang != this.currentLanguage) {
       this.currentLanguage = lang ; // save language
       this.currentLocale = klass.create(); // setup locale
@@ -268,12 +268,34 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
   @property {Hash}
 */
 SC.Locale.locales = {
-  en: SC.Locale.extend({ _deprecatedLanguageCodes: ['English'] }),
-  fr: SC.Locale.extend({ _deprecatedLanguageCodes: ['French'] }),
-  de: SC.Locale.extend({ _deprecatedLanguageCodes: ['German'] }),
-  ja: SC.Locale.extend({ _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
-  es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] })
+  en: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['English'] }),
+  fr: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['French'] }),
+  de: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['German'] }),
+  ja: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
+  es: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Spanish'] }),
+  cs: SC.Locale.extend({ strings: {} }),
+  da: SC.Locale.extend({ strings: {} }),
+  et: SC.Locale.extend({ strings: {} }),
+  fi: SC.Locale.extend({ strings: {} }),
+  hu: SC.Locale.extend({ strings: {} }),
+  id: SC.Locale.extend({ strings: {} }),
+  it: SC.Locale.extend({ strings: {} }),
+  ko: SC.Locale.extend({ strings: {} }),
+  nl: SC.Locale.extend({ strings: {} }),
+  no: SC.Locale.extend({ strings: {} }),
+  pl: SC.Locale.extend({ strings: {} }),
+  pt: SC.Locale.extend({ strings: {} }),
+  ru: SC.Locale.extend({ strings: {} }),
+  sv: SC.Locale.extend({ strings: {} }),
+  tr: SC.Locale.extend({ strings: {} }),
+  zh: SC.Locale.extend({ strings: {} })
 } ;
+
+SC.Locale.locales['en-us'] = SC.Locale.extend({ strings: {} });
+SC.Locale.locales['fr-ca'] = SC.Locale.extend({ strings: {} });
+SC.Locale.locales['pt-br'] = SC.Locale.extend({ strings: {} });
+SC.Locale.locales['zh-cn'] = SC.Locale.extend({ strings: {} });
+SC.Locale.locales['zh-tw'] = SC.Locale.extend({ strings: {} });
 
 
 /**
