@@ -102,13 +102,13 @@ test("Locale.createCurrentLocale() : Should create the Lacale Object for the lan
 
 test("Locale.localeClassFor() : Should find the locale class for the names language code or creates on based on its most likely parent", function() {
  		// Local Class for any language other than default languages will be 'en'. Therefore this condition is false
-	equals(false, SC.Locale.localeClassFor('nl').create().language === "nl") ;
+	equals(false, SC.Locale.localeClassFor('zz').create().language === "zz") ;
 	
 	// This adds the new language with the parent language to the default list
-	SC.Locale.locales['nl'] = SC.Locale.extend({ _deprecatedLanguageCodes: ['Dutch'] }) ;
+	SC.Locale.locales['zz'] = SC.Locale.extend({ _deprecatedLanguageCodes: ['ZTest'] }) ;
 	
-	//This condition is true as the local class now exists for 'nl'
-	equals(true, SC.Locale.localeClassFor('nl').create().language==="nl") ;
+	//This condition is true as the local class now exists for 'zz'
+	equals(true, SC.Locale.localeClassFor('zz').create().language==="zz") ;
 });
 
 test("Locale.define() : Should be able to define a particular type of locale", function() {

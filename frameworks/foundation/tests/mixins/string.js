@@ -7,18 +7,7 @@
 var LocaleObject;
 module('String.prototype.w()', {	
 		setup: function() {
-			
-			LocaleObject = SC.Locale.create({
-				init: function(){
-					sc_super();
-					//hash of new languages
-					var newLocales = { deflang: 'dl', empty: '', something: 'else' };
-					
-					//Added the new languages to the existing list of locales
-					SC.Locale.addStrings(newLocales);
-				}
-			});
-      this.currentLocale = LocaleObject;
+      SC.Locale.locales['en'].addStrings({ deflang: 'dl', empty: '', something: 'else' });
 		}
 	});
 
