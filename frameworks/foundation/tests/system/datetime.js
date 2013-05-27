@@ -4,12 +4,10 @@
 // ==========================================================================
 /*globals module test ok equals same stop start */
 
-module('Time');
-
 var dt, options, ms, timezone, startTime, timezones;
 
 module("SC.DateTime", {
-  setup: function() {
+  setup: function () {
     ms = 487054822032; // June 8, 1985, 05:00:22:32 UTC
     options = { year: 1985, month: 6, day: 8, hour: 4, minute: 0, second: 22, millisecond: 32, timezone: 60 }; // an arbitrary time zone
     dt = SC.DateTime.create(options);
@@ -239,7 +237,96 @@ test('Format', function() {
   equals(dt.adjust({ timezone:  420 }).toFormattedString('%Y-%m-%d %H:%M:%S %Z'), '1985-06-07 22:00:22 -07:00'); // the previous day
 });
 
-test('fancy getters', function() {
+test('format with locale meridian designators', function () {
+
+  var amDesignator = SC.Locale.currentLocale.amDesignator;
+  var pmDesignator = SC.Locale.currentLocale.pmDesignator;
+  var d;
+
+  SC.Locale.currentLocale.amDesignator = 'AM';
+  SC.Locale.currentLocale.pmDesignator = 'PM';
+  d = SC.DateTime.create({ hour: 11, minute: 59, second: 59 });
+  equals(d.toFormattedString('%h:%M:%S %p'), '11:59:59 AM');
+  d = SC.DateTime.create({ hour: 12, minute: 00, second: 00 });
+  equals(d.toFormattedString('%h:%M:%S %p'), '12:00:00 PM');
+
+  SC.Locale.currentLocale.amDesignator = 'yyy';
+  SC.Locale.currentLocale.pmDesignator = 'zzz';
+  d = SC.DateTime.create({ hour: 11, minute: 59, second: 59 });
+  equals(d.toFormattedString('%h:%M:%S %p'), '11:59:59 yyy');
+  d = SC.DateTime.create({ hour: 12, minute: 00, second: 00 });
+  equals(d.toFormattedString('%h:%M:%S %p'), '12:00:00 zzz');
+
+  SC.Locale.currentLocale.amDesignator = amDesignator;
+  SC.Locale.currentLocale.pmDesignator = pmDesignator;
+
+});
+
+test('format with locale short date format', function () {
+
+  var shortDate = SC.Locale.currentLocale.formats.shortDate;
+
+  SC.Locale.currentLocale.formats.shortDate = 'zzz%Yzzz%mzzz%dzzz';
+  d = SC.DateTime.create({ year: 1985, month: 5, day: 7 });
+  equals(d.toShortDateString(), 'zzz1985zzz05zzz07zzz');
+
+  SC.Locale.currentLocale.formats.shortDate = shortDate;
+
+});
+
+test('format with locale short time format', function () {
+
+  var shortTime = SC.Locale.currentLocale.formats.shortTime;
+
+  SC.Locale.currentLocale.formats.shortTime = 'zzz%hzzz%Mzzz%Szzz';
+  d = SC.DateTime.create({ hour: 11, minute: 59, second: 59 });
+  equals(d.toShortTimeString(), 'zzz11zzz59zzz59zzz');
+
+  SC.Locale.currentLocale.formats.shortTime = shortTime;
+
+});
+
+test('format with locale short date/short time format', function () {
+
+  var shortDateShortTime = SC.Locale.currentLocale.formats.shortDateShortTime;
+
+  SC.Locale.currentLocale.formats.shortDateShortTime = 'zzz%Yzzz%mzzz%dzzz%hzzz%Mzzz%Szzz';
+  d = SC.DateTime.create({ year: 1985, month: 5, day: 7, hour: 11, minute: 59, second: 59 });
+  equals(d.toShortDateShortTimeString(), 'zzz1985zzz05zzz07zzz11zzz59zzz59zzz');
+
+  SC.Locale.currentLocale.formats.shortDateShortTime = shortDateShortTime;
+
+});
+
+test('format with %h and %i', function () {
+
+  // the original implementation missed lowercase %h or %i.
+
+  // %h - Hour of the day, 24-hour clock (0..23)
+  // %H - Hour of the day, 24-hour clock (00..23)
+
+  d = SC.DateTime.create({ hour: 7 });
+  equals(d.toFormattedString('%h'), '7');
+  equals(d.toFormattedString('%H'), '07');
+
+  d = SC.DateTime.create({ hour: 19 });
+  equals(d.toFormattedString('%h'), '19');
+  equals(d.toFormattedString('%H'), '19');
+
+  // %i - Hour of the day, 12-hour clock (1..12)
+  // %I - Hour of the day, 12-hour clock (01..12)
+
+  d = SC.DateTime.create({ hour: 7 });
+  equals(d.toFormattedString('%i'), '7');
+  equals(d.toFormattedString('%I'), '07');
+
+  d = SC.DateTime.create({ hour: 19 });
+  equals(d.toFormattedString('%i'), '7');
+  equals(d.toFormattedString('%I'), '07');
+
+});
+
+test('fancy getters', function () {
   equals(dt.get('isLeapYear'), NO);
 
   // (note must set all three components of a date
@@ -325,7 +412,50 @@ test('parse without a format uses default ISO8601', function() {
   equals(SC.DateTime.parse("2010-09-17T18:35:08Z").toISO8601(), "2010-09-17T18:35:08+00:00");
 });
 
-test('bad parsing', function() {
+test('parse with locale meridian designators', function () {
+
+  var amDesignator = SC.Locale.currentLocale.amDesignator;
+  var pmDesignator = SC.Locale.currentLocale.pmDesignator;
+  var d;
+
+  SC.Locale.currentLocale.amDesignator = 'AM';
+  SC.Locale.currentLocale.pmDesignator = 'PM';
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 11:59:59 AM', '%d/%m/%Y %H:%M:%S %p'), { year: 1985, month: 5, day: 8, hour: 11, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 11:59:59 PM', '%d/%m/%Y %H:%M:%S %p'), { year: 1985, month: 5, day: 8, hour: 23, minute: 59, second: 59, millisecond: 0 });
+
+  SC.Locale.currentLocale.amDesignator = 'yyy';
+  SC.Locale.currentLocale.pmDesignator = 'zzz';
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 11:59:59 yyy', '%d/%m/%Y %H:%M:%S %p'), { year: 1985, month: 5, day: 8, hour: 11, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 11:59:59 zzz', '%d/%m/%Y %H:%M:%S %p'), { year: 1985, month: 5, day: 8, hour: 23, minute: 59, second: 59, millisecond: 0 });
+
+  SC.Locale.currentLocale.amDesignator = amDesignator;
+  SC.Locale.currentLocale.pmDesignator = pmDesignator;
+
+});
+
+test('parse with %h and %i', function () {
+
+  // the original implementation missed lowercase %h or %i.
+
+  // %h - Hour of the day, 24-hour clock (0..23)
+  // %H - Hour of the day, 24-hour clock (00..23)
+
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 7:59:59', '%d/%m/%Y %h:%M:%S'), { year: 1985, month: 5, day: 8, hour: 7, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 07:59:59', '%d/%m/%Y %H:%M:%S'), { year: 1985, month: 5, day: 8, hour: 7, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 19:59:59', '%d/%m/%Y %h:%M:%S'), { year: 1985, month: 5, day: 8, hour: 19, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 19:59:59', '%d/%m/%Y %H:%M:%S'), { year: 1985, month: 5, day: 8, hour: 19, minute: 59, second: 59, millisecond: 0 });
+
+  // %i - Hour of the day, 12-hour clock (1..12)
+  // %I - Hour of the day, 12-hour clock (01..12)
+
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 7:59:59', '%d/%m/%Y %i:%M:%S'), { year: 1985, month: 5, day: 8, hour: 7, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 07:59:59', '%d/%m/%Y %I:%M:%S'), { year: 1985, month: 5, day: 8, hour: 7, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 19:59:59', '%d/%m/%Y %i:%M:%S'), { year: 1985, month: 5, day: 8, hour: 19, minute: 59, second: 59, millisecond: 0 });
+  timeShouldBeEqualToHash(SC.DateTime.parse('08/05/1985 19:59:59', '%d/%m/%Y %I:%M:%S'), { year: 1985, month: 5, day: 8, hour: 19, minute: 59, second: 59, millisecond: 0 });
+
+});
+
+test('bad parsing', function () {
   equals(SC.DateTime.parse(SC.DateTime.parse("foo")), null);
   equals(SC.DateTime.parse("2010-09-17T18:35:08Z", SC.DATETIME_ISO8601).toISO8601(), "2010-09-17T18:35:08+00:00");
 });

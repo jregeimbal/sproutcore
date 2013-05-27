@@ -33,9 +33,9 @@
 //   }}}
 //   
 //   The default format are:
-//   - formatTime: '%I:%M %p',
+//   - formatTime: '%i:%M %p',
 //   - formatDate: '%d/%m/%Y',
-//   - formatDateTime: '%d/%m/%Y %I:%M %p',
+//   - formatDateTime: '%d/%m/%Y %i:%M %p',
 //   
 //   Example usage with special format:
 // 
@@ -66,9 +66,9 @@
 //   showTime: NO,
 //   
 //   // Default formats to choose depending of the behaviour.
-//   formatTime: '%I:%M %p',
+//   formatTime: '%i:%M %p',
 //   formatDate: '%d/%m/%Y',
-//   formatDateTime: '%d/%m/%Y %I:%M %p',
+//   formatDateTime: '%d/%m/%Y %i:%M %p',
 //   
 //   // DateTime constants (with fixed width, like numbers or abbs with fixed length)
 //   // original: '%a %A %b %B %c %d %h %H %i %I %j %m %M %p %S %U %W %x %X %y %Y %Z %%'.w(),

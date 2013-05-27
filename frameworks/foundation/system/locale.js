@@ -267,36 +267,7 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
   
   @property {Hash}
 */
-SC.Locale.locales = {
-  en: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['English'] }),
-  fr: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['French'] }),
-  de: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['German'] }),
-  ja: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
-  es: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Spanish'] }),
-  cs: SC.Locale.extend({ strings: {} }),
-  da: SC.Locale.extend({ strings: {} }),
-  et: SC.Locale.extend({ strings: {} }),
-  fi: SC.Locale.extend({ strings: {} }),
-  hu: SC.Locale.extend({ strings: {} }),
-  id: SC.Locale.extend({ strings: {} }),
-  it: SC.Locale.extend({ strings: {} }),
-  ko: SC.Locale.extend({ strings: {} }),
-  nl: SC.Locale.extend({ strings: {} }),
-  no: SC.Locale.extend({ strings: {} }),
-  pl: SC.Locale.extend({ strings: {} }),
-  pt: SC.Locale.extend({ strings: {} }),
-  ru: SC.Locale.extend({ strings: {} }),
-  sv: SC.Locale.extend({ strings: {} }),
-  tr: SC.Locale.extend({ strings: {} }),
-  zh: SC.Locale.extend({ strings: {} })
-} ;
-
-SC.Locale.locales['en-us'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['fr-ca'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['pt-br'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['zh-cn'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['zh-tw'] = SC.Locale.extend({ strings: {} });
-
+SC.Locale.locales = {} ;
 
 /**
   This special helper will store the strings you pass in the locale matching

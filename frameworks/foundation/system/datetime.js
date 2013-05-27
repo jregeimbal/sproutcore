@@ -1,3 +1,5 @@
+sc_require('system/supported_locales');
+
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2011 Strobe Inc. and contributors.
@@ -333,6 +335,33 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     return this.constructor._toFormattedString(SC.DATETIME_ISO8601, this._ms, this.timezone);
   },
   
+  /**
+    Formats the receiver using the current locale's short date format.
+    
+    @return {String} the short date string
+  */
+  toShortDateString: function(){
+    return this.constructor._toFormattedString(SC.Locale.currentLocale.formats.shortDate, this._ms, this.timezone);
+  },
+   
+  /**
+    Formats the receiver using the current locale's short date/short time format.
+    
+    @return {String} the short date/short time string
+  */
+  toShortDateShortTimeString: function(){
+    return this.constructor._toFormattedString(SC.Locale.currentLocale.formats.shortDateShortTime, this._ms, this.timezone);
+  },
+  
+  /**
+    Formats the receiver using the current locale's short time format.
+    
+    @return {String} the short time string
+  */
+  toShortTimeString: function(){
+    return this.constructor._toFormattedString(SC.Locale.currentLocale.formats.shortTime, this._ms, this.timezone);
+  },
+   
   /** @private
     Creates a string representation of the receiver.
     (Debuggers call all the time the toString method. Because of the way
@@ -410,15 +439,7 @@ SC.DateTime.mixin(SC.Comparable,
     @type {String}
   */
   recordFormat: SC.DATETIME_ISO8601,
-  
-  /**
-    The localized day names. Add the key '_SC.DateTime.dayNames' and its value
-    to your strings.js file to add support for another language than English.
 
-    @property
-    @type {Array}
-  */
-  dayNames: "_SC.DateTime.dayNames".loc().w(),
   
   /** @private
     The English day names used for the 'lastMonday',
@@ -428,36 +449,6 @@ SC.DateTime.mixin(SC.Comparable,
     @type {Array}
   */
   _englishDayNames: 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.w(),
-  
-  /**
-    The localized abbreviated day names. Add the key
-    '_SC.DateTime.abbreviatedDayNames' and its value to your strings.js
-    file to add support for another language than English.
-
-    @property
-    @type {Array}
-  */
-  abbreviatedDayNames: "_SC.DateTime.abbreviatedDayNames".loc().w(),
-
-  /**
-    The localized month names. Add the key '_SC.DateTime.monthNames' and its
-    value to your strings.js file to add support for another language than
-    English.
-
-    @property
-    @type {Array}
-  */
-  monthNames: "_SC.DateTime.monthNames".loc().w(),
-
-  /**
-    The localized abbreviated month names. Add the key
-    '_SC.DateTime.abbreviatedMonthNames' and its value to your strings.js
-    file to add support for another language than English.
-
-    @property
-    @type {Array}
-  */
-  abbreviatedMonthNames: "_SC.DateTime.abbreviatedMonthNames".loc().w(),
   
   /** @private
     The unique internal Date object used to make computations. Better
@@ -893,7 +884,7 @@ SC.DateTime.mixin(SC.Comparable,
   parse: function(str, fmt) {
     // Declared as an object not a literal since in some browsers the literal
     // retains state across function calls
-    var re = new RegExp('(?:%([aAbBcdHIjmMpSUWwxXyYZ%])|(.))', "g");
+    var re = new RegExp('(?:%([aAbBcdhHiIjmMpSUWwxXyYZ%])|(.))', "g");
     var d, parts, opts = {}, check = {}, scanner = SC.Scanner.create({string: str});
     
     if (SC.none(fmt)) fmt = SC.DATETIME_ISO8601;
@@ -901,18 +892,20 @@ SC.DateTime.mixin(SC.Comparable,
     try {
       while ((parts = re.exec(fmt)) !== null) {
         switch(parts[1]) {
-          case 'a': check.dayOfWeek = scanner.scanArray(this.abbreviatedDayNames); break;
-          case 'A': check.dayOfWeek = scanner.scanArray(this.dayNames); break;
-          case 'b': opts.month = scanner.scanArray(this.abbreviatedMonthNames) + 1; break;
-          case 'B': opts.month = scanner.scanArray(this.monthNames) + 1; break;
+          case 'a': check.dayOfWeek = scanner.scanArray(SC.Locale.currentLocale.abbreviatedDayNames); break;
+          case 'A': check.dayOfWeek = scanner.scanArray(SC.Locale.currentLocale.dayNames); break;
+          case 'b': opts.month = scanner.scanArray(SC.Locale.currentLocale.abbreviatedMonthNames) + 1; break;
+          case 'B': opts.month = scanner.scanArray(SC.Locale.currentLocale.monthNames) + 1; break;
           case 'c': throw "%c is not implemented";
           case 'd': opts.day = scanner.scanInt(1, 2); break;
+          case 'h': opts.hour = scanner.scanInt(1, 2); break;
           case 'H': opts.hour = scanner.scanInt(1, 2); break;
+          case 'i': opts.hour = scanner.scanInt(1, 2); break;
           case 'I': opts.hour = scanner.scanInt(1, 2); break;
           case 'j': throw "%j is not implemented";
           case 'm': opts.month = scanner.scanInt(1, 2); break;
           case 'M': opts.minute = scanner.scanInt(1, 2); break;
-          case 'p': opts.meridian = scanner.scanArray(['AM', 'PM']); break;
+          case 'p': opts.meridian = scanner.scanArray([SC.Locale.currentLocale.amDesignator, SC.Locale.currentLocale.pmDesignator]); break;
           case 'S': opts.second = scanner.scanInt(1, 2); break;
           case 'U': throw "%U is not implemented";
           case 'W': throw "%W is not implemented";
@@ -985,10 +978,10 @@ SC.DateTime.mixin(SC.Comparable,
     // set up the appropriate internal date/time/timezone state for it.
     
     switch(part[1]) {
-      case 'a': return this.abbreviatedDayNames[this._get('dayOfWeek')];
-      case 'A': return this.dayNames[this._get('dayOfWeek')];
-      case 'b': return this.abbreviatedMonthNames[this._get('month')-1];
-      case 'B': return this.monthNames[this._get('month')-1];
+      case 'a': return SC.Locale.currentLocale.abbreviatedDayNames[this._get('dayOfWeek')];
+      case 'A': return SC.Locale.currentLocale.dayNames[this._get('dayOfWeek')];
+      case 'b': return SC.Locale.currentLocale.abbreviatedMonthNames[this._get('month')-1];
+      case 'B': return SC.Locale.currentLocale.monthNames[this._get('month')-1];
       case 'c': return this._date.toString();
       case 'd': return this._pad(this._get('day'));
       case 'D': return this._get('day');
@@ -1003,7 +996,7 @@ SC.DateTime.mixin(SC.Comparable,
       case 'j': return this._pad(this._get('dayOfYear'), 3);
       case 'm': return this._pad(this._get('month'));
       case 'M': return this._pad(this._get('minute'));
-      case 'p': return this._get('hour') > 11 ? 'PM' : 'AM';
+      case 'p': return this._get('hour') > 11 ? SC.Locale.currentLocale.pmDesignator : SC.Locale.currentLocale.amDesignator;
       case 'S': return this._pad(this._get('second'));
       case 'u': return this._pad(this._get('utc')); //utc
       case 'U': return this._pad(this._get('week0'));
@@ -1033,7 +1026,7 @@ SC.DateTime.mixin(SC.Comparable,
     // need to move into local time zone for these calculations
     this._setCalcState(start - (timezone * 60000), 0); // so simulate a shifted 'UTC' time
 
-    return format.replace(/\%([aAbBcdDHiIjmMpSUWwxXyYZ\%])/g, function() {
+    return format.replace(/\%([aAbBcdDhHiIjmMpSUWwxXyYZ\%])/g, function() {
       var v = that.__toFormattedString.call(that, arguments, start, timezone);
       return v;
     });

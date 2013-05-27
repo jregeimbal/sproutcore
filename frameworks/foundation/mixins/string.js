@@ -5,7 +5,7 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-sc_require('system/locale');
+sc_require('system/supported_locales');
 
 // These are basic enhancements to the string class used throughout 
 // SproutCore.
