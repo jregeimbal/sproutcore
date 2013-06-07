@@ -428,7 +428,7 @@ SC.RootResponder = SC.Object.extend({
     // HACK: If the target is a ResponderContext, forward the action.
     if (target && target.isResponderContext) {
       return !!target.sendAction(action, sender, context);
-    } else return target && target.tryToPerform(action, sender);
+    } else return target && target.tryToPerform && target.tryToPerform(action, sender);
   },
 
   _responderFor: function(target, methodName) {
