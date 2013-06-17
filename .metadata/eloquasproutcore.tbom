@@ -21,21 +21,6 @@
       <exclude source="apps/welcome/%v.lproj/strings.js"/>
     </extract>
 
-    <!-- strings.js files
-         NOTE: translatable strings.js must be listed one by one if it is located in "english.lproj"
-    -->
-    <file source="frameworks/core_tools/english.lproj/strings.js"
-          target="frameworks/core_tools/%v.lproj/strings.js"
-          file-type="jsolit-sprout-core"/>
-    <file source="frameworks/desktop/english.lproj/strings.js"
-          target="frameworks/desktop/%v.lproj/strings.js"
-          file-type="jsolit-sprout-core"/>
-    <file source="frameworks/foundation/english.lproj/strings.js"
-          target="frameworks/foundation/%v.lproj/strings.js"
-          file-type="jsolit-sprout-core"/>
-    <file source="themes/iphone_theme/english.lproj/strings.js"
-          target="themes/iphone_theme/%v.lproj/strings.js"
-          file-type="jsolit-sprout-core"/>
   </file-set>
   
 </translation>
