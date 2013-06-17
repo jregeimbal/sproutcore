@@ -132,3 +132,48 @@ test("Locale.extend() : Should make sure important properties of Locale object a
 	//Result should be true as the new lacales added to the list of default locales
 	equals(SC.Locale.locales.mn.options().strings.test,'te') ;
 });
+
+test("locale inheritance", function () {
+ 
+  // setup in frameworks/sproutcore/.../locale.js
+  SC.Locale.locales['qq'] = SC.Locale.extend({ strings: {} });
+  SC.Locale.locales['qq-us'] = SC.Locale.locales['qq'].extend();
+  SC.Locale.locales['qq-ca'] = SC.Locale.locales['qq'].extend();
+  // ...and other cultures...
+ 
+ // setup in qq.lproj/strings.js
+  SC.stringsFor('qq', { 'hello': 'quvonno' });
+
+  // setup in frameworks/sproutcore/.../locale_codegen.js
+  SC.stringsFor('qq-us', { 'date format': 'mm/dd/yyyy' });
+  SC.stringsFor('qq-ca', { 'date format': 'dd/mm/yyyy' });
+  // ...and other cultures...
+ 
+  // pretend we loaded the app in language qq
+  SC.Locale.currentLanguage = SC.Locale.currentLocale = null;
+  String.preferredLanguage = 'qq';
+  SC.Locale.createCurrentLocale();
+ 
+  equals(SC.Locale.currentLocale.language, 'qq');
+  equals('hello'.loc(), 'quvonno');
+  equals('date format'.loc(), 'date format', "'qq' shouldn't have a date format");
+  
+  // pretend we loaded the app in culture qq-ca
+  SC.Locale.currentLanguage = SC.Locale.currentLocale = null;
+  String.preferredLanguage = 'qq-ca';
+  SC.Locale.createCurrentLocale();
+ 
+  equals(SC.Locale.currentLocale.language, 'qq-ca');
+  equals('hello'.loc(), 'quvonno');
+  equals('date format'.loc(), 'dd/mm/yyyy', "'qq-ca' should have the canadian date format");
+ 
+  // pretend we loaded the app in culture qq-us
+  SC.Locale.currentLanguage = SC.Locale.currentLocale = null;
+  String.preferredLanguage = 'qq-us';
+  SC.Locale.createCurrentLocale();
+ 
+  equals(SC.Locale.currentLocale.language, 'qq-us');
+  equals('hello'.loc(), 'quvonno');
+  equals('date format'.loc(), 'mm/dd/yyyy', "'qq-us' should have the u.s. date format");
+ 
+});
