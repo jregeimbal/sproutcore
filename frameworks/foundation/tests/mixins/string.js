@@ -67,8 +67,8 @@ test("Localize a string", function() {
 });
 
 test("Localize a string even if localized version is empty", function() {
-  equals("empty".loc(), "");
-  equals("empty".locWithDefault("Empty"), "");
+  equals("empty".loc(), "empty");
+  equals("empty".locWithDefault("Empty"), "Empty");
 });
 
 test("Localize a string that isn't there with override", function() {
