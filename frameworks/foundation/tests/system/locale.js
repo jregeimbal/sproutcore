@@ -175,5 +175,11 @@ test("locale inheritance", function () {
   equals(SC.Locale.currentLocale.language, 'qq-us');
   equals('hello'.loc(), 'quvonno');
   equals('date format'.loc(), 'mm/dd/yyyy', "'qq-us' should have the u.s. date format");
+
+  SC.stringsFor('qq-us', { 'hello': 'qq hello'});
+  equals('hello'.loc(), 'qq hello', 'strings in child locale should override strings in the parent');
+
+  SC.stringsFor('qq', { '_goodbye': 'goodbye'});
+  equals('_goodbye'.loc(), 'goodbye', 'if string is not found in child, look in parent');
  
 });

@@ -85,8 +85,10 @@ SC.Locale = SC.Object.extend({
   */
   locWithDefault: function(string, def) {
     var ret, lookupVal;
-    if(!ret) ret = this.strings[string];
-    
+    ret = this.strings[string];
+    if(!ret && this.prototype && this.prototype.parentLocale) {
+      ret = this.prototype.parentLocale.locWithDefault(string, def);
+    }
     lookupVal = (ret === null || ret === undefined) ? string : ret;
     
     if(window.OverRide && window.OverRide[lookupVal]) ret = window.OverRide[lookupVal]; 
@@ -138,6 +140,7 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     if (lang != this.currentLanguage) {
       this.currentLanguage = lang ; // save language
       this.currentLocale = klass.create(); // setup locale
+      this.currentLocale.prototype = klass;
     }
     return this.currentLocale ;
   },
@@ -207,16 +210,8 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     @returns {Object} receiver
   */
   addStrings: function(stringsHash) {
-    // make sure the target strings hash exists and belongs to the locale
-    var strings = this.prototype.strings ;
-    if (strings) {
-      if (!this.prototype.hasOwnProperty('strings')) {
-        strings = SC.clone(strings) ;
-      }
-    } else strings = this.prototype.strings = {} ;
-    
     // add strings hash
-    if (stringsHash)  this.prototype.strings = SC.mixin(strings, stringsHash) ;
+    if (stringsHash)  this.prototype.strings = stringsHash;
     this.prototype.hasStrings = YES ;
     return this;
   },
@@ -255,6 +250,7 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     ret.define = SC.Locale.define ;
     ret.options = SC.Locale.options ;
     ret.toString = SC.Locale.toString ;
+    ret.parentLocale = this.prototype;
     return ret ;
   }
     
