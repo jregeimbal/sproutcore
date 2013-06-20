@@ -181,5 +181,6 @@ test("locale inheritance", function () {
 
   SC.stringsFor('qq', { '_goodbye': 'goodbye'});
   equals('_goodbye'.loc(), 'goodbye', 'if string is not found in child, look in parent');
+  equals('date format'.loc(), 'mm/dd/yyyy', 'stringsFor can be called more than once');
  
 });

@@ -210,8 +210,12 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     @returns {Object} receiver
   */
   addStrings: function(stringsHash) {
-    // add strings hash
-    if (stringsHash)  this.prototype.strings = stringsHash;
+    var strings;
+    if (this.prototype.hasOwnProperty('strings')) {
+      strings = this.prototype.strings;
+      this.prototype.strings = SC.mixin(strings, stringsHash);
+    }
+    else this.prototype.strings = stringsHash;
     this.prototype.hasStrings = YES ;
     return this;
   },
