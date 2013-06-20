@@ -86,7 +86,7 @@ SC.Locale = SC.Object.extend({
   locWithDefault: function(string, def) {
     var ret, lookupVal;
     ret = this.strings[string];
-    if(!ret && this.prototype && this.prototype.parentLocale) {
+    if(!ret && ret !== "" && this.prototype && this.prototype.parentLocale) {
       ret = this.prototype.parentLocale.locWithDefault(string, def);
     }
     lookupVal = (ret === null || ret === undefined) ? string : ret;
@@ -268,34 +268,34 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
   @property {Hash}
 */
 SC.Locale.locales = {
-  en: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['English'] }),
-  fr: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['French'] }),
-  de: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['German'] }),
-  ja: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
-  es: SC.Locale.extend({ strings: {}, _deprecatedLanguageCodes: ['Spanish'] }),
-  cs: SC.Locale.extend({ strings: {} }),
-  da: SC.Locale.extend({ strings: {} }),
-  et: SC.Locale.extend({ strings: {} }),
-  fi: SC.Locale.extend({ strings: {} }),
-  hu: SC.Locale.extend({ strings: {} }),
-  id: SC.Locale.extend({ strings: {} }),
-  it: SC.Locale.extend({ strings: {} }),
-  ko: SC.Locale.extend({ strings: {} }),
-  nl: SC.Locale.extend({ strings: {} }),
-  no: SC.Locale.extend({ strings: {} }),
-  pl: SC.Locale.extend({ strings: {} }),
-  pt: SC.Locale.extend({ strings: {} }),
-  ru: SC.Locale.extend({ strings: {} }),
-  sv: SC.Locale.extend({ strings: {} }),
-  tr: SC.Locale.extend({ strings: {} }),
-  zh: SC.Locale.extend({ strings: {} })
+  en: SC.Locale.extend({ _deprecatedLanguageCodes: ['English'] }),
+  fr: SC.Locale.extend({ _deprecatedLanguageCodes: ['French'] }),
+  de: SC.Locale.extend({ _deprecatedLanguageCodes: ['German'] }),
+  ja: SC.Locale.extend({ _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
+  es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] }),
+  cs: SC.Locale.extend({ }),
+  da: SC.Locale.extend({ }),
+  et: SC.Locale.extend({ }),
+  fi: SC.Locale.extend({ }),
+  hu: SC.Locale.extend({ }),
+  id: SC.Locale.extend({ }),
+  it: SC.Locale.extend({ }),
+  ko: SC.Locale.extend({ }),
+  nl: SC.Locale.extend({ }),
+  no: SC.Locale.extend({ }),
+  pl: SC.Locale.extend({ }),
+  pt: SC.Locale.extend({ }),
+  ru: SC.Locale.extend({ }),
+  sv: SC.Locale.extend({ }),
+  tr: SC.Locale.extend({ }),
+  zh: SC.Locale.extend({ })
 } ;
 
-SC.Locale.locales['en-us'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['fr-ca'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['pt-br'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['zh-cn'] = SC.Locale.extend({ strings: {} });
-SC.Locale.locales['zh-tw'] = SC.Locale.extend({ strings: {} });
+SC.Locale.locales['en-us'] = SC.Locale.extend({ });
+SC.Locale.locales['fr-ca'] = SC.Locale.extend({ });
+SC.Locale.locales['pt-br'] = SC.Locale.extend({ });
+SC.Locale.locales['zh-cn'] = SC.Locale.extend({ });
+SC.Locale.locales['zh-tw'] = SC.Locale.extend({ });
 
 
 /**
