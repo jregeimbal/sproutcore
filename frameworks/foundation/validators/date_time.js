@@ -20,7 +20,7 @@ SC.Validator.DateTime = SC.Validator.extend({
   /**
     The standard format you want the validator to convert dates to.
   */
-  format: '%d/%m/%Y',
+  format: '%d/%m/%Y', // FIXME i18n?
 
   /**
     if we have a number, then convert to a date object.
