@@ -15,6 +15,7 @@
     <extract filter="Wildcard" pattern="**/%v.lproj/strings.js" file-type="jsolit-sprout-core">
       <directory source="."/>
       <!-- exclude non-translatable strings.js files; DO NOT OMIT %v -->
+      <exclude source="frameworks/foundation/languages/%v.lproj/strings.js"/>
       <exclude source="apps/docs/%v.lproj/strings.js"/>
       <exclude source="apps/greenhouse/%v.lproj/strings.js"/>
       <exclude source="apps/tests/%v.lproj/strings.js"/>
