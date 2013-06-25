@@ -222,7 +222,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     
     // walk up the responder chain looking for a method to handle the event
     if (!target) target = this.get('firstResponder') ;
-    while(target && !target.tryToPerform(action, evt)) {
+    while(target && target.tryToPerform && !target.tryToPerform(action, evt)) {
 
       // even if someone tries to fill in the nextResponder on the pane, stop
       // searching when we hit the pane.
@@ -236,7 +236,7 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
       }
 
       if (!target) target = null;
-      else target = target.tryToPerform(action, evt) ? target : null ;
+      else target = target.tryToPerform && target.tryToPerform(action, evt) ? target : null ;
     }
 
     // if we don't have a default responder or no responders in the responder
