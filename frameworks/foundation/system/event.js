@@ -504,7 +504,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
       event.data = event.context = handler[2];
 
       target = handler[0] || this ;
-      ret = method.apply( target, args );
+      ret = (method && !!method.apply) ? method.apply( target, args ) : NO;
       
       if (val !== NO) val = ret;
 
