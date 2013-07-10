@@ -220,7 +220,7 @@ SC.PickerPane = SC.PalettePane.extend({
         preferMatrix = this.get('preferMatrix'),
         layout       = this.get('layout'),
         origin;
-    
+
     // usually an anchorElement will be passed.  The ideal position is just 
     // below the anchor + default or custom offset according to preferType.
     // If that is not possible, fitPositionToScreen will take care of that for 

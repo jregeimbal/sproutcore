@@ -459,6 +459,22 @@ SC.mixin( /** @scope SC */ {
     return result;
   },
 
+  /**
+    Given an array of strings, will return the dimensions of the largest string
+  */
+  maxMetricsForStrings: function(strings, exampleElement, classNames, ignoreEscape) {
+    var str, metrics, max = { height: 0, width: 0 };
+    SC.prepareStringMeasurement(exampleElement, classNames);
+    for(var i = 0, len = strings.length; i<len;i++) {
+      if(!ignoreEscape) str = SC.RenderContext.escapeHTML(strings[i]);
+      metrics = SC.measureString(str.loc());
+      if (metrics.length > max.length) max.length = metrics.length;
+      if (metrics.width > max.width) max.width = metrics.width;
+    }
+    SC.teardownStringMeasurement();
+    return max;
+  },
+
   /** Finds the absolute viewportOffset for a given element.
     This method is more accurate than the version provided by prototype.
     
