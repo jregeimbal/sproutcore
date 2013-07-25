@@ -404,7 +404,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     @return {String} the formatted string
   */
   toISO8601: function(){
-    return this.constructor._toFormattedString(SC.DATETIME_ISO8601, this._ms, this.timezone);
+    return this._ms + " - " + this.constructor._toFormattedString(SC.DATETIME_ISO8601, this._ms, this.timezone);
   },
   
   /** @private
