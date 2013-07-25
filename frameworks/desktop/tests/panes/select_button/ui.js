@@ -98,7 +98,11 @@ var pane = SC.ControlTestPane.design()
       sortKey: 'pos',
       checkboxEnabled: NO,
       emptyName: 'Fred'
-    }) ;
+    })
+    .add("IgnoreCase",SC.SelectButtonView, {
+       objects: ['None', 'Low', 'Medium', 'High'],
+       ignoreCase: true
+    });
     pane.show();
 
 // ..........................................................
@@ -234,4 +238,15 @@ test("EmptyName", function() {
   // itemList has emptyName first regardless of sort
   equals(view.get('itemList')[0].title, 'Fred','First item in list should be "Fred", the emptyName out of sort') ;
   equals(view.get('itemList')[3].title, 'None','Fourth item in list should be "None" sorted as before') ;
+});
+
+test("IgnoreCase", function () {
+  var view = pane.view('IgnoreCase');
+
+  SC.RunLoop.begin();
+  view.set('value','None');
+  view.set('value','low');
+  SC.RunLoop.end();
+
+  equals(view.$('.sc-button-label').html(),'Low','Setting a different case still matches correct value');
 });

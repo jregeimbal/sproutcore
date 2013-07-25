@@ -325,7 +325,9 @@ SC.SelectButtonView = SC.ButtonView.extend(
     set this to YES if the user can select the emptyName option and clear the value
   */
   canDeleteValue: NO,
-  
+
+  ignoreCase: NO,
+
   /**
     Left Alignment based on the size of the button
 
@@ -377,7 +379,9 @@ SC.SelectButtonView = SC.ButtonView.extend(
     sc_super();
     var layoutWidth, objects, len, nameKey, iconKey, valueKey, checkboxEnabled,
       currentSelectedVal, shouldLocalize, separatorPostion, itemList, isChecked,
-      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName,itemAction,itemActionKey ;
+      idx, name, icon, value, item, itemEnabled, isEnabledKey, emptyName,
+      itemAction,itemActionKey,currentValue, self = this;
+
     layoutWidth = this.layout.width ;
     if(firstTime && layoutWidth) {
       this.adjust({ width: layoutWidth + 2 }) ;
@@ -394,6 +398,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
     valueKey = this.get('valueKey') ;
     isEnabledKey = this.get('isEnabledKey') ;
     checkboxEnabled = this.get('checkboxEnabled') ;
+    currentValue = this.get('value');
 
     //get the current selected value
     currentSelectedVal = this.get('value') ;
@@ -419,7 +424,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
       icon = null;
       value = "***";
       itemEnabled = this.get('canDeleteValue');
-      if (SC.none(this.get('value'))) {
+      if (SC.none(currentValue)) {
         this.set('itemIdx', idx);
         this.set('title', name) ;
         this.set('icon', icon) ;
@@ -463,7 +468,7 @@ SC.SelectButtonView = SC.ButtonView.extend(
         // get the value using the valueKey or the object
         value = (valueKey) ? (object.get ? object.get(valueKey) : object[valueKey]) : object ;
 
-        if (!SC.none(currentSelectedVal) && !SC.none(value) && currentSelectedVal === value ) {
+        if (!SC.none(currentSelectedVal) && !SC.none(value) && self._equalValues(currentSelectedVal,value) ) {
           this.set('title', name) ;
           this.set('icon', icon) ;
         }
@@ -473,7 +478,8 @@ SC.SelectButtonView = SC.ButtonView.extend(
         }
 
         //Check if the item is currentSelectedItem or not
-        if(value === this.get('value')) {
+
+        if(self._equalValues(value, currentValue)) {
           //set the itemIdx - To change the prefMatrix accordingly.
           this.set('itemIdx', idx) ;
           isChecked = !checkboxEnabled ? NO : YES ;
@@ -539,6 +545,18 @@ SC.SelectButtonView = SC.ButtonView.extend(
     //Set the preference matrix for the menu pane
     this.changeSelectButtonPreferMatrix(this.itemIdx) ;
 
+  },
+
+  _equalValues: function (a,b) {
+    var ignoreCase = this.get('ignoreCase');
+
+    if (a === b) { return true; }
+
+    if (ignoreCase && !SC.none(a) && !SC.none(b) && !!a.toLowerCase && !!b.toLowerCase) {
+      return a.toLowerCase() === b.toLowerCase();
+    }
+
+    return false;
   },
 
   /**
