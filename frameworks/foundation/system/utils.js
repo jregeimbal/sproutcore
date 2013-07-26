@@ -464,10 +464,12 @@ SC.mixin( /** @scope SC */ {
   */
   maxMetricsForStrings: function(strings, exampleElement, classNames, ignoreEscape) {
     var str, metrics, max = { height: 0, width: 0 };
+    metrics = max;
     SC.prepareStringMeasurement(exampleElement, classNames);
     for(var i = 0, len = strings.length; i<len;i++) {
       if(!ignoreEscape) str = SC.RenderContext.escapeHTML(strings[i]);
-      metrics = SC.measureString(str.loc());
+      else str = strings[i];
+      if (SC.typeOf(str) === SC.T_STRING) metrics = SC.measureString(str.loc());
       if (metrics.length > max.length) max.length = metrics.length;
       if (metrics.width > max.width) max.width = metrics.width;
     }
