@@ -470,6 +470,8 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         if (!attrs.hasOwnProperty(key)) continue ;
         value = attrs[key];
         if (value === null) continue ; // skip empty attrs
+        // safety-check double-quotes - this was an XSS attack waiting to happen...
+        value = value.replace(/\"/g,'&quot;');
         tag.push(key, '="', value, '" ');
       }
       

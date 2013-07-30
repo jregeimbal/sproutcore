@@ -49,6 +49,12 @@ test("should write arbitrary attrs has in opts", function() {
   ok(context.get(0).match(/bar=\"baz\"/), 'has bar="baz"');
 });
 
+test("should write arbitrary attrs with quotes values in opts", function() {
+  context.attr({ foo: "\"bar", bar: "ba\"z\"" }).end();
+  ok(context.get(0).match(/foo=\"&quot;bar\"/), 'has foo=""bar"');
+  ok(context.get(0).match(/bar=\"ba&quot;z&quot;\"/), 'has bar="ba"z""');
+});
+
 test("classNames should override attrs.class", function() {
   context.classNames("foo".w()).attr({ "class": "bar" }).end();
   ok(context.get(0).match(/class=\"foo\"/), 'has class="foo"');
