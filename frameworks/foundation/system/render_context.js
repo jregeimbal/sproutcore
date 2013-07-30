@@ -471,7 +471,7 @@ SC.RenderContext = SC.Builder.create(/** SC.RenderContext.fn */ {
         value = attrs[key];
         if (value === null) continue ; // skip empty attrs
         // safety-check double-quotes - this was an XSS attack waiting to happen...
-        value = value.replace(/\"/g,'&quot;');
+        value = SC.typeOf(value) === SC.T_STRING ? value.replace(/\"/g,'&quot;') : value;
         tag.push(key, '="', value, '" ');
       }
       
