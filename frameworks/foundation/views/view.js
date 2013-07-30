@@ -2565,7 +2565,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
         ret.marginLeft = Math.floor(lcX - ret.width/2) ;
       }else {
         // This error message happens whenever width is not set.
-        console.warn("You have to set width and centerX usign both percentages or pixels");
+        console.warn("You have to set width and centerX usign both percentages or pixels", this);
         ret.marginLeft = "50%";
       }
       ret.right = null ;
@@ -2644,7 +2644,7 @@ SC.View = SC.Responder.extend(SC.DelegateSupport,
       }else if(lH && lH >= 1 && !SC.isPercentage(lcY)){
         ret.marginTop = Math.floor(lcY - ret.height/2) ;
       }else {
-        console.warn("You have to set height and centerY to use both percentages or pixels");
+        console.warn("You have to set height and centerY to use both percentages or pixels", this);
         ret.marginTop = "50%";
       }
     } else if (!SC.none(lH)) {
