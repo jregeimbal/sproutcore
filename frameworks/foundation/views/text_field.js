@@ -970,6 +970,14 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
 
     if (which === 27) return NO ;
 
+console.warn('which', which,'isActionable',this.get('isActionable'), SC.allowsBackspaceToPreviousPage);
+    if (which === 8 && !this.get('isActionable')) {
+      console.log('blocking backspace...');
+      // backspace in a disabled text field isn't caught by root responder, so default action (allowsBackspaceToPreviousPage) can occur
+      // evt.preventDefault();
+      return NO;
+    }
+
     // handle tab key
     if (which === 9) {
       view = evt.shiftKey ? this.get('previousValidKeyView') : this.get('nextValidKeyView');
