@@ -1579,6 +1579,7 @@ SC.RootResponder = SC.Object.extend({
   keypress: function(evt) {
     var ret,
         keyCode   = evt.keyCode,
+        target = evt.target || evt.srcElement,
         isFirefox = !!SC.browser.mozilla;
 
     // delete is handled in keydown() for most browsers
@@ -1586,6 +1587,10 @@ SC.RootResponder = SC.Object.extend({
       //get the keycode and set it for which.
       evt.which = keyCode;
       ret = this.sendEvent('keyDown', evt);
+      // HACK: [JS] ret is coming back null when nobody handles the keyDown, resulting in a return value of YES from here
+      // and thus allowsBackspaceToPreviousPage is ignored.  Also, why does keyDown check target===body and this one did not?
+      if (!ret && target === document.body) ret = true;
+
       return ret ? (SC.allowsBackspaceToPreviousPage || evt.hasCustomEventHandling) : YES ;
 
     // normal processing.  send keyDown for printable keys...
