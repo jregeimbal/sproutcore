@@ -1722,6 +1722,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     // otherwise, make new status READY_DIRTY unless new.
     // K.READY_CLEAN, K.READY_DIRTY, ignore K.READY_NEW
     } else {
+      console.log('dirty', recordType, id, key);
       if (status != K.READY_NEW) this.writeStatus(storeKey, K.READY_DIRTY);
     }
     
