@@ -470,7 +470,7 @@ SC.mixin( /** @scope SC */ {
       if(!ignoreEscape) str = SC.RenderContext.escapeHTML(strings[i]);
       else str = strings[i];
       if (SC.typeOf(str) === SC.T_STRING) metrics = SC.measureString(str.loc());
-      if (metrics.length > max.length) max.length = metrics.length;
+      if (metrics.height > max.height) max.height = metrics.height;
       if (metrics.width > max.width) max.width = metrics.width;
     }
     SC.teardownStringMeasurement();
