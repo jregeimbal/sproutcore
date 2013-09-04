@@ -110,3 +110,7 @@ SC.Locale.locales['zh-tw'] = SC.Locale.locales['zh-cht'].extend();
 SC.Locale.locales['zh-hk'] = SC.Locale.locales['zh-cht'].extend();
 SC.Locale.locales['zh-mo'] = SC.Locale.locales['zh-cht'].extend();
 SC.Locale.locales['pt-br'] = SC.Locale.extend();
+SC.Locale.locales['et'] = SC.Locale.extend();
+SC.Locale.locales['et-ee'] = SC.Locale.locales['et'].extend();
+SC.Locale.locales['id'] = SC.Locale.extend();
+SC.Locale.locales['id-id'] = SC.Locale.locales['id'].extend();
