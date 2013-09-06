@@ -274,8 +274,9 @@ SC.ButtonView = SC.View.extend(SC.Control, SC.Button, SC.StaticLayout,
       context.attr('title', toolTip) ;
       context.attr('alt', toolTip) ;
     } else {
-      context.attr('title', '') ;
-      context.attr('alt', '') ;
+      toolTip = SC.RenderContext.escapeHTML(this.get('displayTitle'));
+      context.attr('title', toolTip) ;
+      context.attr('alt', toolTip) ;
     }
     
     // add some standard attributes & classes.

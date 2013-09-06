@@ -319,6 +319,7 @@ SC.LabelView = SC.View.extend(SC.Control,
         
     if(firstTime || textChanged || iconChanged){
       context.push(icon, text);
+      context.attr({title: text});
     }
     
     // and setup alignment and font-weight on styles
