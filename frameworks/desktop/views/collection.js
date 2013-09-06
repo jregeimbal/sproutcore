@@ -2222,6 +2222,7 @@ SC.CollectionView = SC.View.extend(
         content       = this.get('content'),
         contentIndex, sel, isSelected, canEdit, itemView, idx,
         editOnDelayedClick = this.get('editOnDelayedClick'),
+        triggerBegin = false,
         allowsMultipleSel = content ? content.get('allowsMultipleSelection') : NO;
         
     if (this.get('useToggleSelection')) {
@@ -2293,8 +2294,9 @@ SC.CollectionView = SC.View.extend(
         // - the item view responds to beginEditing and returns YES.
         if (canEdit) {
           itemView = this.itemViewForContentIndex(idx) ;
-          canEdit = itemView && (!itemView.contentHitTest || itemView.contentHitTest(ev)) ;
-          canEdit = (canEdit && itemView.beginEditing) ? itemView.beginEditing(ev) : NO ;
+
+          canEdit = !!itemView && (!itemView.contentHitTest || !!itemView.contentHitTest(ev)) ;
+          triggerBegin = canEdit && !!itemView.beginEditing;
         }
         
         // if cannot edit, schedule a reselect (but give doubleClick a chance)
@@ -2309,7 +2311,13 @@ SC.CollectionView = SC.View.extend(
 
     // handle actions on editing
     this._cv_performSelectAction(view, ev, 0, ev.clickCount);
-    
+
+    // beginEditing should be the last thing performed during the mouseup event.
+    if (triggerBegin) {
+      this.invokeLast(function () {
+        itemView.beginEditing(ev);
+      });
+    }
     return NO;  // bubble event to allow didDoubleClick to be called...
   },
   
