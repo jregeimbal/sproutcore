@@ -400,6 +400,7 @@ SC.ListItemView = SC.View.extend(
   */
   renderLabel: function(context, label) {
     context.push('<label>', label || '', '</label>') ;
+    context.attr({title: label || ''});
   },
   
   /**
