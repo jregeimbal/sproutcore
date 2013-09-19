@@ -776,6 +776,7 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     
     return this;
   },
+
   /**
     Resets the store content.  This will clear all internal data for all
     records, resetting them to an EMPTY state.  You generally do not want
@@ -784,29 +785,37 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
     @returns {SC.Store} receiver
   */
   reset: function() {
-    
-    // create a new empty data store
-    this.dataHashes = {} ;
-    this.revisions  = {} ;
-    this.statuses   = {} ;
+    // Reset the main data structures.
+    this.dataHashes = {};
+    this.revisions = {};
+    this.statuses = {};
+    this.childRecords = {};
+    this.parentRecords = {};
 
-    // also reset temporary objects and errors
-    this.chainedChanges = this.locks = this.editables = null;
-    this.changelog = null ;
+    // Also reset temporary objects and errors.
+    this.chainedChanges = null;
+    this.locks = null;
+    this.editables = null;
+    this.changelog = null;
     this.recordErrors = null;
     this.queryErrors = null;
 
+    // Notify any currently instantiated records that they've changed (destroyed).
     var records = this.records, storeKey;
+
     if (records) {
-      for(storeKey in records) {
-        if (!records.hasOwnProperty(storeKey)) continue ;
+      for (storeKey in records) {
+        if (!records.hasOwnProperty(storeKey)) continue;
         this._notifyRecordPropertyChange(parseInt(storeKey, 10), NO);
       }
     }
-    
+
+    // Remove all cached instantiated records.
+    this.records = {};
+
     this.set('hasChanges', NO);
   },
-  
+
   /** @private
     Called by a nested store on a parent store to commit any changes from the
     store. This will copy any changed dataHashes as well as any persistant 

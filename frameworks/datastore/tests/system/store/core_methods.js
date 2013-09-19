@@ -142,6 +142,22 @@ test("Make sure that setting an attribute on a record will only notify respectiv
 
 });
 
+test("Verify reset() clears what it's supposed to", function() {
+  var sk = store.find(Application.File, '14').get('storeKey');
+
+  // Pre-reset validation.
+  ok(store.dataHashes[sk], "Data hash exists prior to reset");
+  ok(store.statuses[sk], "Status exists prior to reset");
+  ok(store.records[sk], "Cached instance exists prior to reset");
+
+  // Do the reset, which should clear all relevant data structures.
+  store.reset();
+
+  // Post-reset validation.
+  ok(!store.dataHashes[sk], "Data hash should no longer exist after reset");
+  ok(!store.statuses[sk], "Status should no longer exist after reset");
+  ok(!store.records[sk], "Cached instance should no longer exist after reset");
+});
 
 // test("Calling replaceIdFor() should notify the record that its id has changed", function() {
 //   
