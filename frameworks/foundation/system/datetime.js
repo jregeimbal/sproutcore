@@ -1126,7 +1126,7 @@ SC.DateTime.mixin(SC.Comparable,
     // adjust DateTime Instances to hour 0
     var ma = a.adjust({ hour: 0 });
     mb = mb.adjust({ hour: 0 });
-    var ret = ma < mb ? -1 : ma === mb ? 0 : 1;
+    var ret = this.compare(ma, mb);
     return ret;
   }
   
