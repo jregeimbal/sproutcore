@@ -43,7 +43,7 @@ module("SC.TabView", {
 });
 
 test("Check that all segmentedViews are visible", function() {
-   ok(true, 'hello');
+  ok(view.get('isVisibleInWindow'), 'tabView1.isVisibleInWindow should be YES');
  });
 
 

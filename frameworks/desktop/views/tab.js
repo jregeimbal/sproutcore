@@ -132,7 +132,13 @@ SC.TabView = SC.View.extend(
   */
   userDefaultKey: null,
   
+  /**
+    This value is passed down to the contained SegmentedView as autoAdjustHeight.  If YES, then the segmented view will increase its height when the labels don't fit on a single row,
+    and the TabView will adjust accordingly to make sure they are displayed.
+  */
   
+  autoAdjustTabHeight: YES,
+
   // ..........................................................
   // FORWARDING PROPERTIES
   // 
@@ -205,9 +211,10 @@ SC.TabView = SC.View.extend(
              { height: tabHeight, left: 0, right: 0, top: 0 } :
              { height: tabHeight, left: 0, right: 0, bottom: 0 } ;
 
+    var that = this;
     this.segmentedView = this.get('segmentedView').extend({
       layout: layout,
-
+      autoAdjustHeight: SC.Binding.oneWay('autoAdjustTabHeight', that),
       /** @private
         When the value changes, update the parentView's value as well.
       */
@@ -221,6 +228,19 @@ SC.TabView = SC.View.extend(
         this.set('layerNeedsUpdate', YES) ;
         this.invokeOnce(this.updateLayerIfNeeded) ;
       }.observes('value'),
+
+      _sc_tab_segmented_heightDidChange: function() {
+        console.log('_sc_tab_segmented_height');
+        if (this.getPath('layout.height') > tabHeight) {0
+          if (tabLocation === SC.TOP_LOCATION || tabLocation === SC.TOP_TOOLBAR_LOCATION) {
+            var top = tabLocation === SC.TOP_LOCATION ? tabHeight + tabHeight/2 + 1 :  tabHeight*2 + 1;
+            this.get('parentView').containerView.adjust('top', top);
+          } else {
+            var bottom = tabHeight*2 -1 ;
+            this.get('parentView').containerView.adjust('bottom', bottom);
+          }
+        }
+      }.observes('items','*layout.height'),
 
       init: function() {
         // before we setup the rest of the view, copy key config properties 
