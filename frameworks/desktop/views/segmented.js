@@ -87,6 +87,12 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   */
   layoutDirection: SC.LAYOUT_HORIZONTAL,
   
+  /**
+    If YES, when the total width of the items is long enough to force items to a new line, the height will auto-adjust to meet it.  note that views that are next
+    to this view need to be aware that the height is increasing and adapt accordingly, including SC.TabView
+  */
+  autoAdjustHeight: NO,
+  
   // ..........................................................
   // SEGMENT DEFINITION
   //
@@ -244,9 +250,24 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       ret[ret.length] = cur;
     }
     
+    if (this.get('autoAdjustHeight') && this.get('layer')) {
+      if (!this._originalHeight) this._originalHeight = this.get('layout').height;
+      var width = this.$().width();
+      var maxWidth = 0;
+      ret.forEach(function(cur) {
+        if (cur && cur[0]) {
+          var itemWidthGuess = SC.metricsForString(cur[0], 'sc-segment').width;
+          maxWidth += itemWidthGuess;
+        }
+      });
+      if (maxWidth > width) {
+        this.adjust('height', this._originalHeight*2);
+      }
+    }
+    
     // all done, return!
     return ret ;
-  }.property('items', 'itemTitleKey', 'itemValueKey', 'itemIsEnabledKey', 'localize', 'itemIconKey', 'itemWidthKey', 'itemToolTipKey'),
+  }.property('items', 'itemTitleKey', 'itemValueKey', 'itemIsEnabledKey', 'localize', 'itemIconKey', 'itemWidthKey', 'itemToolTipKey', 'autoAdjustHeight', 'layer'),
   
   /** If the items array itself changes, add/remove observer on item... */
   itemsDidChange: function() { 
@@ -340,7 +361,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       classArray = [];
 
       if (this.get('layoutDirection') === SC.LAYOUT_HORIZONTAL) {
-        stylesHash['display'] = 'inline-block' ;
+        stylesHash.display = 'inline-block' ;
       }
 
       classArray.push('sc-segment');
@@ -365,7 +386,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       }
       if(item[4]){
         width=item[4];
-        stylesHash['width'] = width+'px';
+        stylesHash.width = width+'px';
       }
       ic.addClass(classArray);
       ic.addStyle(stylesHash);

@@ -110,6 +110,11 @@ var pane;
       allowsEmptySelection: YES,
       allowsMultipleSelection: YES,
       layout: { height: 25 }
+    })
+    .add("3_items,changeHeight", SC.SegmentedView, {
+      items: [ "really long tab1","even longer and more annoying tab2", "tab3" ],
+      layout: { height: 25 },
+      autoAdjustHeight: YES
     });
     
   pane.show(); // add a test to show the test pane
@@ -133,6 +138,7 @@ var pane;
     ok(pane.view('3_items,2_sel,multipleSel').get('isVisibleInWindow'), '3_items,2_sel,multipleSel.isVisibleInWindow should be YES');
     ok(pane.view('3_items,1_sel,emptySel,multiSel').get('isVisibleInWindow'), '3_items,1_sel,emptySel,multiSel.isVisibleInWindow should be YES');
     ok(pane.view('3_items,2_sel,emptySel,multiSel').get('isVisibleInWindow'), '3_items,2_sel,emptySel,multiSel.isVisibleInWindow should be YES');
+    ok(pane.view('3_items,changeHeight').get('isVisibleInWindow'), '3_items,changeHeight.isVisibleInWindow should be YES');
   });
   
   
@@ -229,4 +235,12 @@ var pane;
     equals(segments[0].title, 'Item1', 'first segment has title as tool tip assigned.');
   });
   
+  test("3_items,changeHeight can be seen...", function() {
+    var segments=pane.view('3_items,changeHeight').$('a');
+    equals(pane.view('3_items,changeHeight').get('layout').height, 50, 'height should be adjusted to 50 for not fitting in one row');
+    pane.view('3_items,changeHeight').notifyPropertyChange('items');
+    SC.RunLoop.begin().end();
+    equals(pane.view('3_items,changeHeight').get('layout').height, 50, 'height should still be adjusted to 50 for not fitting in one row');
+  });
+
 })();
