@@ -371,6 +371,8 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       ic.addStyle(stylesHash);
       if(toolTip) {
         ic.attr('title', toolTip) ;
+      } else if (title) {
+        ic.attr('title', title);
       }
 
       if (icon) {
