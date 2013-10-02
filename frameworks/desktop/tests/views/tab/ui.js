@@ -69,6 +69,19 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
       itemTitleKey: 'title',
       itemValueKey: 'value',
       layout: { left:12, height: 200, right:12, top:12}
+    })
+    .add("tabView5", SC.TabView, { 
+      nowShowing: 'tab1',
+      tabLocation: SC.TOP_LOCATION,
+      items: [
+        { title: "really long tab1", value: "tab1" },
+        { title: "even longer and more annoying tab2", value: "tab2" },
+        { title: "tab3", value: "tab3" }
+      ],
+    
+      itemTitleKey: 'title',
+      itemValueKey: 'value',
+      layout: { left:12, height: 200, right:12, top:12}
     });
     
   pane.show(); // add a test to show the test pane
@@ -96,10 +109,14 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
      ok(views[1].childNodes.length===3, 'tabView1 should have 3 options');
    });
   
-  test("Check that the nowShowing initial tab is still selected", function() {
+  test("Check that tabs and contentView are adjusted when the tabs don't fit on one line", function() {
     equals(pane.view('tabView4').get('nowShowing'), 'tab1', 'tab1 of tabView4 should be nowShowing');
     ok(pane.view('tabView4').segmentedView.get('autoAdjustHeight'), 'autoAdjustHeight should have been passed in as true via binding');
     equals(pane.view('tabView4').containerView.getPath('layout.top'), SC.REGULAR_BUTTON_HEIGHT*2+1, 'containerView should adjust top to meet height');
+
+    equals(pane.view('tabView5').get('nowShowing'), 'tab1', 'tab1 of tabView4 should be nowShowing');
+    ok(pane.view('tabView5').segmentedView.get('autoAdjustHeight'), 'autoAdjustHeight should have been passed in as true via binding');
+    equals(pane.view('tabView5').containerView.getPath('layout.top'), (SC.REGULAR_BUTTON_HEIGHT*1.5)+1, 'containerView should adjust top to meet height');
   });
 
 })();

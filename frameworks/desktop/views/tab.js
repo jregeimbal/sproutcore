@@ -239,6 +239,8 @@ SC.TabView = SC.View.extend(
             var bottom = tabHeight*2 -1 ;
             this.get('parentView').containerView.adjust('bottom', bottom);
           }
+          this.set('layerNeedsUpdate', YES) ;
+          this.invokeOnce(this.updateLayerIfNeeded) ;
         }
       }.observes('items','*layout.height'),
 
