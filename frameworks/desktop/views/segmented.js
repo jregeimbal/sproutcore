@@ -351,7 +351,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
         classArray;
 
     for(i=0; i< len; i++){
-      ic = context.begin('a').attr('role', 'button');
+      ic = context.begin('a').attr('role', 'button').attr('id', 'sc-segment-' + len);
       item=items[i];
       title = item[0]; 
       icon = item[3];
@@ -439,15 +439,19 @@ SC.SegmentedView = SC.View.extend(SC.Control,
       // get its rectangle
       r = segment.getBoundingClientRect();
       
+      // and test if click is within it - same for vertical vs horizontal orientation because the whole box should be considered given multi-line possibilities
+      if (pageX > r.left && pageX < r.right && pageY > r.top && pageY < r.bottom) return idx;
+      
+      // the old way.  in the future, this should really be an evt-based call entirely...
       // based on orientation, check the position left-to-right or up-to-down.
-      if (this.get('layoutDirection') === SC.LAYOUT_VERTICAL) {
-        // if it fits, return it right away
-        if (pageY > r.top && pageY < r.bottom) return idx;
-      }
-      else {
-        // if it fits, return it right away.
-        if (pageX > r.left && pageX < r.right) return idx;
-      }
+      // if (this.get('layoutDirection') === SC.LAYOUT_VERTICAL) {
+      //   // if it fits, return it right away
+      //   if (pageY > r.top && pageY < r.bottom) return isx;
+      // }
+      // else {
+      //   // if it fits, return it right away.
+      //   if (pageX > r.left && pageX < r.right && ) return idx;
+      // }
     }
     
     // if we didn't find anything, return the old standard -1 for "not found."
