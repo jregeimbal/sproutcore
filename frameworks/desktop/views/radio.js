@@ -208,7 +208,8 @@ SC.RadioView = SC.View.extend(SC.Control,
                     'aria-checked="', sel ? 'true':'false','" ',
                     'role="radio"' , ' index="', idx,'">',
                     '<span class="button"></span>',
-                    '<span class="sc-button-label">', 
+                    '<span class="sc-button-label"',
+                    ' title="',labelText, '">', 
                     icon, labelText, '</span></div>');
       }
 

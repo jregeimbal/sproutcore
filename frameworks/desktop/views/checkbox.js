@@ -50,6 +50,7 @@ SC.CheckboxView = SC.ButtonView.extend(SC.StaticLayout, SC.Button,
       }else{
         context.push('<span class="label">', dt, '</span>');  
       }
+      context.attr({title: dt});
       context.attr('name', guid);
 
     // since we don't want to regenerate the contents each time 
