@@ -1117,7 +1117,8 @@ String.prototype.w = function() {
   @returns {Boolean} true
 **/
 String.prototype.containsString = function (needle,strictMatch) {
-  var haystack = this, needle = String(needle), needles, ret;
+  var haystack = this, needles, ret;
+  needle = String(needle);
 
   if (strictMatch) return haystack.indexOf(needle) >= 0;
   
@@ -1131,6 +1132,41 @@ String.prototype.containsString = function (needle,strictMatch) {
   return ret;
 };
 
+/**
+  Replaces a string inside of the string. Accepts a string or regex.
+  Regexes with ignoreCase true but strictMatch=true will be reset to
+  be strict.
+
+  CAVEAT: This is a little slower than straight regexp,
+  but it takes care of weird escaping for you and also some
+  strange behavior across browsers supporting 'g' and 'i' in regex
+  when using in conjunction with String.replace();
+
+  @param needle {String|RegExp}
+  @param rep {String}
+  @param strictMatch {Boolean} optional
+
+  @returns {String}
+**/
+String.prototype.replaceAll = function (needle, rep, strictMatch) {
+  var haystack = this, idx, len, needleE, needleR, ret, resetR;
+
+  if (typeof(needle) === 'string') {
+    // escape problematic things
+    // http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+    needleE = needle.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    needleR = new RegExp(needleE, strictMatch?'':'i');
+  } else {
+    // make sure strict matching is correct
+    resetR = (!!strictMatch && !!needle.source && needle.ignoreCase===true);
+    needleR = resetR ? new RegExp(needle.source) : needle;
+  }
+
+  ret = haystack.split(needleR).join(rep);
+
+  return ret;
+};
+
 //
 // DATE ENHANCEMENT
 //
@@ -1139,4 +1175,3 @@ if (!Date.now) {
     return new Date().getTime() ;
   };
 }
-  
