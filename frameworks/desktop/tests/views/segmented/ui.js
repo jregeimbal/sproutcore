@@ -110,6 +110,15 @@ var pane;
       allowsEmptySelection: YES,
       allowsMultipleSelection: YES,
       layout: { height: 25 }
+    })
+    .add("3_items,longstrings,nocompress", SC.SegmentedView, {
+      items: [ "really long tab1","even longer and more annoying tab2", "tab3" ],
+      layout: { height: 25 }
+    })
+    .add("3_items,longstrings,compress", SC.SegmentedView, {
+      items: [ "really long tab1","even longer and more annoying tab2", "tab3" ],
+      layout: { height: 25 },
+      maxTitleLength: 15
     });
     
   pane.show(); // add a test to show the test pane
@@ -133,6 +142,8 @@ var pane;
     ok(pane.view('3_items,2_sel,multipleSel').get('isVisibleInWindow'), '3_items,2_sel,multipleSel.isVisibleInWindow should be YES');
     ok(pane.view('3_items,1_sel,emptySel,multiSel').get('isVisibleInWindow'), '3_items,1_sel,emptySel,multiSel.isVisibleInWindow should be YES');
     ok(pane.view('3_items,2_sel,emptySel,multiSel').get('isVisibleInWindow'), '3_items,2_sel,emptySel,multiSel.isVisibleInWindow should be YES');
+    ok(pane.view('3_items,longstrings,nocompress').get('isVisibleInWindow'), '3_items,longstrings,nocompress.isVisibleInWindow should be YES');
+    ok(pane.view('3_items,longstrings,compress').get('isVisibleInWindow'), '3_items,longstrings,compress.isVisibleInWindow should be YES');
   });
   
   
@@ -228,5 +239,18 @@ var pane;
     var segments=pane.view('3_items,1_sel').$('a');
     equals(segments[0].title, 'Item1', 'first segment has title as tool tip assigned.');
   });
-  
+
+  test("3_items,longstrings,nocompress and 3_items,longstrings,compress react correctly", function() {
+    var segments=pane.view('3_items,longstrings,nocompress').$('a');
+    equals(segments[0].childNodes[0].childNodes[0].childNodes[0].data,"Really Long Tab1", 'first segment has expected text.');
+    equals(segments[1].childNodes[0].childNodes[0].childNodes[0].data,"Even Longer And More Annoying Tab2", 'second segment has expected text.');
+    equals(segments[2].childNodes[0].childNodes[0].childNodes[0].data,"Tab3", 'third segment has expected text.');
+
+    segments=pane.view('3_items,longstrings,compress').$('a');
+    equals(segments[0].childNodes[0].childNodes[0].childNodes[0].data,"Really Long Tab1", 'first segment (right on the edge, 16 char of max 15) has expected text intact');
+    equals(segments[1].childNodes[0].childNodes[0].childNodes[0].data,"Even Longer And...", 'second segment has expected truncated text.');
+    equals(segments[1].title,"Even Longer And More Annoying Tab2", 'second segment has expected full text as title.');
+    equals(segments[2].childNodes[0].childNodes[0].childNodes[0].data,"Tab3", 'third segment has expected indact text.');
+  });
+
 })();

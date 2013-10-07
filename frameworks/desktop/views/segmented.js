@@ -190,6 +190,12 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   itemKeys: 'itemTitleKey itemValueKey itemIsEnabledKey itemIconKey itemWidthKey itemToolTipKey'.w(),
   
   /**
+    If set, strings longer than this will be truncated with ..., with their tooltip set to the full length.
+  */
+  // FIXME: [SC][JS] attempts to do this in a more dynamic way have failed utterly and I just don't have the time to argue with it anymore.
+  maxTitleLength: null,
+  
+  /**
     This computed property is generated from the items array based on the 
     itemKey properties that you set.  The return value is an array of arrays
     that contain private information used by the SegmentedView to render. 
@@ -279,7 +285,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
   // RENDERING/DISPLAY SUPPORT
   // 
   
-  displayProperties: ['displayItems', 'value', 'activeIndex'],
+  displayProperties: ['displayItems', 'value', 'activeIndex', 'maxTitleLength'],
   
   
   render: function(context, firstTime) { 
@@ -325,6 +331,7 @@ SC.SegmentedView = SC.View.extend(SC.Control,
     var value       = this.get('value'),
         isArray     = SC.isArray(value),
         activeIndex = this.get('activeIndex'),
+        maxTitleLength = this.get('maxTitleLength'),
         len         = items.length,
         title, icon, url, className, ic, item, toolTip, width, i, stylesHash,
         classArray;
@@ -373,6 +380,10 @@ SC.SegmentedView = SC.View.extend(SC.Control,
         ic.attr('title', toolTip) ;
       } else if (title) {
         ic.attr('title', title);
+      }
+
+      if (maxTitleLength && title && title.length > maxTitleLength+1) {
+        title = title.substr(0, maxTitleLength) + '...';// "&hellip;"; -- can't use that because in the font we are using, it takes up more space than ... does WTF???
       }
 
       if (icon) {

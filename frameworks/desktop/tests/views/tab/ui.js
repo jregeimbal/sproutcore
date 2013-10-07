@@ -29,22 +29,23 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
       itemIconKey: 'icon',
       layout: { left:12, height: 200, right:12, top:12 }
       
-  })
+    })
   
-  .add("tabView2", SC.TabView, { 
-    nowShowing: 'tab3',
-
-    items: [
-      { title: "tab1", value: "tab1" },
-      { title: "tab2", value: "tab2" },
-      { title: "tab3", value: "tab3" }
-    ],
+    .add("tabView2", SC.TabView, { 
+      nowShowing: 'tab3',
+  
+      items: [
+        { title: "tab1", value: "tab1" },
+        { title: "tab2", value: "tab2" },
+        { title: "tab3", value: "tab3" }
+      ],
     
-    itemTitleKey: 'title',
-    itemValueKey: 'value',
-    layout: { left:12, height: 200, right:12, top:12 }
+      itemTitleKey: 'title',
+      itemValueKey: 'value',
+      layout: { left:12, height: 200, right:12, top:12 }
     
     })
+  
     .add("tabView3", SC.TabView, { 
       
       items: [
@@ -53,6 +54,20 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
         { title: "tab3", value: "tab3" }
       ],
       
+      itemTitleKey: 'title',
+      itemValueKey: 'value',
+      layout: { left:12, height: 200, right:12, top:12}
+    })
+
+    .add("tabView4", SC.TabView, { 
+
+      items: [
+        { title: "really long tab1", value: "tab1" },
+        { title: "even longer and more annoying tab2", value: "tab2" },
+        { title: "tab3", value: "tab3" }
+      ],
+      maxTitleLength: 15,
+
       itemTitleKey: 'title',
       itemValueKey: 'value',
       layout: { left:12, height: 200, right:12, top:12}
@@ -69,6 +84,7 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
     ok(pane.view('tabView1').get('isVisibleInWindow'), 'tabView1.isVisibleInWindow should be YES');
     ok(pane.view('tabView2').get('isVisibleInWindow'), 'tabView2.isVisibleInWindow should be YES');
     ok(pane.view('tabView3').get('isVisibleInWindow'), 'tabView3.isVisibleInWindow should be YES');
+    ok(pane.view('tabView4').get('isVisibleInWindow'), 'tabView4.isVisibleInWindow should be YES');
    });
    
    
@@ -84,5 +100,11 @@ htmlbody('<style> .sc-static-layout { border: 1px red dotted; } </style>');
 
    });
   
+  test("Check that the tabView's segmentView has applied the maxTitleLength", function() {
+    equals(pane.view('tabView4').get('maxTitleLength'), 15);
+    equals(pane.view('tabView4').segmentedView.get('maxTitleLength'), 15);
+    equals(pane.view('tabView4').segmentedView.$('a')[1].childNodes[0].childNodes[0].childNodes[0].data,"even longer and...", 'second segment has expected truncated text.');
+    equals(pane.view('tabView4').segmentedView.$('a')[1].title,"even longer and more annoying tab2", 'second segment has expected full text as title.');
+  });
 
 })();

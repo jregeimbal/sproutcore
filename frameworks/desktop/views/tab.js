@@ -132,6 +132,11 @@ SC.TabView = SC.View.extend(
   */
   userDefaultKey: null,
   
+  /**
+    If set, strings longer than this will be truncated with ..., with their tooltip set to the full length.
+  */
+  // FIXME: [SC][JS] attempts to do this in a more dynamic way have failed utterly and I just don't have the time to argue with it anymore.
+  maxTitleLength: null,
   
   // ..........................................................
   // FORWARDING PROPERTIES
@@ -142,7 +147,7 @@ SC.TabView = SC.View.extend(
     var v = this.get('nowShowing');
     this.get('containerView').set('nowShowing',v);
     this.get('segmentedView').set('value',v);
-    return this ;
+    return this;
   }.observes('nowShowing'),
 
   _tab_saveUserDefault: function() {
@@ -156,15 +161,20 @@ SC.TabView = SC.View.extend(
   
   _tab_itemsDidChange: function() {
     this.get('segmentedView').set('items', this.get('items'));
-    return this ;    
+    return this;
   }.observes('items'),
+
+  _tab_maxTitleLengthDidChange: function() {
+    this.get('segmentedView').set('maxTitleLength', this.get('maxTitleLength'));
+    return this;
+  }.observes('maxTitleLength'),
 
   /** @private
     Restore userDefault key if set.
   */
   init: function() {
     sc_super();
-    this._tab_nowShowingDidChange()._tab_itemsDidChange();
+    this._tab_nowShowingDidChange()._tab_maxTitleLengthDidChange()._tab_itemsDidChange();
   },
 
   awake: function() {
