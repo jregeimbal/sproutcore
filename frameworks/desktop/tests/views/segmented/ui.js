@@ -219,8 +219,14 @@ var pane;
   
   test("2_items,toolTip has toolTips assigned.", function() {
     var segments=pane.view('2_items,toolTip').$('a');
-    ok((segments[0].title=="this is title1's tip"), 'first segment has expected tool tip assigned.');
-    ok((segments[1].title=="this is title2's tip"), 'second segment has expected tool tip assigned.');
+    equals(segments[0].title,"this is title1's tip", 'first segment has expected tool tip assigned.');
+    equals(segments[1].title,"this is title2's tip", 'second segment has expected tool tip assigned.');
+  });
+
+
+  test("3_items,1_sel has title as toolTips assigned.", function() {
+    var segments=pane.view('3_items,1_sel').$('a');
+    equals(segments[0].title, 'Item1', 'first segment has title as tool tip assigned.');
   });
   
 })();
