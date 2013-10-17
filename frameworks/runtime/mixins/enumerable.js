@@ -1116,7 +1116,7 @@ Array.prototype.isEnumerable = YES ;
       return ret ;
     },
 
-    findProperty: function(key, value) {
+    findProperty: function(key, value) {      
       var len = this.length ;
       var next, cur, found=NO, ret=null;
       for(var idx=0;idx<len && !found;idx++) {
