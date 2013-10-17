@@ -156,7 +156,12 @@
 	height: 16px;
 	background: no-repeat sc_static('icons/shared') -32px -384px;
 }
-
+.sc-icon-info-16-padding {
+	width: 16px;
+	height: 16px;
+	padding-right: 10px;
+	background: no-repeat sc_static('icons/shared') -32px -384px;
+}
 .sc-icon-help-16 {
 	width: 16px;
 	height: 16px;
