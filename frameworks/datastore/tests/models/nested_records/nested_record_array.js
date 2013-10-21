@@ -397,6 +397,36 @@ test("Basic Array Functionality: removeAt and pushObject different type, repeate
   same(elementsAttrs[3], crLast, "verify that parent attributes are the same as the last individual child attributes (2)");
 });
 
+test("Basic Array Functionality: removeObject and removeObjects", function() {
+  var elements = testParent.get('elements'), allElements = [];
+
+  // Stick all elements in a temporary array.
+  elements.forEach(function(element) {
+    allElements.push(element);
+  });
+
+  // Remove one object from the array.
+  var cr = allElements.objectAt(0), crId = cr.get('id');
+  elements.removeObject(cr);
+  allElements.removeObject(cr);
+
+  equals(elements.get('length'), 3, 'after removeObject(), length should be reduced by 1');
+
+  // Sometimes _records exists and sometimes it doesn't; dependent on runloop voodoo. :-\
+  if (elements._records) {
+    ok(elements._records[0].get('id') !== crId, 'after removeObject(), record should no longer be in records cache');
+  }
+
+  // Remove multiple objects from the array.
+  elements.removeObjects(allElements);
+  equals(elements.get('length'), 0, 'after removeObjects(), length should be 0');
+
+  // Again, see above re: _records.
+  if (elements._records) {
+    equals(elements._records.length, 0, 'after removeObjects(), all cached records should be removed as well');
+  }
+});
+
 test("Basic Array Functionality: shiftObject", function() {   
   var elements, cr;
   // Add something to the array

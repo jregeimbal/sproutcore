@@ -130,14 +130,22 @@ SC.NestedArray = SC.Object.extend(SC.Enumerable, SC.Array,
       len = recs ? (recs.get ? recs.get('length') : recs.length) : 0,
       parent = this.get('record'),
       pname = this.get('propertyName'),
-      newRecs, cr, recordType, i, limit = idx + amt;
+      limit = idx + amt,
+      cachedRecs = this._records || [],
+      newRecs, cr, recordType, i;
 
     newRecs = this._processRecordsToHashes(recs);
 
-    // If removing records, unregister them from the parent path cache.
+    // If removing records, unregister them from the parent path cache and
+    // remove any cached record instances.
     if (amt) {
       for (i = idx; i < limit; ++i) {
         parent.unregisterNestedRecord('%@.%@'.fmt(pname, i));
+
+        // Yes, the cache is cleared in _contentDidChange() as well, but we do it here for
+        // individual records because we want the changes in the cache to be reflected in the same
+        // runloop as this method was invoked.
+        if (cachedRecs[i]) cachedRecs[i] = null;
       }
     }
 
@@ -154,6 +162,8 @@ SC.NestedArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
     // Notify that the record did change.
     parent.recordDidChange(pname);
+
+    // Also force a _contentDidChange call, because sometimes 
 
     return this;
   },
