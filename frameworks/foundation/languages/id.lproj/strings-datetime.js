@@ -26,6 +26,8 @@ SC.stringsFor('id', {
   '_SC.DateTime.shortDateLongTimePattern': '%-m/%-d/%Y %i:%M:%S %p',
   '_SC.DateTime.longDateShortTimePattern': '%A, %B %d, %Y %i:%M %p',
   '_SC.DateTime.longDateLongTimePattern': '%A, %B %d, %Y %i:%M:%S %p',
+  '_SC.Decimal.percentPositivePattern': '%@1 %',
+  '_SC.Decimal.percentNegativePattern': '-%@1 %',
 });
 
 // Indonesian (Indonesia)
