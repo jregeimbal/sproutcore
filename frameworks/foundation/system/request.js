@@ -360,8 +360,10 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     else if (timeout === 0) {
       throw "The timeout value must either not be specified or must be greater than 0";
     }
-    
-    if (body) this.set('body', body);
+
+    // NOTE: [SE] Handling the case in which the body is explicitly an empty string.
+    if (body || body === "") this.set('body', body);
+
     return SC.Request.manager.sendRequest(this.copy()._prep());
   },
 
