@@ -220,6 +220,7 @@ SC.LabelView = SC.View.extend(SC.Control,
       exampleElement: el,
       value: value, 
       multiline: this.get('isInlineEditorMultiline'), 
+      escapeHTML: this.get('escapeHTML'),
       isCollection: NO,
       validator: this.get('validator'),
       exampleInlineTextFieldView: this.get('exampleInlineTextFieldView')
