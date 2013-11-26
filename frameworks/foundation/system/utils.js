@@ -316,7 +316,7 @@ SC.mixin( /** @scope SC */ {
   prepareStringMeasurement: function(exampleElement, classNames) {
     var element = this._metricsCalculationElement, classes, styles, style,
         cqElem;
-    
+        
     // collect the class names
     classes = SC.A(classNames).join(' ');
     
@@ -383,7 +383,7 @@ SC.mixin( /** @scope SC */ {
       style = exampleElement;
       
       // set style
-      cqElem.attr("style", style + "; position:absolute; left: 0px; top: 0px; bottom: auto; right: auto; width: auto; height: auto;");
+      cqElem.attr("style", style + "; position:absolute; left: 0px; top: 0px; bottom: auto; right: auto; height: auto;");
     }
     
     element.className = classes;
@@ -428,7 +428,7 @@ SC.mixin( /** @scope SC */ {
     // the conclusion of which to use (innerText or textContent) should be cached
     if (typeof element.innerText != "undefined") element.innerText = string;
     else element.textContent = string;
-    
+
     // generate result
     var result = {
       width: element.clientWidth,
