@@ -108,6 +108,11 @@ SC.LabelView = SC.View.extend(SC.Control,
   isInlineEditorMultiline: NO,
   
   /**
+    internal property, only to be used for the tooltip
+  */
+  _unescapedValue: '',
+
+  /**
     [RO] The value that will actually be displayed.
     
     This property is dynamically computed by applying localization, 
@@ -145,6 +150,9 @@ SC.LabelView = SC.View.extend(SC.Control,
     
     // 4. Localize
     if (value && this.getDelegateProperty('localize', this.displayDelegate)) value = value.loc() ;
+
+    // 4.9 cache away non-escaped version for tooltip - being set by attr({title: valueString}) is xss safe
+    this.set('_unescapedValue', value);
 
     // 5. escapeHTML if needed
     if (this.get('escapeHTML')) value = SC.RenderContext.escapeHTML(value);
@@ -293,6 +301,7 @@ SC.LabelView = SC.View.extend(SC.Control,
   
   render: function(context, firstTime) {
     var value = this.get('displayValue'),
+        tooltip = this.get('_unescapedValue'),
         icon = this.get('icon'),
         hint = this.get('hintValue'),
         classes, stylesHash, text,
@@ -320,7 +329,7 @@ SC.LabelView = SC.View.extend(SC.Control,
         
     if(firstTime || textChanged || iconChanged){
       context.push(icon, text);
-      context.attr({title: text});
+      context.attr({title: tooltip});
     }
     
     // and setup alignment and font-weight on styles
