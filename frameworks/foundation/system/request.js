@@ -361,8 +361,9 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
       throw "The timeout value must either not be specified or must be greater than 0";
     }
 
-    // NOTE: [SE] Handling the case in which the body is explicitly an empty string.
-    if (body || body === "") this.set('body', body);
+    // NOTE: [SE] Because this request instance may be reused, explicitly set the body every time.
+    // If empty (or null/undefined), set to an empty string.
+    this.set('body', SC.empty(body) ? '' : body);
 
     return SC.Request.manager.sendRequest(this.copy()._prep());
   },
