@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Finnish
 SC.stringsFor('fi', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'sunnuntai maanantai tiistai keskiviikko torstai perjantai lauantai',
   '_SC.DateTime.abbreviatedDayNames': 'su ma ti ke to pe la',
   '_SC.DateTime.monthNames': 'tammikuu helmikuu maaliskuu huhtikuu toukokuu kesäkuu heinäkuu elokuu syyskuu lokakuu marraskuu joulukuu',

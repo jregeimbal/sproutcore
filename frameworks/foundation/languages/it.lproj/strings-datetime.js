@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Italian
 SC.stringsFor('it', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'domenica lunedì martedì mercoledì giovedì venerdì sabato',
   '_SC.DateTime.abbreviatedDayNames': 'dom lun mar mer gio ven sab',
   '_SC.DateTime.monthNames': 'gennaio febbraio marzo aprile maggio giugno luglio agosto settembre ottobre novembre dicembre',

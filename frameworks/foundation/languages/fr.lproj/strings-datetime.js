@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // French
 SC.stringsFor('fr', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'dimanche lundi mardi mercredi jeudi vendredi samedi',
   '_SC.DateTime.abbreviatedDayNames': 'dim. lun. mar. mer. jeu. ven. sam.',
   '_SC.DateTime.monthNames': 'janvier février mars avril mai juin juillet août septembre octobre novembre décembre',
@@ -44,6 +45,7 @@ SC.stringsFor('fr-be', {
 
 // French (Canada)
 SC.stringsFor('fr-ca', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.shortDatePattern': '%Y-%m-%d',
   '_SC.DateTime.shortDateLabel': 'YYYY-MM-DD',
   '_SC.DateTime.shortDateExample': '2013-07-13',

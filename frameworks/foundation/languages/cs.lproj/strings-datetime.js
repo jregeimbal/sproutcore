@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Czech
 SC.stringsFor('cs', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'neděle pondělí úterý středa čtvrtek pátek sobota',
   '_SC.DateTime.abbreviatedDayNames': 'ne po út st čt pá so',
   '_SC.DateTime.monthNames': 'leden únor březen duben květen červen červenec srpen září říjen listopad prosinec',

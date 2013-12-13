@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Norwegian
 SC.stringsFor('no', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'søndag mandag tirsdag onsdag torsdag fredag lørdag',
   '_SC.DateTime.abbreviatedDayNames': 'sø ma ti on to fr lø',
   '_SC.DateTime.monthNames': 'januar februar mars april mai juni juli august september oktober november desember',

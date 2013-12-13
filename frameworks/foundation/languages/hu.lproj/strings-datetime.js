@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Hungarian
 SC.stringsFor('hu', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'vasárnap hétfő kedd szerda csütörtök péntek szombat',
   '_SC.DateTime.abbreviatedDayNames': 'V H K Sze Cs P Szo',
   '_SC.DateTime.monthNames': 'január február március április május június július augusztus szeptember október november december',

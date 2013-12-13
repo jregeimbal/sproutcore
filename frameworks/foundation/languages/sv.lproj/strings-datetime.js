@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Swedish
 SC.stringsFor('sv', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'söndag måndag tisdag onsdag torsdag fredag lördag',
   '_SC.DateTime.abbreviatedDayNames': 'sö må ti on to fr lö',
   '_SC.DateTime.monthNames': 'januari februari mars april maj juni juli augusti september oktober november december',

@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Spanish
 SC.stringsFor('es', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'domingo lunes martes miércoles jueves viernes sábado',
   '_SC.DateTime.abbreviatedDayNames': 'dom lun mar mié jue vie sáb',
   '_SC.DateTime.monthNames': 'enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre',
@@ -33,6 +34,7 @@ SC.stringsFor('es', {
 
 // Spanish (Mexico)
 SC.stringsFor('es-mx', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -53,6 +55,7 @@ SC.stringsFor('es-es', {
 
 // Spanish (Guatemala)
 SC.stringsFor('es-gt', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -69,6 +72,7 @@ SC.stringsFor('es-gt', {
 
 // Spanish (Costa Rica)
 SC.stringsFor('es-cr', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -85,6 +89,7 @@ SC.stringsFor('es-cr', {
 
 // Spanish (Panama)
 SC.stringsFor('es-pa', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortDatePattern': '%m/%d/%Y',
@@ -104,6 +109,7 @@ SC.stringsFor('es-pa', {
 
 // Spanish (Dominican Republic)
 SC.stringsFor('es-do', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -120,6 +126,7 @@ SC.stringsFor('es-do', {
 
 // Spanish (Bolivarian Republic of Venezuela)
 SC.stringsFor('es-ve', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -136,6 +143,7 @@ SC.stringsFor('es-ve', {
 
 // Spanish (Colombia)
 SC.stringsFor('es-co', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -152,6 +160,7 @@ SC.stringsFor('es-co', {
 
 // Spanish (Peru)
 SC.stringsFor('es-pe', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -168,6 +177,7 @@ SC.stringsFor('es-pe', {
 
 // Spanish (Argentina)
 SC.stringsFor('es-ar', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -184,10 +194,12 @@ SC.stringsFor('es-ar', {
 
 // Spanish (Ecuador)
 SC.stringsFor('es-ec', {
+  '_SC.DateTime.firstDayOfWeek': '0',
 });
 
 // Spanish (Chile)
 SC.stringsFor('es-cl', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.shortDatePattern': '%d-%m-%Y',
   '_SC.DateTime.shortDateLabel': 'DD-MM-YYYY',
   '_SC.DateTime.shortDateExample': '13-07-2013',
@@ -231,6 +243,7 @@ SC.stringsFor('es-py', {
 
 // Spanish (Bolivia)
 SC.stringsFor('es-bo', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -247,6 +260,7 @@ SC.stringsFor('es-bo', {
 
 // Spanish (El Salvador)
 SC.stringsFor('es-sv', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -263,6 +277,7 @@ SC.stringsFor('es-sv', {
 
 // Spanish (Honduras)
 SC.stringsFor('es-hn', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -279,6 +294,7 @@ SC.stringsFor('es-hn', {
 
 // Spanish (Nicaragua)
 SC.stringsFor('es-ni', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -295,6 +311,7 @@ SC.stringsFor('es-ni', {
 
 // Spanish (Puerto Rico)
 SC.stringsFor('es-pr', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortTimePattern': '%I:%M %p',
@@ -311,6 +328,7 @@ SC.stringsFor('es-pr', {
 
 // Spanish (United States)
 SC.stringsFor('es-us', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.amDesignator': 'AM',
   '_SC.DateTime.pmDesignator': 'PM',
   '_SC.DateTime.shortDatePattern': '%-m/%-d/%Y',

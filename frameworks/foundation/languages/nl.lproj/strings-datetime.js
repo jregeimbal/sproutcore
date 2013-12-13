@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Dutch
 SC.stringsFor('nl', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'zondag maandag dinsdag woensdag donderdag vrijdag zaterdag',
   '_SC.DateTime.abbreviatedDayNames': 'zo ma di wo do vr za',
   '_SC.DateTime.monthNames': 'januari februari maart april mei juni juli augustus september oktober november december',

@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Russian
 SC.stringsFor('ru', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'воскресенье понедельник вторник среда четверг пятница суббота',
   '_SC.DateTime.abbreviatedDayNames': 'Вс Пн Вт Ср Чт Пт Сб',
   '_SC.DateTime.monthNames': 'Январь Февраль Март Апрель Май Июнь Июль Август Сентябрь Октябрь Ноябрь Декабрь',

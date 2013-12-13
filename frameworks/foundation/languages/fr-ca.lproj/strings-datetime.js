@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // French (Canada)
 SC.stringsFor('fr-ca', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.dayNames': 'dimanche lundi mardi mercredi jeudi vendredi samedi',
   '_SC.DateTime.abbreviatedDayNames': 'dim. lun. mar. mer. jeu. ven. sam.',
   '_SC.DateTime.monthNames': 'janvier février mars avril mai juin juillet août septembre octobre novembre décembre',

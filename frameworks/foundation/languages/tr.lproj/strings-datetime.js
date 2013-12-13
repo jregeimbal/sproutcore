@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Turkish
 SC.stringsFor('tr', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'Pazar Pazartesi Salı Çarşamba Perşembe Cuma Cumartesi',
   '_SC.DateTime.abbreviatedDayNames': 'Paz Pzt Sal Çar Per Cum Cmt',
   '_SC.DateTime.monthNames': 'Ocak Şubat Mart Nisan Mayıs Haziran Temmuz Ağustos Eylül Ekim Kasım Aralık',

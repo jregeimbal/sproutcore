@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Polish
 SC.stringsFor('pl', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.dayNames': 'niedziela poniedziałek wtorek środa czwartek piątek sobota',
   '_SC.DateTime.abbreviatedDayNames': 'N Pn Wt Śr Cz Pt So',
   '_SC.DateTime.monthNames': 'styczeń luty marzec kwiecień maj czerwiec lipiec sierpień wrzesień październik listopad grudzień',

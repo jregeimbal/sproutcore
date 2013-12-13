@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Portuguese (Brazil)
 SC.stringsFor('pt-br', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.dayNames': 'domingo segunda-feira terça-feira quarta-feira quinta-feira sexta-feira sábado',
   '_SC.DateTime.abbreviatedDayNames': 'dom seg ter qua qui sex sáb',
   '_SC.DateTime.monthNames': 'janeiro fevereiro março abril maio junho julho agosto setembro outubro novembro dezembro',

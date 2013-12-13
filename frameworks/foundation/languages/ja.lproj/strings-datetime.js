@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Japanese
 SC.stringsFor('ja', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.dayNames': '日曜日 月曜日 火曜日 水曜日 木曜日 金曜日 土曜日',
   '_SC.DateTime.abbreviatedDayNames': '日 月 火 水 木 金 土',
   '_SC.DateTime.monthNames': '1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月',

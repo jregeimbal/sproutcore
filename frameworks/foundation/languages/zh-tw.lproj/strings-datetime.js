@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // Chinese (Traditional, Taiwan)
 SC.stringsFor('zh-tw', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.dayNames': '星期日 星期一 星期二 星期三 星期四 星期五 星期六',
   '_SC.DateTime.abbreviatedDayNames': '週日 週一 週二 週三 週四 週五 週六',
   '_SC.DateTime.monthNames': '一月 二月 三月 四月 五月 六月 七月 八月 九月 十月 十一月 十二月',

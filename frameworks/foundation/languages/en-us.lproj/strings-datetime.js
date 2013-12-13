@@ -7,6 +7,7 @@ sc_require('system/locale_setup');
 
 // English (United States)
 SC.stringsFor('en-us', {
+  '_SC.DateTime.firstDayOfWeek': '0',
   '_SC.DateTime.dayNames': 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday',
   '_SC.DateTime.abbreviatedDayNames': 'Sun Mon Tue Wed Thu Fri Sat',
   '_SC.DateTime.monthNames': 'January February March April May June July August September October November December',
@@ -37,6 +38,7 @@ SC.stringsFor('en', {
 
 // English (United Kingdom)
 SC.stringsFor('en-gb', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%d/%m/%Y',
   '_SC.DateTime.shortDateLabel': 'DD/MM/YYYY',
   '_SC.DateTime.shortDateExample': '13/07/2013',
@@ -55,6 +57,7 @@ SC.stringsFor('en-gb', {
 
 // English (Australia)
 SC.stringsFor('en-au', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%-d/%m/%Y',
   '_SC.DateTime.shortDateLabel': 'DD/MM/YYYY',
   '_SC.DateTime.shortDateExample': '13/07/2013',
@@ -83,6 +86,7 @@ SC.stringsFor('en-ca', {
 
 // English (New Zealand)
 SC.stringsFor('en-nz', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortDatePattern': '%-d/%m/%Y',
@@ -101,6 +105,7 @@ SC.stringsFor('en-nz', {
 
 // English (Ireland)
 SC.stringsFor('en-ie', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.amDesignator': '',
   '_SC.DateTime.pmDesignator': '',
   '_SC.DateTime.shortDatePattern': '%d/%m/%Y',
@@ -156,6 +161,7 @@ SC.stringsFor('en-jm', {
 
 // English (Caribbean)
 SC.stringsFor('en-029', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%m/%d/%Y',
   '_SC.DateTime.shortDateExample': '07/13/2013',
   '_SC.DateTime.shortDateShortTimePattern': '%m/%d/%Y %i:%M %p',
@@ -207,6 +213,7 @@ SC.stringsFor('en-ph', {
 
 // English (India)
 SC.stringsFor('en-in', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%d-%m-%Y',
   '_SC.DateTime.shortDateLabel': 'DD-MM-YYYY',
   '_SC.DateTime.shortDateExample': '13-07-2013',
