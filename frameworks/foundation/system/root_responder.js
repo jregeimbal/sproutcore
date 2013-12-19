@@ -613,7 +613,7 @@ SC.RootResponder = SC.Object.extend({
     this.listenFor('touchstart touchmove touchend touchcancel'.w(), document);
 
     // handle basic events
-    this.listenFor('keydown keyup beforedeactivate mousedown mouseup click dblclick mousemove selectstart contextmenu'.w(), document)
+    this.listenFor('keydown keyup beforedeactivate mousedown mouseup click dblclick selectstart contextmenu'.w(), document)
         .listenFor('resize'.w(), window);
         
     if(SC.browser.msie) this.listenFor('focusin focusout'.w(), document);
