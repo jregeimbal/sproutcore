@@ -182,7 +182,8 @@ SC.ManyArray = SC.Object.extend(SC.Enumerable, SC.Array,
         store     = this.get('store'),
         recordType = this.get('recordType'),
         storeKey, ret, storeId ;
-        
+ var attr = this.manyAttribute;
+ console.log('manyarray objectAt', attr, attr.get('depth'));
     if (!storeIds || !store) return undefined; // nothing to do
     if (recs && (ret=recs[idx])) return ret ; // cached
 
