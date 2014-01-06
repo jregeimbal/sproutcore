@@ -112,7 +112,7 @@ SC.ObjectCoder = SC.Object.extend({
   */
   string: function(key, val) {
     return this.js(key, val, function(x) {
-      return '"' + x.replace(/"/g, '\\"') + '"' ;
+      return '"' + x.replace(/\\/g, '\\x5c').replace(/"/g, '\\"') + '"' ;
     });
   },
   
