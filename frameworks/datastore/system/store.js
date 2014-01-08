@@ -913,9 +913,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       myParentRecords[storeKey] = chParentRecords[storeKey];
       myChildRecords[storeKey] = chChildRecords[storeKey];
 
-      // Always make the data hash no longer editable.
-      myEditables[storeKey] = 0;
-
       this._notifyRecordPropertyChange(storeKey, NO);
     }
 
