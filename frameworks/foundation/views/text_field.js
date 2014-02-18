@@ -157,7 +157,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   init:function(){
     var hintStatus = this.get('hintON'),
         val = this.get('value');
-    if(SC.empty(val)) this.set('hintON', YES);
+    if(!val || val && val.length===0) this.set('hintON', YES);
     else this.set('hintON', NO);
     return sc_super();
   },
@@ -550,7 +550,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       var input= this.$input();
       if(!this.get('_supportsPlaceHolder')){
         var val = this.get('value');
-        if (SC.empty(val) || this.get('hintON')) {
+        if (SC.empty(val) || (val && val.length === 0) || this.get('hintON')) {
           if(this.get('hintON') && !this.get('isFirstResponder')){
             //console.log('hint on render');
             context.setClass('sc-hint', YES);
@@ -767,7 +767,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       this.set('focused',YES);
       this.fieldDidFocus(evt);
       var val = this.get('value');
-      if(!this.get('_supportsPlaceHolder') && SC.empty(val)){
+      if(!this.get('_supportsPlaceHolder') && ((!val) || (val && val.length===0))){
         // console.log('turn off hint');
         this.set('hintON', NO);
       }
@@ -786,7 +786,7 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
       // use it for the delegate to end editing
       this.fieldDidBlur(this._origEvent);
       var val = this.get('value');
-      if(!this.get('_supportsPlaceHolder') && !SC.empty(val)){
+      if(!this.get('_supportsPlaceHolder') && ((!val) || (val && val.length===0))){
         // console.log('turn on hint');
         this.set('hintON', YES);
       }
@@ -1128,8 +1128,8 @@ SC.TextFieldView = SC.FieldView.extend(SC.StaticLayout, SC.Editable,
   valueObserver: function(){
     // console.log('value observer');
     var val = this.get('value');
-    if(SC.empty(val)) this.set('hintON', YES);
-    else this.set('hintON', NO);
+    if (val && val.length>0) this.set('hintON', NO);
+    else this.set('hintON', YES);
   }.observes('value')
   
 });
