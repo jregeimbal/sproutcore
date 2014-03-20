@@ -35,6 +35,7 @@ SC.stringsFor('en', {
 
 // English (United Kingdom)
 SC.stringsFor('en-gb', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%d/%m/%Y',
   '_SC.DateTime.shortDateLabel': 'DD/MM/YYYY',
   '_SC.DateTime.shortDateExample': '13/07/2013',
@@ -53,6 +54,7 @@ SC.stringsFor('en-gb', {
 
 // English (Australia)
 SC.stringsFor('en-au', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%-d/%m/%Y',
   '_SC.DateTime.shortDateLabel': 'DD/MM/YYYY',
   '_SC.DateTime.shortDateExample': '13/07/2013',
@@ -81,6 +83,7 @@ SC.stringsFor('en-ca', {
 
 // English (New Zealand)
 SC.stringsFor('en-nz', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.amDesignator': 'a.m.',
   '_SC.DateTime.pmDesignator': 'p.m.',
   '_SC.DateTime.shortDatePattern': '%-d/%m/%Y',
@@ -99,6 +102,7 @@ SC.stringsFor('en-nz', {
 
 // English (Ireland)
 SC.stringsFor('en-ie', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.amDesignator': '',
   '_SC.DateTime.pmDesignator': '',
   '_SC.DateTime.shortDatePattern': '%d/%m/%Y',
@@ -132,6 +136,8 @@ SC.stringsFor('en-za', {
   '_SC.DateTime.shortDateLongTimePattern': '%Y/%m/%d %I:%M:%S %p',
   '_SC.DateTime.longDateShortTimePattern': '%d %B %Y %I:%M %p',
   '_SC.DateTime.longDateLongTimePattern': '%d %B %Y %I:%M:%S %p',
+  '_SC.Decimal.percentPositivePattern': '%@1%',
+  '_SC.Decimal.percentNegativePattern': '-%@1%',
 });
 
 // English (Jamaica)
@@ -152,6 +158,7 @@ SC.stringsFor('en-jm', {
 
 // English (Caribbean)
 SC.stringsFor('en-029', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%m/%d/%Y',
   '_SC.DateTime.shortDateExample': '07/13/2013',
   '_SC.DateTime.shortDateShortTimePattern': '%m/%d/%Y %i:%M %p',
@@ -203,6 +210,7 @@ SC.stringsFor('en-ph', {
 
 // English (India)
 SC.stringsFor('en-in', {
+  '_SC.DateTime.firstDayOfWeek': '1',
   '_SC.DateTime.shortDatePattern': '%d-%m-%Y',
   '_SC.DateTime.shortDateLabel': 'DD-MM-YYYY',
   '_SC.DateTime.shortDateExample': '13-07-2013',
@@ -231,6 +239,8 @@ SC.stringsFor('en-my', {
   '_SC.DateTime.shortDateLongTimePattern': '%-d/%-m/%Y %i:%M:%S %p',
   '_SC.DateTime.longDateShortTimePattern': '%A, %-d %B, %Y %i:%M %p',
   '_SC.DateTime.longDateLongTimePattern': '%A, %-d %B, %Y %i:%M:%S %p',
+  '_SC.Decimal.percentPositivePattern': '%@1%',
+  '_SC.Decimal.percentNegativePattern': '-%@1%',
 });
 
 // English (Singapore)
@@ -245,5 +255,7 @@ SC.stringsFor('en-sg', {
   '_SC.DateTime.shortDateLongTimePattern': '%-d/%-m/%Y %i:%M:%S %p',
   '_SC.DateTime.longDateShortTimePattern': '%A, %-d %B, %Y %i:%M %p',
   '_SC.DateTime.longDateLongTimePattern': '%A, %-d %B, %Y %i:%M:%S %p',
+  '_SC.Decimal.percentPositivePattern': '%@1%',
+  '_SC.Decimal.percentNegativePattern': '-%@1%',
 });
 
