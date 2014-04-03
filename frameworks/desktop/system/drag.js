@@ -498,10 +498,13 @@ SC.Drag = SC.Object.extend(
     var that  = this,
         dragView = this._getDragView(),
         frame = dragView.get('frame'),
-        view;
+        view, classNames = ['sc-ghost-view'];
         
+    if(frame.width === 0 && frame.height === 0) {
+      classNames.push('hidden');
+    }
     view = this.ghostView = SC.Pane.create({
-      classNames:['sc-ghost-view'],
+      classNames: classNames,
       layout: { top: frame.y, left: frame.x, width: frame.width, height: frame.height },
       owner: this,
       didCreateLayer: function() {
